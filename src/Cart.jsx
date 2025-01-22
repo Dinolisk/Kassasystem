@@ -75,6 +75,11 @@ const Cart = forwardRef(({
       if (itemsRef.current) {
         itemsRef.current.scrollTop = 0;
       }
+    },
+    scrollToBottom: () => {
+      if (itemsRef.current) {
+        itemsRef.current.scrollTop = itemsRef.current.scrollHeight;
+      }
     }
   }), []);
 

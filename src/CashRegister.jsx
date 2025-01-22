@@ -100,8 +100,13 @@ function CashRegister() {
       
       // Use a slight delay to ensure DOM has updated
       const timer = setTimeout(() => {
-        console.log('Cart container ref:', cartContainerRef.current);
-        
+        if (cartContainerRef.current instanceof HTMLElement) {
+          const cartItemsContainer = cartContainerRef.current.querySelector('.cart-items');
+          if (cartItemsContainer) {
+            // Scrolla till botten av cart-items containern
+            cartItemsContainer.scrollTop = cartItemsContainer.scrollHeight;
+          }
+        } 
         // Check if it's a DOM element
         if (cartContainerRef.current instanceof HTMLElement) {
           const cartItemsContainer = cartContainerRef.current.querySelector('.cart-items');
@@ -109,22 +114,14 @@ function CashRegister() {
           if (cartItemsContainer) {
             console.log('Scrolling cart to bottom');
             cartItemsContainer.scrollTop = cartItemsContainer.scrollHeight;
-          } else {
-            console.log('Cart items container not found');
           }
         } 
-        // Check if it has a scrollToTop method (from imperative handle)
-        else if (cartContainerRef.current && typeof cartContainerRef.current.scrollToTop === 'function') {
-          console.log('Using scrollToTop method');
-          // If the ref object has a method to scroll, use it
-          cartContainerRef.current.scrollToTop();
+        // Om vi har en scrollToTop metod från imperative handle
+        else if (cartContainerRef.current && typeof cartContainerRef.current.scrollToBottom === 'function') {
+          cartContainerRef.current.scrollToBottom();
         }
-        else {
-          console.log('Unable to scroll cart');
-        }
-      }, 0);
+      }, 100); // Öka fördröjningen lite för att säkerställa att DOM har uppdaterats
   
-      // Cleanup the timer
       return () => clearTimeout(timer);
     } else {
       localStorage.removeItem('cart');
