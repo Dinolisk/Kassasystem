@@ -1,5 +1,63 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
 import './Cart.css';
+
+const CartItem = ({ item, updateQuantity, removeFromCart, formatPrice, formatProductName }) => {
+  const [inputValue, setInputValue] = useState(item.quantity.toString());
+
+  // Uppdatera inputValue när item.quantity ändras (från pilknappar)
+  useEffect(() => {
+    setInputValue(item.quantity.toString());
+  }, [item.quantity]);
+
+  return (
+    <div className="cart-row">
+      <div className="cart-product">
+        <img src={item.thumbnail} alt={item.title} />
+        <span>{formatProductName(item.title)}</span>
+      </div>
+      <div className="cart-price">{formatPrice(item.price)}</div>
+      <div className="cart-quantity">
+        <button onClick={(e) => { 
+          e.preventDefault(); 
+          updateQuantity(item.id, -1); 
+        }}>-</button>
+        <input
+          type="number"
+          min="1"
+          value={inputValue}
+          onChange={(e) => {
+            const value = e.target.value;
+            setInputValue(value);
+            
+            if (/^[0-9]+$/.test(value)) {
+              const newQuantity = parseInt(value, 10);
+              if (!isNaN(newQuantity) && newQuantity > 0) {
+                updateQuantity(item.id, newQuantity - item.quantity);
+              }
+            }
+          }}
+          onBlur={(e) => {
+            if (e.target.value === '' || e.target.value === '0') {
+              setInputValue(item.quantity.toString());
+            }
+          }}
+        />
+        <button onClick={(e) => { 
+          e.preventDefault(); 
+          updateQuantity(item.id, 1); 
+        }}>+</button>
+      </div>
+      <div className="cart-sum">{formatPrice(item.price * item.quantity)}</div>
+      <button
+        className="cart-remove"
+        onClick={() => removeFromCart(item.id)}
+        title="Ta bort"
+      >
+        ×
+      </button>
+    </div>
+  );
+};
 
 const Cart = forwardRef(({
   cart,
@@ -20,7 +78,6 @@ const Cart = forwardRef(({
     }
   }), []);
 
-  // Kontrollera att cart är en array och har element
   if (!Array.isArray(cart) || cart.length === 0) {
     return (
       <div className="cart-empty">
@@ -38,54 +95,18 @@ const Cart = forwardRef(({
         <div>Summa</div>
         <div></div>
       </div>
-
       <div className="cart-items" ref={itemsRef}>
         {cart.map((item) => (
-          <div key={item.id} className="cart-row">
-            <div className="cart-product">
-              <img src={item.thumbnail} alt={item.title} />
-              <span>{formatProductName(item.title)}</span>
-            </div>
-            
-            <div className="cart-price">{formatPrice(item.price)}</div>
-            
-            <div className="cart-quantity">
-  <button onClick={(e) => { e.preventDefault(); updateQuantity(item.id, -1); }}>-</button>
-
-  <input
-    type="number"
-    value={item.quantity}
-    onChange={(e) => {
-      const value = e.target.value;
-      // If it's empty or a valid number, update
-      if (value === '' || /^[0-9]+$/.test(value)) {
-        updateQuantity(item.id, value === '' ? 1 : parseInt(value, 10));
-      }
-    }}
-    onBlur={(e) => {
-      // If empty or '0', set back to 1
-      if (e.target.value === '' || e.target.value === '0') {
-        updateQuantity(item.id, 1);
-      }
-    }}
-  />
-
-  <button onClick={(e) => { e.preventDefault(); updateQuantity(item.id, 1); }}>+</button>
-</div>
-            
-            <div className="cart-sum">{formatPrice(item.price * item.quantity)}</div>
-            
-            <button 
-              className="cart-remove" 
-              onClick={() => removeFromCart(item.id)}
-              title="Ta bort"
-            >
-              ×
-            </button>
-          </div>
+          <CartItem 
+            key={item.id}
+            item={item}
+            updateQuantity={updateQuantity}
+            removeFromCart={removeFromCart}
+            formatPrice={formatPrice}
+            formatProductName={formatProductName}
+          />
         ))}
       </div>
-
       <div className="cart-footer">
         <div className="cart-total">
           <span>Totalt:</span>
@@ -100,5 +121,4 @@ const Cart = forwardRef(({
 });
 
 Cart.displayName = 'Cart';
-
 export default Cart;
