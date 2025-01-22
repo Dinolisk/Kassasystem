@@ -28,7 +28,10 @@ function CashRegister() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false);
   const [isExistingCustomerOpen, setIsExistingCustomerOpen] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+  const [expandedDescriptions, setExpandedDescriptions] = useState({});
   const [customerInfo, setCustomerInfo] = useState({
+    
     name: '',
     email: '',
     phone: '',
@@ -60,18 +63,18 @@ function CashRegister() {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " kr";
   };
 
-  const formatItemTitle = (title) => {
-    const words = title.split(' ');
-    let firstLine = '';
-    let remainingWords = [...words];
-
-    while (remainingWords.length > 0 && (firstLine + remainingWords[0]).length <= 15) {
-      firstLine += (firstLine ? ' ' : '') + remainingWords.shift();
-    }
-
-    const secondLine = remainingWords.join(' ');
-    return firstLine + '\n' + secondLine;
-  };
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 300) {  // Visar knappen efter 300px scroll
+        setShowScrollTop(true);
+      } else {
+        setShowScrollTop(false);
+      }
+    };
+  
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -146,6 +149,13 @@ function CashRegister() {
     setCart(cart.filter(item => item.id !== productId));
   };
 
+  const toggleDescription = (productId) => {
+    setExpandedDescriptions(prev => ({
+      ...prev,
+      [productId]: !prev[productId]
+    }));
+  };
+  
   const updateQuantity = (productId, newQuantity) => {
     setCart(prevCart => {
       const updatedCart = prevCart.map(item => {
@@ -308,7 +318,8 @@ function CashRegister() {
 
   return (
     <div className="cash-register">
-      <h1 className="header">Kassa</h1>
+      <div className="cash-register-content"></div>
+      <h1 className="header">Välkommen till Kassan</h1>
       <div className="top-section">
         <div className="menu-container">
           <button 
@@ -337,7 +348,7 @@ function CashRegister() {
         <div className="search-box">
           <input
             type="text"
-            placeholder="Sök produktnamn eller produktnummer"
+            placeholder="Sök efter produktnamn eller produktnummer"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -368,52 +379,33 @@ function CashRegister() {
         </div>
 
         <div className="cart-section">
-        <div className="customer-registration">
-        <button 
-    className="register-button existing-customer"
-    onClick={() => {
-      console.log('Existing customer button clicked');
-      if (cartContainerRef.current) {
-        console.log('Attempting to scroll to top');
-        // Check if scrollToTop method exists
-        if (typeof cartContainerRef.current.scrollToTop === 'function') {
-          cartContainerRef.current.scrollToTop();
-        }
-      }
-      setIsExistingCustomerOpen(true);
-    }}
-  >
-    Existerande kund
+  <div className="customer-registration">
+    <button className="register-button existing-customer">
+      Existerande kund
     </button>
+    <button className="register-button">
+      Registrera kund
+    </button>
+  </div>
+  {showScrollTop && (
   <button 
-    className="register-button"
-    onClick={() => {
-      console.log('New customer button clicked');
-      if (cartContainerRef.current) {
-        console.log('Attempting to scroll to top');
-        // Check if scrollToTop method exists
-        if (typeof cartContainerRef.current.scrollToTop === 'function') {
-          cartContainerRef.current.scrollToTop();
-        }
-      }
-      setIsNewCustomerOpen(true);
-    }}
+    className="scroll-top-button"
+    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
   >
-    Registrera kund
+    ↑
   </button>
+)}
+  <Cart 
+    ref={cartContainerRef}
+    cart={cart}
+    removeFromCart={removeFromCart}
+    updateQuantity={updateQuantity}
+    total={total}
+    setIsPaymentOpen={setIsPaymentOpen}
+    formatPrice={formatPrice}
+    formatProductName={formatProductName}
+  />
 </div>
-
-          <Cart 
-            ref={cartContainerRef}
-            cart={cart}
-            removeFromCart={removeFromCart}
-            updateQuantity={updateQuantity}
-            total={total}
-            setIsPaymentOpen={setIsPaymentOpen}
-            formatPrice={formatPrice}
-            formatProductName={formatProductName}
-          />
-        </div>
       </div>
 
       {isNewCustomerOpen && (

@@ -50,24 +50,28 @@ const Cart = forwardRef(({
             <div className="cart-price">{formatPrice(item.price)}</div>
             
             <div className="cart-quantity">
-              <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-              <input
-                type="number"
-                value={item.quantity}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  if (value === '' || /^\d+$/.test(value)) {
-                    updateQuantity(item.id, parseInt(value, 10));
-                  }
-                }}
-                onBlur={(e) => {
-                  if (e.target.value === '' || e.target.value === '0') {
-                    updateQuantity(item.id, 1);
-                  }
-                }}
-              />
-              <button onClick={() => updateQuantity(item.id, 1)}>+</button>
-            </div>
+  <button onClick={(e) => { e.preventDefault(); updateQuantity(item.id, -1); }}>-</button>
+
+  <input
+    type="number"
+    value={item.quantity}
+    onChange={(e) => {
+      const value = e.target.value;
+      // If it's empty or a valid number, update
+      if (value === '' || /^[0-9]+$/.test(value)) {
+        updateQuantity(item.id, value === '' ? 1 : parseInt(value, 10));
+      }
+    }}
+    onBlur={(e) => {
+      // If empty or '0', set back to 1
+      if (e.target.value === '' || e.target.value === '0') {
+        updateQuantity(item.id, 1);
+      }
+    }}
+  />
+
+  <button onClick={(e) => { e.preventDefault(); updateQuantity(item.id, 1); }}>+</button>
+</div>
             
             <div className="cart-sum">{formatPrice(item.price * item.quantity)}</div>
             
