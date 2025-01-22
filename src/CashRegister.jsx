@@ -316,7 +316,9 @@ function CashRegister() {
   return (
     <div className="cash-register">
       <div className="cash-register-content"></div>
-      <h1 className="header">Välkommen till Kassan</h1>
+      <div className="logo-container">
+  <img src="https://www.gardeco.se/images/logos/Logo_gardeco.png" alt="Gardeco Logo" className="logo" />
+</div>
       <div className="top-section">
         <div className="menu-container">
           <button 
