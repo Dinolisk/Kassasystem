@@ -22,11 +22,11 @@ const CartItem = ({ item, updateQuantity, removeFromCart, formatPrice, formatPro
           updateQuantity(item.id, -1); 
         }}>-</button>
         <input
-          type="number"
-          min="1"
+          type="text" // Ändrat från "number" till "text" för bättre kontroll
+          inputMode="numeric" 
           value={inputValue}
           onChange={(e) => {
-            const value = e.target.value;
+            const value = e.target.value.replace(/\D/g, '');// Filtrerar bort allt som inte är siffror
             setInputValue(value);
             
             if (/^[0-9]+$/.test(value)) {
