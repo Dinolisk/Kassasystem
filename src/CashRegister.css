@@ -218,9 +218,9 @@ input[type="number"] {
 
 .product-info h3 {
   color: #2c3e50;
-  margin-bottom: 2px;
+  margin-bottom: 15px;
   font-size: 1.2rem;
-  min-height: 2.8em; /* Plats för 2 rader, justeras efter behov */
+  min-height: 1.5em; /* Plats för 2 rader, justeras efter behov */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -229,7 +229,7 @@ input[type="number"] {
   color: #777;
   font-weight: normal;
   font-size: 0.9rem;
-  margin: 2 px 0;
+  margin: 5px 0;
   flex-grow: 1;
   text-align: left;
   display: -webkit-box;
@@ -257,7 +257,7 @@ input[type="number"] {
   font-weight: 500;
   transition: background-color 0.2s ease;
   width: 100%;
-  margin-top: 15px;
+  margin-top: 10px;
 }
 
 .product-info button:hover {
@@ -281,7 +281,7 @@ input[type="number"] {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-bottom: 15px;
-  position: sticky;  /* Lägg till sticky */
+  position: relative;  /* Lägg till sticky */
   top: 20px;        /* Samma top-värde som cart-container */
   z-index: 1;
 }

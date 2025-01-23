@@ -29,7 +29,6 @@ function CashRegister() {
   const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false);
   const [isExistingCustomerOpen, setIsExistingCustomerOpen] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
-  const [expandedDescriptions, setExpandedDescriptions] = useState({});
   const [customerInfo, setCustomerInfo] = useState({
     
     name: '',
@@ -98,33 +97,31 @@ function CashRegister() {
     if (cart.length > 0) {
       localStorage.setItem('cart', JSON.stringify(cart));
       
-      // Use a slight delay to ensure DOM has updated
-      const timer = setTimeout(() => {
-        if (cartContainerRef.current instanceof HTMLElement) {
-          const cartItemsContainer = cartContainerRef.current.querySelector('.cart-items');
-          if (cartItemsContainer) {
-            // Scrolla till botten av cart-items containern
-            cartItemsContainer.scrollTop = cartItemsContainer.scrollHeight;
+      // Kolla om en ny produkt har lagts till genom att jämföra antalet produkter
+      const isNewProductAdded = cart.length > (JSON.parse(localStorage.getItem('previousCart') || '[]')).length;
+      
+      if (isNewProductAdded) {
+        const timer = setTimeout(() => {
+          if (cartContainerRef.current instanceof HTMLElement) {
+            const cartItemsContainer = cartContainerRef.current.querySelector('.cart-items');
+            
+            if (cartItemsContainer) {
+              cartItemsContainer.scrollTop = cartItemsContainer.scrollHeight;
+            }
+          } 
+          else if (cartContainerRef.current && typeof cartContainerRef.current.scrollToBottom === 'function') {
+            cartContainerRef.current.scrollToBottom();
           }
-        } 
-        // Check if it's a DOM element
-        if (cartContainerRef.current instanceof HTMLElement) {
-          const cartItemsContainer = cartContainerRef.current.querySelector('.cart-items');
-          
-          if (cartItemsContainer) {
-            console.log('Scrolling cart to bottom');
-            cartItemsContainer.scrollTop = cartItemsContainer.scrollHeight;
-          }
-        } 
-        // Om vi har en scrollToTop metod från imperative handle
-        else if (cartContainerRef.current && typeof cartContainerRef.current.scrollToBottom === 'function') {
-          cartContainerRef.current.scrollToBottom();
-        }
-      }, 100); // Öka fördröjningen lite för att säkerställa att DOM har uppdaterats
+        }, 100);
   
-      return () => clearTimeout(timer);
+        return () => clearTimeout(timer);
+      }
+      
+      // Spara nuvarande cart för framtida jämförelse
+      localStorage.setItem('previousCart', JSON.stringify(cart));
     } else {
       localStorage.removeItem('cart');
+      localStorage.removeItem('previousCart');
     }
   }, [cart]);
 
@@ -146,13 +143,6 @@ function CashRegister() {
     setCart(cart.filter(item => item.id !== productId));
   };
 
-  const toggleDescription = (productId) => {
-    setExpandedDescriptions(prev => ({
-      ...prev,
-      [productId]: !prev[productId]
-    }));
-  };
-  
   const updateQuantity = (productId, newQuantity) => {
     setCart(prevCart => {
       const updatedCart = prevCart.map(item => {
@@ -234,7 +224,50 @@ function CashRegister() {
     setIsPaymentOpen(false);
     setCart([]);
   };
-
+  const parkPurchase = (e) => {
+    try {
+      // Förhindra standardbeteende
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+  
+      if (cart.length === 0) {
+        alert('Kundvagnen är tom');
+        return;
+      }
+  
+      if (window.confirm('Vill du parkera detta köp?')) {
+        // Spara köpet
+        const parkedPurchase = {
+          id: Date.now(),
+          cart: cart,
+          timestamp: new Date().toISOString()
+        };
+  
+        // Spara i localStorage
+        const parkedPurchases = JSON.parse(localStorage.getItem('parkedPurchases') || '[]');
+        parkedPurchases.push(parkedPurchase);
+        localStorage.setItem('parkedPurchases', JSON.stringify(parkedPurchases));
+  
+        // Töm kundvagnen
+        setCart([]);
+        alert('Köpet har parkerats');
+      }
+    } catch (error) {
+      console.error('Error in parkPurchase:', error);
+      alert('Ett fel uppstod när köpet skulle parkeras');
+    }
+    
+    // Säkerställ att funktionen alltid returnerar false
+    return false;
+  };
+  
+  const cancelPurchase = () => {
+    if (window.confirm('Är du säker på att du vill avbryta köpet?')) {
+      setCart([]);
+    }
+  };
   const generateReceipt = () => {
     const currentDate = new Date();
     const dateString = currentDate.toLocaleDateString();
@@ -395,15 +428,17 @@ function CashRegister() {
   </button>
 )}
   <Cart 
-    ref={cartContainerRef}
-    cart={cart}
-    removeFromCart={removeFromCart}
-    updateQuantity={updateQuantity}
-    total={total}
-    setIsPaymentOpen={setIsPaymentOpen}
-    formatPrice={formatPrice}
-    formatProductName={formatProductName}
-  />
+  ref={cartContainerRef}
+  cart={cart}
+  removeFromCart={removeFromCart}
+  updateQuantity={updateQuantity}
+  total={total}
+  setIsPaymentOpen={setIsPaymentOpen}
+  formatPrice={formatPrice}
+  formatProductName={formatProductName}
+  parkPurchase={parkPurchase}
+  cancelPurchase={cancelPurchase}
+/>
 </div>
       </div>
 

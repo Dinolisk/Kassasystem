@@ -170,14 +170,67 @@
   margin-bottom: 15px;
   font-weight: 500;
 }
-
-.cart-footer button {
+.cart-footer .button-container {
+  display: flex;
   width: 100%;
-  padding: 12px;
-  background: #28a745;
-  color: white;
+  gap: 8px;
+}
+
+.cart-footer .button-container button {
+  flex: 1;
+  height: 45px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-size: 16px;
+  font-weight: 500;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+
+.cart-footer .more-button {
+  background-color: #6c757d;
+}
+
+.cart-footer .cancel-button {
+  background-color: #dc3545;
+}
+
+.cart-footer .park-button {
+  background-color: #ffc107;
+  color: #333; /* Mörk text på ljus bakgrund */
+}
+
+.cart-footer .pay-button {
+  background-color: #28a745;
+}
+.more-dropdown {
+  position: absolute;
+  bottom: 100%;  
+  left: 0;      
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);  
+  width: 200px;
+  z-index: 9999;  /* Öka z-index för att visa över andra element */
+  padding: 8px 0;
+  border: 1px solid #eee;
+  margin-bottom: 8px; 
+}
+
+.more-dropdown button {
+  width: 100%;
+  padding: 12px 15px;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #333;
+  cursor: pointer;
+  font-size: 14px;       /* Säkerställ att knapparna visas som block */
+}
+
+.more-dropdown button:hover {
+  background-color: #f8f9fa;
+} 
