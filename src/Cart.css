@@ -178,45 +178,64 @@
 
 .cart-footer .button-container button {
   flex: 1;
-  height: 45px;
+  height: 60px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
-  font-weight: 500;
-  font-size: 14px;
+  font-weight: 600; /* Ökad från 500 till 600 för bättre läsbarhet */
+  font-size: 18px; /* Ökad från 14px till 15px */
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 0.2s ease-in-out; /* Add transition for smoother hover effect */
+  color: white;
 }
 
 
 .cart-footer .more-button {
-  background-color: #6c757d;
+  background-color: #515d72; /* Mörkare, mer mättad blågrå */
+}
+
+.cart-footer .more-button:hover {
+  background-color: #404b5c;
 }
 
 .cart-footer .cancel-button {
-  background-color: #dc3545;
+  background-color: #e33244; /* Tillbaka till en starkare röd */
+}
+
+.cart-footer .cancel-button:hover {
+  background-color: #c82333;  
 }
 
 .cart-footer .park-button {
-  background-color: #ffc107;
-  color: #333; /* Mörk text på ljus bakgrund */
+  background-color: #ffc30f;
+  color: #1a1a1a; /* Mörkare text för bättre kontrast */
+  font-weight: 600; /* Säkerställ att även den gula knappen har fet text */
+}
+
+.cart-footer .park-button:hover {
+  background-color: #f4a700;
 }
 
 .cart-footer .pay-button {
   background-color: #28a745;
 }
+
+.cart-footer .pay-button:hover {
+  background-color: #218838;
+}
 .more-dropdown {
   position: absolute;
   bottom: 100%;  
   left: 0;      
-  background-color: white;
+  background-color: rgb(61, 139, 255);
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);  
   width: 200px;
   z-index: 9999;  /* Öka z-index för att visa över andra element */
   padding: 8px 0;
-  border: 1px solid #eee;
+  border: 1px solid #000000;
   margin-bottom: 8px; 
 }
 
@@ -226,11 +245,12 @@
   text-align: left;
   background: none;
   border: none;
-  color: #333;
+  color: #17e50d;
   cursor: pointer;
   font-size: 14px;       /* Säkerställ att knapparna visas som block */
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2)
 }
 
 .more-dropdown button:hover {
-  background-color: #f8f9fa;
+  background-color: #b0bdcb90;
 } 
