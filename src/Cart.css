@@ -5,10 +5,12 @@
   display: flex;
   flex-direction: column;
   position: sticky;
-  top: 78px;    
+  top: 78px;
+  margin-bottom: 0;  
 }
 
 .cart-empty {
+  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -188,38 +190,32 @@
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease-in-out; /* Add transition for smoother hover effect */
+  color: #2c3e50;
+}
+
+.cart-footer .more-button,
+.cart-footer .park-button {
+ background-color: #939ead;
+ border: 1px solid #939ead;
+ color: #4a5568;
+}
+
+.cart-footer .more-button:hover,
+.cart-footer .park-button:hover {
+ background-color: #e2e8f0;
+}
+.cart-footer .cancel-button {
+  background-color: #dc3545;
   color: white;
 }
 
-
-.cart-footer .more-button {
-  background-color: #515d72; /* Mörkare, mer mättad blågrå */
-}
-
-.cart-footer .more-button:hover {
-  background-color: #404b5c;
-}
-
-.cart-footer .cancel-button {
-  background-color: #e33244; /* Tillbaka till en starkare röd */
-}
-
 .cart-footer .cancel-button:hover {
-  background-color: #c82333;  
-}
-
-.cart-footer .park-button {
-  background-color: #ffc30f;
-  color: #1a1a1a; /* Mörkare text för bättre kontrast */
-  font-weight: 600; /* Säkerställ att även den gula knappen har fet text */
-}
-
-.cart-footer .park-button:hover {
-  background-color: #f4a700;
+  background-color: #c82333;
 }
 
 .cart-footer .pay-button {
   background-color: #28a745;
+  color: white;
 }
 
 .cart-footer .pay-button:hover {

@@ -155,26 +155,40 @@ input[type="number"] {
 }
 
 .main-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
   gap: 20px;
   width: 100%;
   box-sizing: border-box;
+ 
 }
-
 .products-list {
-  width: 100%;
+  pointer-events: none;
+  width: 50%;
+  flex: 0 0 50%;
+  min-width: 600px;
   background-color: #e2e6ea9c;
   padding: 20px;
   border-radius: 8px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
-  box-sizing: border-box;
+  align-content: start;
+  min-height: 200px;
+
 }
 
+
+.products-list:empty::after {
+  content: 'Inga produkter hittades';
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
 /* Product card styles */
 .product-card {
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -265,11 +279,17 @@ input[type="number"] {
 }
 
 .cart-section {
-  width: 100%;
+  width: 50%;
+  flex: 0 0 50%;
+  height: fit-content;
   position: sticky;
   top: 20px;
-  box-sizing: border-box;
-}
+  background-color: #e2e6ea9c;
+  padding: 20px;
+  border-radius: 8px;
+
+  
+}   
 
 .cart-section > * {
   margin-left: 0;
@@ -282,7 +302,7 @@ input[type="number"] {
   gap: 10px;
   margin-bottom: 15px;
   position: sticky;  /* Lägg till sticky */
-  top: 20px;        /* Samma top-värde som cart-container */
+  top: 20px;       
   z-index: 1;
 }
 
@@ -538,7 +558,12 @@ input[type="number"] {
   font-size: 14px;
 }
 
-/* Responsive touch device styles */
+/* Base styles */
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+/* Touch devices */
 @media (hover: none) {
   .product-card:active {
     transform: scale(0.98);
@@ -549,46 +574,37 @@ input[type="number"] {
   }
 }
 
-*, *:before, *:after {
-  box-sizing: border-box;
+/* Large screens */
+@media (max-width: 1200px) {
+  .products-list,
+  .cart-section {
+    min-width: 450px;
+  }
 }
-@media screen and (max-width: 1024px) {
-  /* Behåll main-content som två kolumner */
+
+/* Tablets */
+@media (max-width: 1024px) {
   .main-content {
-    grid-template-columns: 1fr 1fr; /* Behåll två kolumner */
     gap: 10px;
   }
 
-  /* Ändra bara products-list till en kolumn */
   .products-list {
-    grid-template-columns: 1fr; /* En produkt per rad */
+    grid-template-columns: 1fr;
   }
 
-  /* Behåll sticky-beteendet för cart-section */
+  .products-list,
   .cart-section {
-    position: sticky;
-    top: 20px;
+    min-width: unset;
+    width: 100%;
   }
 
-  .customer-registration {
-    position: sticky;
-    top: 20px;
-  }
-
-  .cart-container {
-    position: sticky;
-    top: 78px;
-  }
-
-  /* Minska eventuellt padding för mindre skärmar */
   .cash-register {
     padding: 15px 20px;
   }
 }
 
-/* För ännu mindre skärmar, t.ex. mobiler */
-@media screen and (max-width: 768px) {
-  /* Här kan du lägga till ytterligare anpassningar för mycket små skärmar */
+/* Mobile */
+@media (max-width: 768px) {
   .product-card {
     min-height: 350px;
   }
