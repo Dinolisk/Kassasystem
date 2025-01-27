@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CashRegister.css';
 import Cart from './Cart.jsx';
 
+
 function CashRegister() {
   const [cart, setCart] = useState(() => {
     const savedCart = localStorage.getItem('cart');
@@ -380,7 +381,7 @@ function CashRegister() {
         <div className="search-box">
           <input
             type="text"
-            placeholder="Sök efter produktnamn eller produktnummer"
+            placeholder="Sök efter produktnamn eller artikelnummer"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
@@ -398,15 +399,25 @@ function CashRegister() {
       <div className="main-content">
         <div className="products-list">
           {filteredProducts.map(product => (
-            <div key={product.id} className="product-card">
-              <img src={product.thumbnail} alt={product.title} />
-              <div className="product-info">
-                <h3>{product.title}</h3>
-                <p className="description">{product.description}</p>
-                <p className="price">{formatPrice(product.price)}</p>
-                <button onClick={() => addToCart(product)}>Lägg till i kundvagn</button>
-              </div>
+            <div 
+            key={product.id} 
+            className="product-card"
+            onClick={() => addToCart(product)}
+            role="button"
+            tabIndex={0}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                addToCart(product);
+              }
+            }}
+          >
+            <img src={product.thumbnail} alt={product.title} />
+            <div className="product-info">
+              <h3>{product.title}</h3>
+              <p className="description">{product.description}</p>
+              <p className="price">{formatPrice(product.price)}</p>
             </div>
+          </div>
           ))}
         </div>
 

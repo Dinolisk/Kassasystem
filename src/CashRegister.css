@@ -1,11 +1,12 @@
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
+input[type="number"] {
+  -moz-appearance: textfield;
   -webkit-appearance: none;
   margin: 0;
 }
 .logo-container {
   text-align: center;
-  padding: 20px 0;
+  padding: 10px;
+  padding-bottom: 20px; 
 }
 
 .logo {
@@ -19,7 +20,7 @@ input[type="number"] {
 
 .cash-register {
   width: 100%;
-  padding: 15px 40px; /* Ändra detta från 0 20px till 15px 40px */
+  padding: 15px 40px;
   box-sizing: border-box;
 }
 
@@ -46,7 +47,6 @@ input[type="number"] {
 
 .menu-container {
   position: relative;
-  margin-left: 20px;
 }
 
 .menu-button {
@@ -74,26 +74,29 @@ input[type="number"] {
   top: 100%;
   left: 0;
   background-color: #f8f9fa;
-  border-radius: 8px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
-  width: 300px;
+  border-radius: 12px;  /* Lite mer rundade hörn */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 400px;        /* Ökat från 300px till 400px */
   z-index: 1000;
   margin-top: 8px;
   border: 1px solid #e0e0e0;
-  padding: 10px 0;
+  padding: 15px 0; 
 }
 
 .menu-option {
   width: 100%;
-  padding: 15px 20px;
+  padding: 20px 25px;  /* Ökat från 15px 20px till 20px 25px */
   border: none;
   background: none;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s;
   color: #333;
-  font-size: 16px;
+  font-size: 20px;    /* Ökat från 16px till 20px */
   font-weight: 500;
+  min-height: 70px;   /* Säkerställer en bra träffyta */
+  display: flex;
+  align-items: center;
 }
 
 .menu-option:hover {
@@ -102,7 +105,7 @@ input[type="number"] {
 }
 
 .menu-option:not(:last-child) {
-  border-bottom: 1px solid #eee;
+  border-bottom: 2px solid #eee;
 }
 
 /* Search box styles */
@@ -161,22 +164,32 @@ input[type="number"] {
   box-sizing: border-box;
  
 }
-.products-list {
-  pointer-events: none;
-  width: 50%;
-  flex: 0 0 50%;
-  min-width: 600px;
+
+
+.products-list, 
+.cart-section {
+  flex: 1; /* Delar utrymme lika mellan rutorna */
+  min-width: 600px; /* Säkerställ att bredden alltid är minst 600px */
+  height: auto; /* Låt höjden anpassas efter innehållet */
+  min-height: 400px; /* Förhindra att rutorna kollapsar */
   background-color: #e2e6ea9c;
   padding: 20px;
   border-radius: 8px;
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  align-content: start;
-  min-height: 200px;
-
+  box-sizing: border-box;
 }
 
+.products-list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Anpassa för produkter */
+  gap: 15px;
+  align-content: start;
+}
+
+.cart-section {
+  position: sticky;
+  top: 20px;
+  height: auto;
+}
 
 .products-list:empty::after {
   content: 'Inga produkter hittades';
@@ -188,7 +201,7 @@ input[type="number"] {
 }
 /* Product card styles */
 .product-card {
-  pointer-events: auto;
+  cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -200,8 +213,13 @@ input[type="number"] {
   min-height: 400px;
   background-color: #f8f9fa;
   transition: all 0.2s ease;
-  margin-bottom: 10px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.product-card:active {
+  transform: scale(0.98);
+  background-color: #addbf3e4;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .product-card:hover {
@@ -218,7 +236,7 @@ input[type="number"] {
   background-color: white;
   transition: all 0.2s ease;
   aspect-ratio: 1 / 1;
-  padding: 10x;
+  padding: 10px;
   box-sizing: border-box;
 }
 
@@ -278,23 +296,7 @@ input[type="number"] {
   background-color: #0056b3;
 }
 
-.cart-section {
-  width: 50%;
-  flex: 0 0 50%;
-  height: fit-content;
-  position: sticky;
-  top: 20px;
-  background-color: #e2e6ea9c;
-  padding: 20px;
-  border-radius: 8px;
 
-  
-}   
-
-.cart-section > * {
-  margin-left: 0;
-  margin-right: 0;
-}
 
 .customer-registration {
   display: grid;

@@ -10,7 +10,6 @@
 }
 
 .cart-empty {
-  min-height: 100px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -152,12 +151,14 @@
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+.cart-remove:hover {
+  background-color: #c82333;
+}
 .cart-footer {
   position: sticky;
   bottom: 0;
@@ -205,12 +206,12 @@
  background-color: #e2e8f0;
 }
 .cart-footer .cancel-button {
-  background-color: #dc3545;
+  background-color: #e45a68;
   color: white;
 }
 
 .cart-footer .cancel-button:hover {
-  background-color: #c82333;
+  background-color: #de4050;
 }
 
 .cart-footer .pay-button {
@@ -222,17 +223,14 @@
   background-color: #218838;
 }
 .more-dropdown {
-  position: absolute;
-  bottom: 100%;  
-  left: 0;      
   background-color: rgb(61, 139, 255);
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);  
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
   width: 200px;
-  z-index: 9999;  /* Öka z-index för att visa över andra element */
+  z-index: 9999;
   padding: 8px 0;
   border: 1px solid #000000;
-  margin-bottom: 8px; 
+  margin-bottom: 8px;
 }
 
 .more-dropdown button {
@@ -241,10 +239,10 @@
   text-align: left;
   background: none;
   border: none;
-  color: #17e50d;
+  color: white;  /* Ändrat från #17e50d för bättre läsbarhet */
   cursor: pointer;
-  font-size: 14px;       /* Säkerställ att knapparna visas som block */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2)
+  font-size: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .more-dropdown button:hover {

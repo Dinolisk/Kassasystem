@@ -1,6 +1,7 @@
   import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
   import './Cart.css';
-
+  import { Trash2 } from 'lucide-react';
+  
   const Cart = forwardRef(({
     cart,
     removeFromCart,
@@ -75,26 +76,27 @@
               updateQuantity(item.id, -1); 
             }}>-</button>
             <input
-              type="text"
-              inputMode="numeric" 
-              value={inputValue}
-              onChange={(e) => {
-                const value = e.target.value.replace(/\D/g, '');
-                setInputValue(value);
-                
-                if (/^[0-9]+$/.test(value)) {
-                  const newQuantity = parseInt(value, 10);
-                  if (!isNaN(newQuantity) && newQuantity > 0) {
-                    updateQuantity(item.id, newQuantity - item.quantity);
-                  }
-                }
-              }}
-              onBlur={(e) => {
-                if (e.target.value === '' || e.target.value === '0') {
-                  setInputValue(item.quantity.toString());
-                }
-              }}
-            />
+  type="text"
+  inputMode="numeric" 
+  value={inputValue}
+  onChange={(e) => {
+    const value = e.target.value.replace(/\D/g, ''); // Tar bort alla icke-numeriska tecken
+    setInputValue(value);
+  }}
+  onBlur={(e) => {
+    const value = e.target.value;
+    if (value === '' || value === '0') {
+      setInputValue(item.quantity.toString());
+    } else {
+      const newQuantity = parseInt(value, 10);
+      if (!isNaN(newQuantity) && newQuantity > 0) {
+        updateQuantity(item.id, newQuantity - item.quantity);
+      } else {
+        setInputValue(item.quantity.toString());
+      }
+    }
+  }}
+/>
             <button onClick={(e) => { 
               e.preventDefault(); 
               updateQuantity(item.id, 1); 
@@ -102,12 +104,12 @@
           </div>
           <div className="cart-sum">{formatPrice(item.price * item.quantity)}</div>
           <button
-            className="cart-remove"
-            onClick={() => removeFromCart(item.id)}
-            title="Ta bort"
-          >
-            ×
-          </button>
+              className="cart-remove"
+              onClick={() => removeFromCart(item.id)}
+              title="Ta bort"
+              >
+           <Trash2 size={18} color="white" />
+        </button>
         </div>
       );
     };
