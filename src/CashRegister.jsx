@@ -353,91 +353,96 @@ function CashRegister() {
       <div className="logo-container">
   <img src="https://www.gardeco.se/images/logos/Logo_gardeco.png" alt="Gardeco Logo" className="logo" />
 </div>
-      <div className="top-section">
-        <div className="menu-container">
-          <button 
-            className="menu-button"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            ☰
-          </button>
-          {isMenuOpen && (
-            <div className="menu-dropdown">
-              {menuOptions.map(option => (
-                <button 
-                  key={option.id} 
-                  className="menu-option"
-                  onClick={() => {
-                    option.action();
-                    setIsMenuOpen(false);
-                  }}
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="search-box">
-          <input
-            type="text"
-            placeholder="Sök efter produktnamn eller artikelnummer"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-          {searchTerm && (
-            <button 
-              className="clear-search"
-              onClick={() => setSearchTerm('')}
-            >
-              ✕
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="main-content">
-        <div className="products-list">
-          {filteredProducts.map(product => (
-            <div 
-            key={product.id} 
-            className="product-card"
-            onClick={() => addToCart(product)}
-            role="button"
-            tabIndex={0}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                addToCart(product);
-              }
-            }}
-          >
-            <img src={product.thumbnail} alt={product.title} />
-            <div className="product-info">
-              <h3>{product.title}</h3>
-              <p className="description">{product.description}</p>
-              <p className="price">{formatPrice(product.price)}</p>
-            </div>
-          </div>
-          ))}
-        </div>
-
-        <div className="cart-section">
-  <div className="customer-registration">
-    <button className="register-button existing-customer">
+<div className="top-section">
+  <div className="search-box">
+    <input
+      type="text"
+      placeholder="Sök efter produktnamn eller artikelnummer"
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+    />
+    {searchTerm && (
+      <button 
+        className="clear-search"
+        onClick={() => setSearchTerm('')}
+      >
+        ✕
+      </button>
+    )}
+  </div>
+  
+  <div className="button-container">
+    <button 
+      className="customer-button existing"
+      onClick={() => setIsExistingCustomerOpen(true)}
+    >
       Existerande kund
     </button>
-    <button className="register-button">
+    <button 
+      className="customer-button"
+      onClick={() => setIsNewCustomerOpen(true)}
+    >
       Registrera kund
     </button>
+    <div className="menu-container">
+      <button 
+        className="menu-button"
+        onClick={() => setIsMenuOpen(!isMenuOpen)}
+      >
+        ☰
+      </button>
+      {isMenuOpen && (
+        <div className="menu-dropdown">
+          {menuOptions.map(option => (
+            <button 
+              key={option.id} 
+              className="menu-option"
+              onClick={() => {
+                option.action();
+                setIsMenuOpen(false);
+              }}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   </div>
-  {showScrollTop && (
-  <button 
-    className="scroll-top-button"
-    onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-  >
-    ↑
-  </button>
-)}
+</div>
+<div className="main-content">
+  <div className="products-list">
+    {filteredProducts.map(product => (
+      <div
+        key={product.id}
+        className="product-card"
+        onClick={() => addToCart(product)}
+        role="button"
+        tabIndex={0}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            addToCart(product);
+          }
+        }}
+      >
+        <img src={product.thumbnail} alt={product.title} />
+        <div className="product-info">
+          <h3>{product.title}</h3>
+          <p className="description">{product.description}</p>
+          <p className="price">{formatPrice(product.price)}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+  <div className="cart-section">
+    {showScrollTop && (
+      <button
+        className="scroll-top-button"
+        onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      >
+        ↑
+      </button>
+    )}
   <Cart 
   ref={cartContainerRef}
   cart={cart}

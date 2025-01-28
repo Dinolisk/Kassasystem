@@ -15,6 +15,10 @@
   }, ref) => {
     const itemsRef = useRef(null);
     const [showMoreMenu, setShowMoreMenu] = useState(false);
+    const totalInclVAT = total;
+    const vatRate = 0.25;
+    const vatAmount = totalInclVAT * (vatRate / (1 + vatRate));
+    const subtotal = totalInclVAT - vatAmount;
 
     useImperativeHandle(ref, () => ({
       scrollToTop: () => {
@@ -73,14 +77,16 @@
           <div className="cart-quantity">
             <button onClick={(e) => { 
               e.preventDefault(); 
-              updateQuantity(item.id, -1); 
+              updateQuantity(item.id, -1);
             }}>-</button>
             <input
   type="text"
   inputMode="numeric" 
   value={inputValue}
   onChange={(e) => {
-    const value = e.target.value.replace(/\D/g, ''); // Tar bort alla icke-numeriska tecken
+    const value = e.target.value.split('')
+      .filter(char => char >= '0' && char <= '9')
+      .join('');
     setInputValue(value);
   }}
   onBlur={(e) => {
@@ -114,41 +120,41 @@
       );
     };
 
-    if (!Array.isArray(cart) || cart.length === 0) {
-      return (
+    return (
+      <div className="cart-container">
+    <div className="cart-header">
+      <div>Produkt</div>
+      <div>Pris</div>
+      <div>Antal</div>
+      <div>Summa</div>
+      <div></div>
+    </div>
+    <div className="cart-items" ref={itemsRef}>
+      {(!Array.isArray(cart) || cart.length === 0) ? (
         <div className="cart-empty">
           <p>Kundvagnen är tom</p>
         </div>
-      );
-    }
-
-    return (
-      <div className="cart-container">
-        <div className="cart-header">
-          <div>Produkt</div>
-          <div>Pris</div>
-          <div>Antal</div>
-          <div>Summa</div>
-          <div></div>
-        </div>
-        <div className="cart-items" ref={itemsRef}>
-          {cart.map((item) => (
-            <CartItem 
-              key={item.id}
-              item={item}
-              updateQuantity={updateQuantity}
-              removeFromCart={removeFromCart}
-              formatPrice={formatPrice}
-              formatProductName={formatProductName}
-            />
-          ))}
-        </div>
-        <div className="cart-footer">
-          <div className="cart-total">
-            <span>Totalt:</span>
-            <span>{formatPrice(total)}</span>
-          </div>
-          <div className="button-container">
+      ) : (
+        cart.map((item) => (
+          <CartItem 
+            key={item.id}
+            item={item}
+            updateQuantity={updateQuantity}
+            removeFromCart={removeFromCart}
+            formatPrice={formatPrice}
+            formatProductName={formatProductName}
+          />
+        ))
+      )}
+    </div>
+    <div className="payment-footer">
+    <div className="cart-total">
+    <div>
+      <span>Totalt</span>
+      <span>{formatPrice(totalInclVAT)}</span>
+    </div>
+  </div>
+  <div className="button-container">
           <button className="cancel-button" onClick={cancelPurchase}>
               Avbryt köp
             </button>

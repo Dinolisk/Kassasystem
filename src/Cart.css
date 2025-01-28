@@ -1,21 +1,25 @@
 .cart-container {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex: 1;
   display: flex;
   flex-direction: column;
-  position: sticky;
-  top: 78px;
-  margin-bottom: 0;  
+  overflow: hidden; 
+  max-height: 100%;
 }
 
 .cart-empty {
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 200px;
   color: #666;
   font-size: 16px;
+  
+}
+.cart-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0; /* Important for Firefox */
 }
 
 .cart-header {
@@ -76,8 +80,7 @@
 .cart-items {
   flex: 1;
   overflow-y: auto;
-  min-height: 100px;
-  max-height: calc(100vh - 250px);
+  padding: 5px 0;
 }
 
 .cart-row {
@@ -106,7 +109,6 @@
 
 .cart-product span {
   font-size: 15px;
-  white-space: pre-wrap;
   text-align: left;
   white-space: normal;
 }
@@ -159,67 +161,82 @@
 .cart-remove:hover {
   background-color: #c82333;
 }
-.cart-footer {
-  position: sticky;
-  bottom: 0;
-  background: white;
-  padding: 15px;
-  border-top: 1px solid #e5e7eb;
-}
 
 .cart-total {
   display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  font-weight: 500;
+  flex-direction: column;
+  margin-bottom: 0;
+  padding: 0;
 }
-.cart-footer .button-container {
+.cart-total > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1px;
+  margin-top: 5px;
+  margin-bottom: 18px;
+}
+
+.cart-total span {
+  font-weight: bold;
+}
+.cart-total div:last-child span {
+  font-size: 18px;
+  font-weight: 600;
+}
+.payment-footer {
+  margin-top: 10px;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+  .payment-footer .button-container {
   display: flex;
   width: 100%;
   gap: 8px;
 }
 
-.cart-footer .button-container button {
+.payment-footer button {
   flex: 1;
-  height: 60px;
+  height: 45px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  font-weight: 600; /* Ökad från 500 till 600 för bättre läsbarhet */
-  font-size: 18px; /* Ökad från 14px till 15px */
+  font-weight: 500;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease-in-out; /* Add transition for smoother hover effect */
-  color: #2c3e50;
+  transition: background-color 0.2s;
 }
 
-.cart-footer .more-button,
-.cart-footer .park-button {
- background-color: #939ead;
- border: 1px solid #939ead;
- color: #4a5568;
+.payment-footer .more-button,
+.payment-footer .park-button {
+  background-color: #939ead;
+  border: 1px solid #939ead;
+  color: #4a5568;
 }
 
-.cart-footer .more-button:hover,
-.cart-footer .park-button:hover {
- background-color: #e2e8f0;
+.payment-footer .more-button:hover,
+.payment-footer .park-button:hover {
+  background-color: #e2e8f0;
 }
-.cart-footer .cancel-button {
+.payment-footer .cancel-button {
   background-color: #e45a68;
   color: white;
 }
 
-.cart-footer .cancel-button:hover {
+.payment-footer .cancel-button:hover {
   background-color: #de4050;
 }
 
-.cart-footer .pay-button {
+.payment-footer .pay-button {
   background-color: #28a745;
   color: white;
 }
 
-.cart-footer .pay-button:hover {
+.payment-footer .pay-button:hover {
   background-color: #218838;
 }
 .more-dropdown {
