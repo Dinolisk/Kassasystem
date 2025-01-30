@@ -23,57 +23,54 @@
   overflow: hidden;
 }
 
-.cart-header {
+.cart-header,
+.cart-item {
   display: grid;
-  grid-template-columns: minmax(200px, 3fr) 1fr 1.2fr 1fr 40px;
+  grid-template-columns: 3fr 1fr 1fr 1fr 35px;
   gap: 10px;
-  padding: 1px;
-  border-radius: 5px;
-  background: white;
-
+  align-items: center;
+  
 }
 
 .cart-header > div {
-  font-weight: bold; /* Gör rubriktexterna bold */
-  font-size: 18px;
+  color: #2c3e50;
+  font-weight: 600;
+  font-size: 16px;
 }
-
 .cart-header > div:first-child {
-  text-align: left;
-  padding-left: 60px; /* Justera för att matcha produktbildens utrymme */
+  padding-left: 45px;  
 }
 .cart-header > div:nth-child(2),
-.cart-header > div:nth-child(4) {
-  text-align: right; /* Pris och Summa höjerjusterade */
+.cart-header > div:nth-child(3),
+.cart-header > div:nth-child(4),
+.cart-item > div:nth-child(2),
+.cart-item > div:nth-child(3),
+.cart-item > div:nth-child(4) {
+  justify-self: end; 
 }
 
-.cart-header > div:nth-child(3) {
-  text-align: center; /* Endast Antal centrerat */
-}
-.cart-item {
-  display: grid;
-  grid-template-columns: minmax(220px, 3fr) 1fr 1.2fr 1fr 40px; /* Öka min-width här */
-  gap: 12px;
-  align-items: start;
-  padding: 12px;
-  border-bottom: 1px solid #e5e7eb;
+.cart-header > div:nth-child(3),
+.cart-item > div:nth-child(3) {
+  justify-self: center; 
 }
 .cart-item-product {
   display: flex;
-  align-items: flex-start; /* Håller text vänsterjusterad */
-  gap: 12px;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .cart-item-name {
   font-size: 0.9rem;
   color: #1f2937;
   white-space: pre-wrap;
-  text-align: left; /* Vänsterjustera texten */
-  line-height: 1.2; /* Bättre radavstånd för flera rader */
+  text-align: left; 
+  line-height: 1.2; 
+  color: #3a4554;
 }
 .cart-item-price,
 .cart-item-total {
   text-align: right;
+  color: #2c3e50;
 }
 
 .cart-item-quantity {
@@ -87,7 +84,7 @@
 
 .cart-row {
   display: grid;
-  grid-template-columns: 3fr 1fr 1fr 1fr 40px;
+  grid-template-columns: 3fr 1fr 1fr 1fr 30px;
   gap: 10px;
   align-items: center;
   padding: 10px;
@@ -101,12 +98,13 @@
 }
 
 .cart-product img {
-  width: 45px;
-  height: 45px;
+  width: 35px;
+  height: 35px;
   object-fit: contain;
   border-radius: 4px;
   background: white;
   padding: 2px;
+  margin-left: -8px; 
 }
 
 .cart-product span {
@@ -169,6 +167,7 @@
   flex-direction: column;
   margin-bottom: 0;
   padding: 0;
+ 
 }
 .cart-total > div {
   display: flex;
@@ -186,6 +185,8 @@
 .cart-total div:last-child span {
   font-size: 18px;
   font-weight: 600;
+  color: #2c3e50;
+  
   
 }
 .payment-footer {

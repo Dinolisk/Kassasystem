@@ -49,22 +49,24 @@ input[type="number"] {
 .products-column {
   flex: 1;
   background-color: #e2e6ea9c;
-  border-radius: 8px;
+  border-radius: 7px;
   padding: 10px;
   overflow-y: auto; /* Detta tillåter scrollning inom products-column */
   height: 0;
+  border: 1px solid rgba(0, 0, 0, 0.1); 
 }
 
 /* Kundvagnskolumnen */
 .cart-column {
   flex: 1;
-  background-color: #e2e6ea9c;
-  border-radius: 8px;
-  padding: 10px;
+  background-color: #f5f7fa;
+  border-radius: 7px;
+  padding: 10px 10px 5px 10px;
   overflow: hidden; /* Förhindrar att hela rutan växer */
   display: flex;
   flex-direction: column;
   height: 0; 
+  border: 1px solid #e1e5eb;
 }
 
 .cash-register {
