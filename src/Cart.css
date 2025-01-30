@@ -20,15 +20,17 @@
   display: flex;
   flex-direction: column;
   min-height: 0; /* Important for Firefox */
+  overflow: hidden;
 }
 
 .cart-header {
   display: grid;
   grid-template-columns: minmax(200px, 3fr) 1fr 1.2fr 1fr 40px;
-  gap: 12px;
-  padding: 12px;
-  background: #ebedee;
-  border-bottom: 1px solid #e5e7eb;
+  gap: 10px;
+  padding: 1px;
+  border-radius: 5px;
+  background: white;
+
 }
 
 .cart-header > div {
@@ -174,7 +176,8 @@
   align-items: center;
   padding: 1px;
   margin-top: 5px;
-  margin-bottom: 18px;
+  margin-bottom: 8px;
+  padding: 5px;
 }
 
 .cart-total span {
@@ -183,15 +186,16 @@
 .cart-total div:last-child span {
   font-size: 18px;
   font-weight: 600;
+  
 }
 .payment-footer {
-  margin-top: 10px;
-  padding: 15px;
+  padding: 5px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: auto; /* Detta tvingar footern längst ner */
 }
-  .payment-footer .button-container {
+.payment-footer .button-container {
   display: flex;
   width: 100%;
   gap: 8px;
@@ -199,7 +203,7 @@
 
 .payment-footer button {
   flex: 1;
-  height: 45px;
+  height: 60px;
   border: none;
   border-radius: 8px;
   cursor: pointer;

@@ -16,6 +16,56 @@ input[type="number"] {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+/* Skapa två huvudkolumner */
+.main-section {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 100px);
+  padding: 10px;
+  justify-content: center;
+  max-width: 1800px;
+  margin: 0 auto;
+}
+
+/* Vänstra sektionen (innehåller både sökfält och products-column) */
+.left-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  min-width: 500px;
+}
+
+/* Högra sektionen (innehåller både knappar och cart-column) */
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  min-width: 500px;
+}
+
+/* Produktkolumnen */
+.products-column {
+  flex: 1;
+  background-color: #e2e6ea9c;
+  border-radius: 8px;
+  padding: 10px;
+  overflow-y: auto; /* Detta tillåter scrollning inom products-column */
+  height: 0;
+}
+
+/* Kundvagnskolumnen */
+.cart-column {
+  flex: 1;
+  background-color: #e2e6ea9c;
+  border-radius: 8px;
+  padding: 10px;
+  overflow: hidden; /* Förhindrar att hela rutan växer */
+  display: flex;
+  flex-direction: column;
+  height: 0; 
+}
 
 .cash-register {
   width: 100%;
@@ -35,14 +85,6 @@ input[type="number"] {
   margin-top: 30px;
 }
 
-.top-section {
-  width: 100%;
-  margin-bottom: 10px;
-  display: flex;
-  gap: 15px;
-  align-items: center;
-
-}
 
 .menu-container {
   position: relative;
@@ -107,8 +149,8 @@ input[type="number"] {
 }
 
 .search-box {
-  flex: 1;
-  width: 50%;
+  width: 100%;
+  margin-bottom: 15px;
 }
 .search-customer-container {
   display: flex;
@@ -133,7 +175,7 @@ input[type="number"] {
 }
 html, body {
   height: 100%;
-  overflow: hidden;
+  overflow-y: auto; 
 }
 .clear-search {
   position: absolute;
@@ -159,25 +201,6 @@ html, body {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-.main-content {
-  display: flex;
-  gap: 20px;
-  height: calc(100vh - 185px); /* Justerar för header och margins */
-  overflow: hidden; 
- 
-}
-
-
-.products-list, 
-.cart-section {
-  flex: 1;
-  min-width: 600px;
-  height: 100%;
-  background-color: #e2e6ea9c;
-  padding: 20px;
-  border-radius: 8px;
-  box-sizing: border-box;
-}
 
 .products-list {
   display: grid;
@@ -185,6 +208,7 @@ html, body {
   gap: 15px;
   align-content: start;
   overflow-y: auto;
+  flex: 1;
 }
 
 .cart-section {
@@ -299,7 +323,7 @@ html, body {
 .customer-buttons {
   display: flex;
   gap: 10px;
-  min-width: 400px; /* Ensures buttons maintain a good width */
+  width: 100%;/* Ensures buttons maintain a good width */
 }
 
 .customer-button {
@@ -330,11 +354,11 @@ html, body {
 .customer-button.existing:hover {
   background-color: #218838;
 }
-.button-container {
+.top-button-container {
   display: flex;
   gap: 15px;
-  width: 50%;
-  padding: 5px;
+  width: 100%;
+  margin-bottom: 15px;
   box-sizing: border-box;
 }
 
@@ -471,7 +495,63 @@ html, body {
 *, *:before, *:after {
   box-sizing: border-box;
 }
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
 
+.registration-form {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  z-index: 1001;
+}
+
+.registration-form h2 {
+  margin-bottom: 20px;
+}
+
+.registration-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.form-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.form-buttons button[type="submit"] {
+  background-color: #28a745;
+  color: white;
+}
+
+.form-buttons button[type="button"] {
+  background-color: #dc3545;
+  color: white;
+}
 /* Touch devices */
 @media (hover: none) {
   .product-card:active {
