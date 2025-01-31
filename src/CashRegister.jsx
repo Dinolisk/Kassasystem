@@ -59,8 +59,13 @@ function CashRegister() {
     return lines.join('\n');
   };
 
-  const formatPrice = (price) => {
+  const formatProductPrice = (price) => {
     return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " kr";
+  };
+  
+  // För kundvagnen (med decimaler)
+  const formatCartPrice = (price) => {
+    return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " kr";
   };
 
   useEffect(() => {
@@ -391,7 +396,7 @@ function CashRegister() {
             <div className="product-info">
               <h3>{product.title}</h3>
               <p className="description">{product.description}</p>
-              <p className="price">{formatPrice(product.price)}</p>
+              <p className="price">{formatProductPrice(product.price)}</p>
             </div>
           </div>
         ))}
@@ -400,28 +405,41 @@ function CashRegister() {
   </div>
 
   <div className="right-section">
-    <div className="top-button-container">
-      <button
-        className="customer-button existing"
-        onClick={() => setIsExistingCustomerOpen(true)}
-      >
-        Existerande kund
-      </button>
-      <button
-        className="customer-button"
-        onClick={() => setIsNewCustomerOpen(true)}
-      >
-        Registrera kund
-      </button>
-      <div className="menu-container">
-        <button
-          className="menu-button"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          ☰
-        </button>
+  <div className="top-button-container">
+  <button
+    className="customer-button existing"
+    onClick={() => setIsExistingCustomerOpen(true)}
+  >
+    Existerande kund
+  </button>
+  <button
+    className="customer-button"
+    onClick={() => setIsNewCustomerOpen(true)}
+  >
+    Registrera kund
+  </button>
+  <div className="menu-container">
+    <button
+      className="menu-button"
+      onClick={() => setIsMenuOpen(!isMenuOpen)}
+    >
+      ☰
+    </button>
+    {isMenuOpen && (
+      <div className="menu-dropdown">
+        {menuOptions.map(option => (
+          <button 
+            key={option.id}
+            className="menu-option"
+            onClick={option.action}
+          >
+            {option.label}
+          </button>
+        ))}
       </div>
-    </div>
+    )}
+  </div>
+</div>
     <div className="cart-column">
       <Cart
         ref={cartContainerRef}
@@ -430,7 +448,7 @@ function CashRegister() {
         updateQuantity={updateQuantity}
         total={total}
         setIsPaymentOpen={setIsPaymentOpen}
-        formatPrice={formatPrice}
+        formatPrice={formatCartPrice} 
         formatProductName={formatProductName}
         parkPurchase={parkPurchase}
         cancelPurchase={cancelPurchase}
