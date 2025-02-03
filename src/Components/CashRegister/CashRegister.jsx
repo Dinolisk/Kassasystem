@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CashRegister.css';
-import Cart from './Cart.jsx';
+import Cart from '../Cart/Cart.jsx';
+import Products from '../Products/Products';
+
 
 
 function CashRegister() {
@@ -375,30 +377,13 @@ function CashRegister() {
       )}
     </div>
     <div className="products-column">
-      <div className="products-list">
-        {filteredProducts.map(product => (
-          <div
-            key={product.id}
-            className="product-card"
-            onClick={() => addToCart(product)}
-            role="button"
-            tabIndex={0}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                addToCart(product);
-              }
-            }}
-          >
-            <img src={product.thumbnail} alt={product.title} />
-            <div className="product-info">
-              <h3>{product.title}</h3>
-              <p className="description">{product.description}</p>
-              <p className="price">{formatProductPrice(product.price)}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+  <Products 
+    productsData={productsData}
+    searchTerm={searchTerm}
+    addToCart={addToCart}
+    formatProductPrice={formatProductPrice}
+  />
+</div>
   </div>
 
   <div className="right-section">
