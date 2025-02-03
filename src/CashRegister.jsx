@@ -29,7 +29,6 @@ function CashRegister() {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false);
   const [isExistingCustomerOpen, setIsExistingCustomerOpen] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
     
     name: '',
@@ -278,13 +277,11 @@ function CashRegister() {
     const currentDate = new Date();
     const dateString = currentDate.toLocaleDateString();
     const timeString = currentDate.toLocaleTimeString();
-
     const momssats = 0.25;
     const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const moms = total * momssats;
     const netto = total - moms;
     const brutto = total;
-
     const receiptContent = `
       <html>
         <head>

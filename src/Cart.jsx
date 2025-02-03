@@ -19,6 +19,22 @@
     const vatRate = 0.25;
     const vatAmount = totalInclVAT * (vatRate / (1 + vatRate));
     const subtotal = totalInclVAT - vatAmount;
+    
+    useEffect(() => {
+      const handleClickOutside = (event) => {
+        if (showMoreMenu && !event.target.closest('.more-button') && !event.target.closest('.more-dropdown')) {
+          setShowMoreMenu(false);
+        }
+      };
+  
+      if (showMoreMenu) {
+        document.addEventListener('mousedown', handleClickOutside);
+      }
+  
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, [showMoreMenu]);
 
     useImperativeHandle(ref, () => ({
       scrollToTop: () => {
@@ -59,7 +75,7 @@
           break;
       }
     };
-
+    
     const CartItem = ({ item, updateQuantity, removeFromCart, formatPrice, formatProductName }) => {
       const [inputValue, setInputValue] = useState(item.quantity.toString());
 
