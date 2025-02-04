@@ -1,52 +1,100 @@
 .products-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1rem;
-    padding: 1rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    align-content: start;
     overflow-y: auto;
+    flex: 1;
+    padding: 1rem;
   }
   
   .product-card {
-    background-color: white;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    padding: 1rem;
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: 1px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+    min-height: 400px;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
   }
   
   .product-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    background-color: #addbf3e4;
+  }
+  
+  .product-card:active {
+    transform: scale(0.98);
+    background-color: #addbf3e4;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   }
   
   .product-card img {
     width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 4px;
+    height: 190px;
+    object-fit: contain;
+    border-radius: 8px;
+    background-color: white;
+    padding: 10px;
+    box-sizing: border-box;
     margin-bottom: 0.5rem;
   }
   
-  .product-info h3 {
-    font-size: 1rem;
-    margin: 0.5rem 0;
-    color: #333;
+  .product-info {
+    margin-top: 2px;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
   }
   
-  .product-info .description {
+  .product-info h3 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    min-height: 1.5em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .product-description {
+    color: #777;
     font-size: 0.9rem;
-    color: #666;
-    margin: 0.5rem 0;
+    margin: 5px 0;
+    text-align: left;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 2; /* Visa endast två rader */
     -webkit-box-orient: vertical;
     overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    height: 3em; /* Begränsar höjden till två rader */
+    flex-grow: 0; 
   }
   
   .product-info .price {
-    font-size: 1.1rem;
+    color: #245fbe;
     font-weight: bold;
-    color: #2c5282;
-    margin: 0.5rem 0 0 0;
+    font-size: 1.2rem;
+    margin: 10px 0;
+  }
+  
+  /* Media Queries */
+  @media (max-width: 1024px) {
+    .products-list {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .product-card {
+      min-height: 350px;
+    }
   }

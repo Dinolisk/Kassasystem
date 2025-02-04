@@ -127,6 +127,8 @@
 .cart-price, .cart-sum {
   text-align: right;
   font-size: 14px;
+  color: #000000;
+
 }
 
 .cart-quantity {
@@ -221,7 +223,7 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -230,17 +232,18 @@
 
 .payment-footer .more-button,
 .payment-footer .park-button {
-  background-color: #939ead;
-  border: 1px solid #939ead;
-  color: #4a5568;
+  background-color: #6f6f6f;
+  border: 1px solid #000000;
+  color: white;
 }
 
 .payment-footer .more-button:hover,
 .payment-footer .park-button:hover {
-  background-color: #e2e8f0;
+  background-color: #5a5a5a;
 }
 .payment-footer .cancel-button {
-  background-color: #e45a68;
+  background-color: #bd263b;
+  border: 1px solid #000000;
   color: white;
 }
 
@@ -249,14 +252,17 @@
 }
 
 .payment-footer .pay-button {
-  background-color: #28a745;
+  background-color: #208546;
+  border: 1px solid #000000;
   color: white;
-}
+  gap:  20px;
+  flex: 2;  
+} 
 
 .payment-footer .pay-button:hover {
-  background-color: #218838;
+  background-color: #218838;  
 }
-.more-dropdown {
+.more-dropdown {  
   position: absolute;
   bottom: 100%;  /* Placerar menyn ovanför knappen */
   left: 50%;          
@@ -293,4 +299,150 @@
 
 .more-dropdown button:not(:last-child) {
   border-bottom: 2px solid #eee;
+}
+/* Lägg till i Cart.css */
+button:focus-visible,
+input:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+}
+
+/* För bättre synlighet när man tabbar genom sidan */
+.cart-row:focus-within {
+  background-color: rgba(0, 123, 255, 0.05);
+}
+/* Skip link för tangentbordsnavigering */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1em;
+  background-color: white;
+  color: black;
+  text-decoration: none;
+}
+
+.skip-link:focus {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.confirmation-dialog {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative; /* Lägg till denna */
+  z-index: 1001;    /* Lägg till denna */
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.dialog-buttons button {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  min-width: 100px; /* Lägg till denna för bättre klickyta */
+}
+
+/* Första knappen (Fortsätt handla) */
+.dialog-buttons button:first-child {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+  pointer-events: auto; /* Lägg till denna */
+}
+
+.dialog-buttons button:first-child:hover {
+  background-color: #e5e7eb;
+}
+
+/* Andra knappen (Avbryt/Parkera köp) */
+.dialog-buttons button:last-child {
+  background-color: #bd263b;
+  color: white;
+  border: 1px solid #000000;
+  pointer-events: auto; /* Lägg till denna */
+}
+
+.dialog-buttons button:last-child:hover {
+  background-color: #de4050;
+}
+
+/* Lägg till focus styles */
+.dialog-buttons button:focus-visible {
+  outline: 2px solid #007bff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+}
+
+.confirmation-dialog h2 {
+  margin: 0 0 16px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.confirmation-dialog p {
+  margin: 0 0 24px 0;
+  color: #4b5563;
+  font-size: 16px;
+}
+
+.dialog-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+.dialog-buttons button {
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+
+}.dialog-buttons button:first-child {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #d1d5db;
+}
+
+.dialog-buttons button:first-child:hover {
+  background-color: #e5e7eb;
+}
+
+/* "Avbryt köp" knappen */
+.dialog-buttons button:last-child {
+  background-color: #bd263b; /* Samma röda färg som cancel-button i footer */
+  color: white;
+  border: 1px solid #000000;
+}
+
+.dialog-buttons button:last-child:hover {
+  background-color: #de4050; /* Samma hover-färg som cancel-button i footer */
 }

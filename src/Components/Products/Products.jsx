@@ -29,7 +29,7 @@ function Products({
           <img src={product.thumbnail} alt={product.title} />
           <div className="product-info">
             <h3>{product.title}</h3>
-            <p className="description">{product.description}</p>
+            <p className="product-description">{product.description}</p>
             <p className="price">{formatProductPrice(product.price)}</p>
           </div>
         </div>

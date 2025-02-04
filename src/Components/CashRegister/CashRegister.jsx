@@ -231,9 +231,11 @@ function CashRegister() {
     setIsPaymentOpen(false);
     setCart([]);
   };
+  const cancelPurchase = () => {
+    setCart([]);  // Enkel version utan window.confirm
+  };
   const parkPurchase = (e) => {
     try {
-      // Förhindra standardbeteende
       if (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -244,37 +246,28 @@ function CashRegister() {
         return;
       }
   
-      if (window.confirm('Vill du parkera detta köp?')) {
-        // Spara köpet
-        const parkedPurchase = {
-          id: Date.now(),
-          cart: cart,
-          timestamp: new Date().toISOString()
-        };
+      // Spara köpet
+      const parkedPurchase = {
+        id: Date.now(),
+        cart: cart,
+        timestamp: new Date().toISOString()
+      };
   
-        // Spara i localStorage
-        const parkedPurchases = JSON.parse(localStorage.getItem('parkedPurchases') || '[]');
-        parkedPurchases.push(parkedPurchase);
-        localStorage.setItem('parkedPurchases', JSON.stringify(parkedPurchases));
+      // Spara i localStorage
+      const parkedPurchases = JSON.parse(localStorage.getItem('parkedPurchases') || '[]');
+      parkedPurchases.push(parkedPurchase);
+      localStorage.setItem('parkedPurchases', JSON.stringify(parkedPurchases));
   
-        // Töm kundvagnen
-        setCart([]);
-        alert('Köpet har parkerats');
-      }
+      // Töm kundvagnen
+      setCart([]);
     } catch (error) {
       console.error('Error in parkPurchase:', error);
       alert('Ett fel uppstod när köpet skulle parkeras');
     }
     
-    // Säkerställ att funktionen alltid returnerar false
     return false;
   };
   
-  const cancelPurchase = () => {
-    if (window.confirm('Är du säker på att du vill avbryta köpet?')) {
-      setCart([]);
-    }
-  };
   const generateReceipt = () => {
     const currentDate = new Date();
     const dateString = currentDate.toLocaleDateString();
@@ -388,25 +381,13 @@ function CashRegister() {
 
   <div className="right-section">
   <div className="top-button-container">
-  <button
-    className="customer-button existing"
-    onClick={() => setIsExistingCustomerOpen(true)}
-  >
-    Existerande kund
-  </button>
-  <button
-    className="customer-button"
-    onClick={() => setIsNewCustomerOpen(true)}
-  >
-    Registrera kund
-  </button>
   <div className="menu-container">
-    <button
-      className="menu-button"
-      onClick={() => setIsMenuOpen(!isMenuOpen)}
-    >
-      ☰
-    </button>
+  <button
+  className="menu-button"
+  onClick={() => setIsMenuOpen(!isMenuOpen)}
+>
+  ☰ Meny
+</button>
     {isMenuOpen && (
       <div className="menu-dropdown">
         {menuOptions.map(option => (
@@ -421,6 +402,18 @@ function CashRegister() {
       </div>
     )}
   </div>
+  <button
+    className="customer-button"
+    onClick={() => setIsNewCustomerOpen(true)}
+  >
+    Registrera kund
+  </button>
+  <button
+    className="customer-button existing"
+    onClick={() => setIsExistingCustomerOpen(true)}
+  >
+    Existerande kund
+  </button>
 </div>
     <div className="cart-column">
       <Cart
