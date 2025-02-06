@@ -64,6 +64,43 @@ const Cart = forwardRef(({
     };
   }, [showMoreMenu, showConfirmDialog, showParkDialog]);
 
+  // Hantera tangentbordsnavigation i dialoger
+  useEffect(() => {
+    const handleDialogKeyDown = (e) => {
+      if (!showConfirmDialog && !showParkDialog) return;
+
+      if (e.key === 'Tab') {
+        if (showConfirmDialog) {
+          const focusableElements = document.querySelector('.confirmation-dialog[data-type="cancel"]')
+            .querySelectorAll('button');
+          if (e.shiftKey && document.activeElement === focusableElements[0]) {
+            e.preventDefault();
+            focusableElements[focusableElements.length - 1].focus();
+          } else if (!e.shiftKey && document.activeElement === focusableElements[focusableElements.length - 1]) {
+            e.preventDefault();
+            focusableElements[0].focus();
+          }
+        }
+      }
+
+      if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+        const dialog = document.querySelector('.confirmation-dialog');
+        const buttons = dialog.querySelectorAll('button');
+        const currentIndex = Array.from(buttons).indexOf(document.activeElement);
+        
+        if (e.key === 'ArrowLeft' && currentIndex > 0) {
+          buttons[currentIndex - 1].focus();
+        } else if (e.key === 'ArrowRight' && currentIndex < buttons.length - 1) {
+          buttons[currentIndex + 1].focus();
+        }
+      }
+    };
+
+    document.addEventListener('keydown', handleDialogKeyDown);
+    return () => document.removeEventListener('keydown', handleDialogKeyDown);
+  }, [showConfirmDialog, showParkDialog]);
+
   useImperativeHandle(ref, () => ({
     scrollToTop: () => {
       if (itemsRef.current) {
@@ -104,7 +141,7 @@ const Cart = forwardRef(({
   };
 
   const handleCancelClick = () => {
-    if (!showConfirmDialog) {  // Bara visa dialogen om den inte redan visas
+    if (!showConfirmDialog) {
       setShowConfirmDialog(true);
       setTimeout(() => {
         confirmButtonRef.current?.focus();
@@ -319,186 +356,192 @@ const Cart = forwardRef(({
           </button>
 
           {showMoreMenu && (
-            <div 
-              className="more-dropdown" 
-              role="menu" 
-              aria-label="Fler alternativ"
-            >
-              <button
-                role="menuitem"
-                onClick={() => handleMoreOptions('openDrawer')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleMoreOptions('openDrawer');
-                  }
-                }}
-                tabIndex={showMoreMenu ? 0 : -1}
-              >
-                Öppna kassalåda
-              </button>
-              <button
-                role="menuitem"
-                onClick={() => handleMoreOptions('showParked')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleMoreOptions('showParked');
-                  }
-                }}
-                tabIndex={showMoreMenu ? 0 : -1}
-              >
-                Visa parkerade köp
-              </button>
-              <button
-                role="menuitem"
-                onClick={() => handleMoreOptions('receiptOptions')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleMoreOptions('receiptOptions');
-                  }
-                }}
-                tabIndex={showMoreMenu ? 0 : -1}
-              >
-                Kvittoalternativ
-              </button>
-              <button
-                role="menuitem"
-                onClick={() => handleMoreOptions('addComment')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleMoreOptions('addComment');
-                  }
-                }}
-                tabIndex={showMoreMenu ? 0 : -1}
-              >
-                Lägg till kommentar
-              </button>
-              <button
-                role="menuitem"
-                onClick={() => handleMoreOptions('return')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleMoreOptions('return');
-                  }
-                }}
-                tabIndex={showMoreMenu ? 0 : -1}
-              >
-                Returnera vara
-              </button>
-              <button
-                role="menuitem"
-                onClick={() => handleMoreOptions('history')}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleMoreOptions('history');
-                  }
-                }}
-                tabIndex={showMoreMenu ? 0 : -1}
-              >
-                Visa historik
-              </button>
-            </div>
-          )}
+  <div 
+    className="more-dropdown" 
+    role="menu" 
+    aria-label="Fler alternativ"
+  >
+    <button
+      onClick={() => handleMoreOptions('openDrawer')}
+      role="menuitem"
+      tabIndex={0}
+    >
+      Öppna kassalåda
+    </button>
+    <button
+      onClick={() => handleMoreOptions('showParked')}
+      role="menuitem"
+      tabIndex={0}
+    >
+      Visa parkerade köp
+    </button>
+    <button
+      onClick={() => handleMoreOptions('receiptOptions')}
+      role="menuitem"
+      tabIndex={0}
+    >
+      Kvittoalternativ
+    </button>
+    <button
+      onClick={() => handleMoreOptions('addComment')}
+      role="menuitem"
+      tabIndex={0}
+    >
+      Lägg till kommentar
+    </button>
+    <button
+      onClick={() => handleMoreOptions('return')}
+      role="menuitem"
+      tabIndex={0}
+    >
+      Returnera vara
+    </button>
+    <button
+      onClick={() => handleMoreOptions('history')}
+      role="menuitem"
+      tabIndex={0}
+    >
+      Historik
+    </button>
+  </div>
+)}
         </div>
       </div>
 
-      {/* Avbryt köp dialog */}
-      {/* Avbryt köp dialog */}
-{showConfirmDialog && (
-  <div 
-    className="modal-overlay" 
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="cancel-dialog-title"
-    onClick={(e) => {
-      e.stopPropagation();
-      setShowConfirmDialog(false);
-    }}
-  >
-    <div 
-      className="confirmation-dialog"
-      onClick={e => e.stopPropagation()}
-    >
-      <h2 id="cancel-dialog-title">Avbryta köp?</h2>
-      <p>Om du avbryter kommer alla varor i kundvagnen att tas bort. Vill du verkligen avbryta köpet?</p>
-      <div className="dialog-buttons">
-        <button
-          tabIndex={0}
+      {showConfirmDialog && (
+        <div 
+          className="modal-overlay" 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="cancel-dialog-title"
           onClick={(e) => {
             e.stopPropagation();
             setShowConfirmDialog(false);
-            cancelButtonRef.current?.focus();
           }}
         >
-          Gå tillbaka
-        </button>
-        <button
-  tabIndex={0}
-  ref={confirmButtonRef}
-  onClick={(e) => {
-    e.stopPropagation();
-    cancelPurchase(e);
-    setShowConfirmDialog(false);
-    // Eventuellt fokusera på någon annan knapp eller element istället
-    // Till exempel betalknappen eller mer-knappen
-  }}
->
-  Avbryt köp
-</button>
-      </div>
-    </div>
-  </div>
-)}
+          <div 
+            className="confirmation-dialog"
+            data-type="cancel" 
+            onClick={e => e.stopPropagation()}
+          >
+            <h2 id="cancel-dialog-title">Avbryta köp?</h2>
+            <p>Om du avbryter kommer alla varor i kundvagnen att tas bort. Vill du verkligen avbryta köpet?</p>
+            <div className="dialog-buttons">
+              <button
+                tabIndex={0}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowConfirmDialog(false);
+                  cancelButtonRef.current?.focus();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setShowConfirmDialog(false);
+                    cancelButtonRef.current?.focus();
+                  }
+                  if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    confirmButtonRef.current?.focus();
+                  }
+                }}
+              >
+                Gå tillbaka
+              </button>
+              <button
+                tabIndex={0}
+                ref={confirmButtonRef}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  cancelPurchase(e);
+                  setShowConfirmDialog(false);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    cancelPurchase(e);
+                    setShowConfirmDialog(false);
+                  }
+                  if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    e.target.previousElementSibling?.focus();
+                  }
+                }}
+              >
+                Avbryt köp
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
-{/* Parkera köp dialog */}
-{showParkDialog && (
-  <div 
-    className="modal-overlay" 
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="park-dialog-title"
-    onClick={(e) => {
-      e.stopPropagation();
-      setShowParkDialog(false);
-    }}
-  >
-    <div 
-      className="confirmation-dialog"
-      onClick={e => e.stopPropagation()}
-    >
-      <h2 id="park-dialog-title">Parkera köp?</h2>
-      <p>Vill du parkera det pågående köpet? Du kan återuppta det senare från "Visa parkerade köp".</p>
-      <div className="dialog-buttons">
-        <button
-          tabIndex={0}
+    {showParkDialog && (
+        <div 
+          className="modal-overlay" 
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="park-dialog-title"
           onClick={(e) => {
             e.stopPropagation();
             setShowParkDialog(false);
-            parkButtonRef.current?.focus();
           }}
         >
-          Gå tillbaka
-        </button>
-        <button
-          tabIndex={0}
-          ref={confirmParkRef}
-          onClick={(e) => {
-            e.stopPropagation();
-            parkPurchase(e);  // Detta var redan korrekt
-            setShowParkDialog(false);
-            parkButtonRef.current?.focus();
-          }}
-        >
-          Parkera köp
-        </button>
-      </div>
-    </div>
-  </div>
+          <div 
+            className="confirmation-dialog"
+            data-type="park" 
+            onClick={e => e.stopPropagation()}
+          >
+            <h2 id="park-dialog-title">Parkera köp?</h2>
+            <p>Vill du parkera det pågående köpet? Du kan återuppta det senare från "Visa parkerade köp".</p>
+            <div className="dialog-buttons">
+              <button
+                tabIndex={0}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowParkDialog(false);
+                  parkButtonRef.current?.focus();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setShowParkDialog(false);
+                    parkButtonRef.current?.focus();
+                  }
+                  if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    confirmParkRef.current?.focus();
+                  }
+                }}
+              >
+                Gå tillbaka
+              </button>
+              <button
+                tabIndex={0}
+                ref={confirmParkRef}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  parkPurchase(e);
+                  setShowParkDialog(false);
+                  parkButtonRef.current?.focus();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    parkPurchase(e);
+                    setShowParkDialog(false);
+                    parkButtonRef.current?.focus();
+                  }
+                  if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    e.target.previousElementSibling?.focus();
+                  }
+                }}
+              >
+                Parkera köp
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
