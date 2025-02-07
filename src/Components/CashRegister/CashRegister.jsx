@@ -1,18 +1,11 @@
 // Del 1: Imports och grundläggande state
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CashRegister.css';
+import Products from "../Products/Products.jsx";
 import Cart from '../Cart/Cart.jsx';
-import Products from '../Products/Products';
-import { 
-  CreditCard, 
-  Smartphone, 
-  Receipt, 
-  FileText, 
-  Banknote, 
-  Gift, 
-  Calendar, 
-  ArrowLeft 
-} from 'lucide-react';
+import Payments from '../Payments/Payments.jsx';  
+import MenuModal from './MenuModal.jsx';
+
 
 function CashRegister() {
   // State-hantering
@@ -25,9 +18,6 @@ function CashRegister() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPaymentOpen, setIsPaymentOpen] = useState(false);
   const [productsData, setProductsData] = useState([]);
-  const [receivedAmount, setReceivedAmount] = useState('');
-  const [giftCardNumber, setGiftCardNumber] = useState('');
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [isNewCustomerOpen, setIsNewCustomerOpen] = useState(false);
   const [isExistingCustomerOpen, setIsExistingCustomerOpen] = useState(false);
   const [customerInfo, setCustomerInfo] = useState({
@@ -166,34 +156,6 @@ function CashRegister() {
     });
   };
 
-  // Betalningshantering
-  const handleCashPayment = () => {
-    const received = parseFloat(receivedAmount);
-    if (isNaN(received) || received < total) {
-      alert('Vänligen ange ett giltigt belopp som är större än eller lika med totalbeloppet');
-      return;
-    }
-    const change = received - total;
-    alert(`Växel att ge tillbaka: ${formatPrice(change)}`);
-    generateReceipt();
-    setIsPaymentOpen(false);
-    setSelectedPaymentMethod('');
-    setReceivedAmount('');
-    setCart([]);
-  };
-
-  const handleGiftCardPayment = () => {
-    if (giftCardNumber.length < 8) {
-      alert('Vänligen ange ett giltigt presentkortsnummer');
-      return;
-    }
-    generateReceipt();
-    setIsPaymentOpen(false);
-    setSelectedPaymentMethod('');
-    setGiftCardNumber('');
-    setCart([]);
-  };
-
   const cancelPurchase = () => {
     setCart([]);
   };
@@ -275,7 +237,7 @@ function CashRegister() {
         <head>
           <style>
             .receipt-container {
-              font-family: Arial, sans-serif;
+              font-family: "SF Mono", "Segoe UI", "Arial", sans-serif;
               padding: 20px;
               max-width: 400px;
               margin: 0 auto;
@@ -370,6 +332,12 @@ function CashRegister() {
     newWindow.document.write(receiptContent);
     newWindow.document.close();
   };
+  // Add a method to handle payment completion
+  const handlePaymentComplete = () => {
+    generateReceipt();
+    setCart([]); // Clear the cart after successful payment
+  };
+
   return (
     <div className="cash-register">
       <div className="cash-register-content"></div>
@@ -404,24 +372,16 @@ function CashRegister() {
 
         <div className="right-section">
           <div className="top-button-container">
-            <div className="menu-container">
-              <button className="menu-button" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-                ☰ Meny
-              </button>
-              {isMenuOpen && (
-                <div className="menu-dropdown">
-                  {menuOptions.map(option => (
-                    <button 
-                      key={option.id}
-                      className="menu-option"
-                      onClick={option.action}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
+          <div className="menu-container">
+            <button className="menu-button" onClick={() => setIsMenuOpen(true)}>
+              ☰ Meny
+            </button>
+            <MenuModal 
+              isOpen={isMenuOpen}
+              onClose={() => setIsMenuOpen(false)}
+              menuOptions={menuOptions}
+            />
+          </div>
             <button className="customer-button" onClick={() => setIsNewCustomerOpen(true)}>
               Registrera kund
             </button>
@@ -446,124 +406,7 @@ function CashRegister() {
         </div>
       </div>
       {/* Betalningsmodal */}
-      {isPaymentOpen && (
-        <div className="modal-overlay" onClick={() => setIsPaymentOpen(false)}>
-          <div className="payment-options" onClick={e => e.stopPropagation()}>
-            <h2>Betalningsalternativ</h2>
-            <div className="payment-methods">
-              {selectedPaymentMethod === 'cash' ? (
-                <div className="payment-input-container">
-                  <input
-                    type="number"
-                    placeholder="Mottaget belopp"
-                    value={receivedAmount}
-                    onChange={(e) => setReceivedAmount(e.target.value)}
-                  />
-                  <button onClick={handleCashPayment}>
-                    <span>Slutför kontant betalning</span>
-                    <Banknote size={24} />
-                  </button>
-                  <button onClick={() => setSelectedPaymentMethod('')}>
-                    <span>Tillbaka</span>
-                    <ArrowLeft size={24} />
-                  </button>
-                </div>
-              ) : selectedPaymentMethod === 'giftcard' ? (
-                <div className="payment-input-container">
-                  <input
-                    type="text"
-                    placeholder="Presentkortsnummer"
-                    value={giftCardNumber}
-                    onChange={(e) => setGiftCardNumber(e.target.value)}
-                  />
-                  <button onClick={handleGiftCardPayment}>
-                    <span>Använd presentkort</span>
-                    <Gift size={24} />
-                  </button>
-                  <button onClick={() => setSelectedPaymentMethod('')}>
-                    <span>Tillbaka</span>
-                    <ArrowLeft size={24} />
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <button onClick={() => {
-                    alert('Betalning med kreditkort');
-                    generateReceipt();
-                    setIsPaymentOpen(false);
-                    setSelectedPaymentMethod('');
-                    setCart([]);
-                  }}>
-                    <span>Kort</span>
-                    <CreditCard size={24} />
-                  </button>
-                  <button onClick={() => {
-                    generateReceipt();
-                    setIsPaymentOpen(false);
-                    setSelectedPaymentMethod('');
-                    setCart([]);
-                  }}>
-                    <span>Swish</span>
-                    <Smartphone size={24} />
-                  </button>
-                  <button onClick={() => {
-                    generateReceipt();
-                    setIsPaymentOpen(false);
-                    setSelectedPaymentMethod('');
-                    setCart([]);
-                  }}>
-                    <span>Klarna</span>
-                    <span style={{
-                      fontSize: '70px',
-                      fontWeight: 'bold',
-                      fontFamily: 'Arial'
-                    }}>K</span>
-                  </button>
-                  <button onClick={() => {
-                    generateReceipt();
-                    setIsPaymentOpen(false);
-                    setSelectedPaymentMethod('');
-                    setCart([]);
-                  }}>
-                    <span>Faktura</span>
-                    <FileText size={24} />
-                  </button>
-                  <button onClick={() => {
-                    setSelectedPaymentMethod('cash');
-                    setReceivedAmount('');
-                  }}>
-                    <span>Kontant</span>
-                    <Banknote size={24} />
-                  </button>
-                  <button onClick={() => {
-                    setSelectedPaymentMethod('giftcard');
-                    setGiftCardNumber('');
-                  }}>
-                    <span>Presentkort</span>
-                    <Gift size={24} />
-                  </button>
-                  <button onClick={() => {
-                    generateReceipt();
-                    setIsPaymentOpen(false);
-                    setSelectedPaymentMethod('');
-                    setCart([]);
-                  }}>
-                    <span>Delbetalning</span>
-                    <Calendar size={24} />
-                  </button>
-                  <button
-                    onClick={() => setIsPaymentOpen(false)}
-                    className="back-button"
-                  >
-                    <span>Tillbaka</span>
-                    <ArrowLeft size={24} />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+     
       {/* Ny kund Modal */}
       {isNewCustomerOpen && (
         <div className="modal-overlay" role="dialog" aria-modal="true"
@@ -611,6 +454,10 @@ function CashRegister() {
               </div>
             </form>
           </div>
+        </div>
+      )}
+      {isPaymentOpen && (
+        <div className="modal-overlay" onClick={() => setIsPaymentOpen(false)}>
         </div>
       )}
       {/* Existerande kund Modal */}
@@ -689,6 +536,14 @@ function CashRegister() {
           </div>
         </div>
       )}
+       {/* Here you'll add the Payments component */}
+      <Payments
+        isOpen={isPaymentOpen}
+        onClose={() => setIsPaymentOpen(false)}
+        total={total}
+        onPaymentComplete={handlePaymentComplete}
+        formatPrice={formatCartPrice}
+      />
     </div>
   );
 }

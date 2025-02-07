@@ -1,5 +1,7 @@
 import React, { useState, useEffect, forwardRef, useImperativeHandle, useRef } from 'react';
 import './Cart.css';
+import CartMoreModal from './CartMoreModal.jsx';
+
 import { 
   Trash2,
   CreditCard 
@@ -32,11 +34,11 @@ const Cart = forwardRef(({
   
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (showMoreMenu && !event.target.closest('.more-button') && !event.target.closest('.more-dropdown')) {
+      if (showMoreMenu && !event.target.closest('.more-button') && !event.target.closest('.payment-options')) {
         setShowMoreMenu(false);
       }
     };
-
+  
     const handleEscape = (event) => {
       if (event.key === 'Escape') {
         if (showMoreMenu) {
@@ -52,12 +54,12 @@ const Cart = forwardRef(({
         }
       }
     };
-
+  
     if (showMoreMenu || showConfirmDialog || showParkDialog) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('keydown', handleEscape);
     }
-
+  
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('keydown', handleEscape);
@@ -122,6 +124,15 @@ const Cart = forwardRef(({
         break;
       case 'showParked':
         alert('Visar parkerade köp...');
+        break;
+      case 'orderManagement':
+        alert('Öppnar orderhantering...');
+        break;
+      case 'customerManagement':
+        alert('Öppnar kundhantering...');
+        break;
+      case 'inventoryManagement':
+        alert('Öppnar lagerhantering...');
         break;
       case 'receiptOptions':
         alert('Visar kvittoalternativ...');
@@ -354,60 +365,9 @@ const Cart = forwardRef(({
             Betala
             <CreditCard size={20} />
           </button>
-
-          {showMoreMenu && (
-  <div 
-    className="more-dropdown" 
-    role="menu" 
-    aria-label="Fler alternativ"
-  >
-    <button
-      onClick={() => handleMoreOptions('openDrawer')}
-      role="menuitem"
-      tabIndex={0}
-    >
-      Öppna kassalåda
-    </button>
-    <button
-      onClick={() => handleMoreOptions('showParked')}
-      role="menuitem"
-      tabIndex={0}
-    >
-      Visa parkerade köp
-    </button>
-    <button
-      onClick={() => handleMoreOptions('receiptOptions')}
-      role="menuitem"
-      tabIndex={0}
-    >
-      Kvittoalternativ
-    </button>
-    <button
-      onClick={() => handleMoreOptions('addComment')}
-      role="menuitem"
-      tabIndex={0}
-    >
-      Lägg till kommentar
-    </button>
-    <button
-      onClick={() => handleMoreOptions('return')}
-      role="menuitem"
-      tabIndex={0}
-    >
-      Returnera vara
-    </button>
-    <button
-      onClick={() => handleMoreOptions('history')}
-      role="menuitem"
-      tabIndex={0}
-    >
-      Historik
-    </button>
-  </div>
-)}
         </div>
       </div>
-
+            
       {showConfirmDialog && (
         <div 
           className="modal-overlay" 
@@ -474,8 +434,8 @@ const Cart = forwardRef(({
           </div>
         </div>
       )}
-
-    {showParkDialog && (
+      
+      {showParkDialog && (
         <div 
           className="modal-overlay" 
           role="dialog"
@@ -543,6 +503,12 @@ const Cart = forwardRef(({
           </div>
         </div>
       )}
+
+      <CartMoreModal 
+        isOpen={showMoreMenu}
+        onClose={() => setShowMoreMenu(false)}
+        handleMoreOptions={handleMoreOptions}
+      />
     </div>
   );
 });
