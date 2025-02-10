@@ -65,11 +65,11 @@ function CashRegister() {
   };
   
   const formatCartPrice = (price) => {
-    return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " kr";
+    return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
   const formatPrice = (price) => {
-    return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " kr";
+    return price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
@@ -315,7 +315,7 @@ function CashRegister() {
               <span>${formatPrice(moms)}</span>
             </div>
             <div class="price-info" style="font-weight: bold; margin-top: 10px;">
-              <span>Totalt:</span>
+              <span>Totalt SEK:</span>
               <span>${formatPrice(brutto)}</span>
             </div>
             <div class="separator"></div>

@@ -293,7 +293,7 @@ const Cart = forwardRef(({
       <div className="payment-footer">
         <div className="cart-total" role="contentinfo">
           <div>
-            <span>Totalt</span>
+            <span>Totalt SEK:</span>
             <span aria-label={`Totalt belopp: ${formatPrice(totalInclVAT)}`}>
               {formatPrice(totalInclVAT)}
             </span>

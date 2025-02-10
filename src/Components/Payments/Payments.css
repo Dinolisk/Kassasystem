@@ -41,7 +41,7 @@
 }
 
 .payment-methods button:hover {
-    background: #3d4b63;
+    background: #2c3440;
 }
 
 .payment-methods button svg {
@@ -80,7 +80,7 @@
 }
 
 .payment-input-container button:hover {
-    background: #3d4b63;
+    background: #2c3440; 
 }
 
 /* Betalningsstatus */

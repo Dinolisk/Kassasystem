@@ -175,7 +175,9 @@
 .cart-total span {
   font-weight: bold;
 }
-
+.cart-total span:first-child {
+  word-spacing: 15px;
+}
 .cart-total div:last-child span {
   font-size: 18px;
   font-weight: 600;
