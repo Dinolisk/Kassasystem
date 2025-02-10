@@ -348,6 +348,16 @@ function CashRegister() {
       <div className="main-section">
         <div className="left-section">
           <div className="search-box">
+          <div className="menu-container">
+            <button className="menu-button" onClick={() => setIsMenuOpen(true)}>
+              ☰
+            </button>
+            <MenuModal 
+              isOpen={isMenuOpen}
+              onClose={() => setIsMenuOpen(false)}
+              menuOptions={menuOptions}
+            />
+          </div>
             <input
               type="text"
               placeholder="Sök efter produktnamn eller artikelnummer"
@@ -372,16 +382,6 @@ function CashRegister() {
 
         <div className="right-section">
           <div className="top-button-container">
-          <div className="menu-container">
-            <button className="menu-button" onClick={() => setIsMenuOpen(true)}>
-              ☰ Meny
-            </button>
-            <MenuModal 
-              isOpen={isMenuOpen}
-              onClose={() => setIsMenuOpen(false)}
-              menuOptions={menuOptions}
-            />
-          </div>
             <button className="customer-button" onClick={() => setIsNewCustomerOpen(true)}>
               Registrera kund
             </button>
@@ -405,8 +405,6 @@ function CashRegister() {
           </div>
         </div>
       </div>
-      {/* Betalningsmodal */}
-     
       {/* Ny kund Modal */}
       {isNewCustomerOpen && (
         <div className="modal-overlay" role="dialog" aria-modal="true"

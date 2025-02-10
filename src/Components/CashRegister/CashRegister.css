@@ -83,73 +83,80 @@ input[type="number"] {
   position: relative;
  }
  
- .menu-button {
+/* Meny */
+.menu-button {
   height: 45px;
   padding: 0 25px;
-  background-color: #6e6e6e;
+  background-color: #6e6e6e;  /* Behåller originalfärgen */
   color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  font-size: 19px;
+  font-size: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 140px;
+  min-width: 90px;
   gap: 8px;
- }
- 
- .menu-button:hover {
-  background-color: #5a5a5a;
- }
- 
- .menu-dropdown {
+}
+
+.menu-button:hover {
+  background-color: #5a5a5a;  /* Behåller original hover */
+}
+
+.menu-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: #f8f9fa;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   width: 300px;
   z-index: 1000;
   margin-top: 8px;
-  border: 1px solid #e0e0e0;
-  padding: 15px 0;
- }
- 
- .menu-option {
+  padding: 15px;
+}
+
+.menu-option {
   width: 100%;
   padding: 20px 25px;
   border: none;
-  background: none;
+  background: #374151;  /* Ny mörkgrå för menyalternativen */
+  color: white;
   text-align: left;
   cursor: pointer;
   transition: all 0.2s;
-  color: #333;
   font-size: 20px;
   font-weight: 500;
   min-height: 70px;
   display: flex;
   align-items: center;
- }
- 
- .menu-option:hover {
-  background-color: #007bff;
-  color: white;
- }
- 
- .menu-option:not(:last-child) {
-  border-bottom: 2px solid #eee;
- }
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.menu-option:hover {
+  background-color: #4b5563;
+}
+
+.menu-option:last-child {
+  margin-bottom: 0;
+}
+
+.menu-option:not(:last-child) {
+  border-bottom: none;
+}
  
  /* Sökbox */
  .search-box {
   width: 100%;
-  position: relative;
-  margin-bottom: 15px;
+    position: relative;
+    margin-bottom: 15px;
+    display: flex;  /* Ny */
+    gap: 15px;   
  }
  
  .search-box input {
+  flex: 1;
   width: 100%;
   height: 45px;
   padding: 10px 15px;

@@ -1,4 +1,5 @@
 // MenuModal.jsx
+import './MenuModal.css';
 import React from 'react';
 import { 
   FileText, 
@@ -39,11 +40,12 @@ const MenuModal = ({ isOpen, onClose, menuOptions }) => {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="payment-options" onClick={e => e.stopPropagation()}>
+      <div className="menu-modal" onClick={e => e.stopPropagation()}>
         <h2>Meny</h2>
-        <div className="payment-methods">
+        <div className="menu-grid">
           {menuOptions.map(option => (
             <button
+              className="menu-item"
               key={option.id}
               onClick={() => {
                 option.action();
@@ -67,4 +69,4 @@ const MenuModal = ({ isOpen, onClose, menuOptions }) => {
   );
 };
 
-export default MenuModal;  // Detta är viktigt - se till att denna rad finns!
+export default MenuModal;

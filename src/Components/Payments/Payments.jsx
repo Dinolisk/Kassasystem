@@ -147,7 +147,7 @@ const Payments = ({
               }}>
                 <span>Klarna</span>
                 <span style={{
-                  fontSize: '70px',
+                  fontSize: '45px',
                   fontWeight: 'bold',
                   fontFamily: 'Arial'
                 }}>K</span>
