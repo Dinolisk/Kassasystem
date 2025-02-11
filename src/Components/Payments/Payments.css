@@ -1,142 +1,4 @@
-.payment-options {
-    background: rgba(248, 248, 248, 0.95);
-    padding: 2rem;
-    border-radius: 12px;
-    max-width: 850px;  /* Ökad till samma som huvudmenyn */
-    width: 90%;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.payment-options h2 {
-    margin-bottom: 2rem;
-    text-align: center;
-    font-size: 24px;
-    color: #333;
-}
-
-.payment-methods {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);  /* Fast 3-kolumns layout som huvudmenyn */
-    gap: 1rem;
-    padding: 5px;
-    position: relative;
-}
-
-.payment-methods button {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    padding: 1.5rem;
-    border: none;
-    border-radius: 8px;
-    background: #3f4b61;  /* Samma blå som huvudmenyn */
-    color: white;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    height: 130px;  /* Fast höjd som huvudmenyn */
-    font-size: 18px;
-    font-weight: 500;
-}
-
-.payment-methods button:hover {
-    background: #2c3440;
-}
-
-.payment-methods button svg {
-    color: white;
-    width: 45px;
-    height: 45px;
-}
-
-.back-button {
-    grid-column: 1 / -1;
-    background: #6B7280 !important;
-    margin-top: 1rem;
-}
-
-.payment-input-container {
-    grid-column: 1 / -1;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-.payment-input-container input {
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1.2rem;
-}
-
-.payment-input-container button {
-    flex-direction: row;
-    padding: 1rem;
-    font-size: 1.1rem;
-    background: #2E3A4E;  /* Matchande blå färg */
-    color: white;
-    height: auto;  /* Reset height för dessa knappar */
-}
-
-.payment-input-container button:hover {
-    background: #2c3440; 
-}
-
-/* Betalningsstatus */
-.payment-status {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 8px;
-}
-
-.status {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 2rem;
-    border-radius: 8px;
-    text-align: center;
-}
-
-.status p {
-    margin-top: 1rem;
-    font-size: 1.2rem;
-}
-
-/* Loading spinner */
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #e9ecef;
-    border-top: 5px solid #007bff;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 0 auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* Status ikoner */
-.checkmark {
-    color: #2ecc71;
-    font-size: 3rem;
-}
-
-.cross {
-    color: #e74c3c;
-    font-size: 3rem;
-}
-
-/* Modal overlay */
+/* Modal layout */
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -148,4 +10,89 @@
     justify-content: center;
     align-items: center;
     z-index: 1000;
-}
+  }
+  
+  .modal-content {
+    background: rgba(248, 248, 248, 0.95);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 850px;
+    width: 90%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-content h2 {
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  /* Betalningsalternativ grid */
+  .payment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 5px;
+    position: relative;
+  }
+  
+  .payment-grid button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: #2E3A4E;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    height: 130px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .payment-grid button:hover {
+    background: #3d4b63;
+  }
+  
+  .payment-grid button svg {
+    color: white;
+    width: 45px;
+    height: 45px;
+  }
+  
+  /* Tillbaka-knapp */
+  .payment-grid button:last-child {
+    grid-column: 1 / -1;
+    background: #6B7280 !important;
+    margin-top: 1rem;
+  }
+  
+  .payment-grid button:last-child:hover {
+    background: #3d4b63 !important;
+  }
+  
+  /* Responsiv design */
+  @media (max-width: 768px) {
+    .payment-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .modal-content {
+      width: 95%;
+      padding: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .payment-grid {
+      grid-template-columns: 1fr;
+    }
+    .payment-grid button {
+      height: auto;
+      padding: 1rem;
+    }
+  }

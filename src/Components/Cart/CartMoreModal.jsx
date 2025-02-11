@@ -11,6 +11,7 @@ import {
   Users,
   Package
 } from 'lucide-react';
+import './CartMoreModal.css';
 
 const CartMoreModal = ({ isOpen, onClose, handleMoreOptions }) => {
   const moreOptions = [
@@ -29,9 +30,9 @@ const CartMoreModal = ({ isOpen, onClose, handleMoreOptions }) => {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="payment-options" onClick={e => e.stopPropagation()}>
+      <div className="cart-more-modal" onClick={e => e.stopPropagation()}>
         <h2>Fler alternativ</h2>
-        <div className="payment-methods">
+        <div className="cart-grid">
           {moreOptions.map(option => {
             const IconComponent = option.icon;
             return (
@@ -42,8 +43,8 @@ const CartMoreModal = ({ isOpen, onClose, handleMoreOptions }) => {
                   onClose();
                 }}
               >
+                <IconComponent size={45} />
                 <span>{option.label}</span>
-                <IconComponent size={24} />
               </button>
             );
           })}
@@ -51,8 +52,8 @@ const CartMoreModal = ({ isOpen, onClose, handleMoreOptions }) => {
             onClick={onClose}
             className="back-button"
           >
+            <ArrowLeft size={45} />
             <span>Tillbaka</span>
-            <ArrowLeft size={24} />
           </button>
         </div>
       </div>
