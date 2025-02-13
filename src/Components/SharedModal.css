@@ -1,0 +1,126 @@
+/* Gemensam modal layout */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal-content {
+    background: rgba(248, 248, 248, 0.95);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 850px;
+    width: 90%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .modal-content h2 {
+    margin-bottom: 2rem;
+    text-align: center;
+    font-size: 24px;
+    color: #333;
+  }
+  
+  /* Gemensam grid layout */
+  .modal-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    padding: 5px;
+    position: relative;
+  }
+  
+  /* Gemensam knapp-styling */
+  .modal-grid button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background: #2E3A4E;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    height: 130px;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  .modal-grid button:hover {
+    background: #3d4b63;
+  }
+  
+  .modal-grid button svg {
+    color: white;
+    width: 45px;
+    height: 45px;
+  }
+  
+  /* Tillbaka-knapp styling */
+  .modal-grid button:last-child {
+    grid-column: 1 / -1;
+    background: #6B7280 !important;
+    margin-top: 1rem;
+  }
+  
+  .modal-grid button:last-child:hover {
+    background: #3d4b63 !important;
+  }
+  /* Ta bort eller ersätt den gamla .back-button stilen */
+.back-button {
+    grid-column: 1 / -1;
+    background: #6B7280 !important;
+    margin-top: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 18px;
+    font-weight: 500;
+  }
+  
+  /* Lägg till denna styling för ikonerna om den inte redan finns */
+  .back-button svg {
+    color: white;
+    width: 24px;
+    height: 24px;
+  }
+  /* Responsiv design */
+  @media (max-width: 768px) {
+    .modal-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .modal-content {
+      width: 95%;
+      padding: 1.5rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .modal-grid {
+      grid-template-columns: 1fr;
+    }
+    
+    .modal-grid button {
+      height: auto;
+      padding: 1rem;
+    }
+  }
