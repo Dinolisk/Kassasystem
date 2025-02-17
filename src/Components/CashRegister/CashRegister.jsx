@@ -541,6 +541,7 @@ function CashRegister() {
         total={total}
         onPaymentComplete={handlePaymentComplete}
         formatPrice={formatCartPrice}
+        cartItems={cart}
       />
     </div>
   );
