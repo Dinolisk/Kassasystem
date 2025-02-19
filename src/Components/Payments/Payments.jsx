@@ -12,6 +12,7 @@ import {
   XCircle,
   Loader2
 } from 'lucide-react';
+import PaymentMethodSelector from './PaymentMethodSelector';
 
 const Payments = ({ 
   isOpen, 
@@ -21,7 +22,7 @@ const Payments = ({
   formatPrice,
   cartItems
 }) => {
-  // State-hantering
+  // Existerande state
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('idle');
   const [isSplitPayment, setIsSplitPayment] = useState(false);
@@ -34,6 +35,11 @@ const Payments = ({
   const [personnummer, setPersonnummer] = useState('');
   const [email, setEmail] = useState('');
   const [giftCardNumber, setGiftCardNumber] = useState('');
+  
+  // Ny state för method selector
+  const [isMethodSelectorOpen, setIsMethodSelectorOpen] = useState(false);
+
+  // Återställ state när modalen stängs
   useEffect(() => {
     if (!isOpen) {
       resetAllStates();
@@ -53,6 +59,7 @@ const Payments = ({
     setPersonnummer('');
     setEmail('');
     setGiftCardNumber('');
+    setIsMethodSelectorOpen(false);
   };
   const handlePaymentMethodSelect = (method) => {
     if (!cartItems || cartItems.length === 0) {
@@ -142,27 +149,45 @@ const Payments = ({
     }, 2000);
   };
 
-  const handleSplitPayment = () => {
-    const amount = parseFloat(splitPaymentAmount);
+  const handleSplitPayment = (directAmount) => {
+    const amount = directAmount || parseFloat(splitPaymentAmount);
     if (!isNaN(amount) && amount > 0 && amount <= remainingAmount) {
       if (splitPaymentMethod === 'card') {
         setPaymentStatus('awaiting_card');
         setTimeout(() => {
-          setPaymentStatus('processing');
+          setPaymentStatus('verifying_card');
           setTimeout(() => {
             setPaymentStatus('approved');
             setTimeout(() => {
               completePayment('card', amount);
               setPaymentStatus('idle');
             }, 1500);
-          }, 3000);
+          }, 2000);
         }, 2000);
-      } else {
-        setPaymentStatus('processing');
+      } else if (splitPaymentMethod === 'swish') {
+        setPaymentStatus('awaiting_scan');
         setTimeout(() => {
-          completePayment(splitPaymentMethod, amount);
-          setPaymentStatus('idle');
+          setPaymentStatus('processing');
+          setTimeout(() => {
+            setPaymentStatus('approved');
+            setTimeout(() => {
+              completePayment('swish', amount);
+              setPaymentStatus('idle');
+            }, 1500);
+          }, 2000);
         }, 2000);
+      } else if (splitPaymentMethod === 'giftcard') {
+        setPaymentStatus('verifying_card');
+        setTimeout(() => {
+          setPaymentStatus('approved');
+          setTimeout(() => {
+            completePayment('giftcard', amount);
+            setPaymentStatus('idle');
+          }, 1500);
+        }, 2000);
+      } else if (splitPaymentMethod === 'cash') {
+        // Direkt completion utan väntestatus för kontant
+        completePayment('cash', amount);
       }
     }
   };
@@ -190,12 +215,12 @@ const Payments = ({
     
     const statusMessages = {
       awaiting_card: 'Väntar på kortbetalning...',
+      verifying_card: 'Verifierar kort...',
       processing: 'Behandlar betalning...',
       approved: 'Betalning godkänd!',
       declined: 'Betalning nekad. Försök igen.',
       awaiting_scan: 'Väntar på QR-kod scanning...',
       verifying: 'Verifierar kundinformation...',
-      verifying_card: 'Verifierar presentkort...',
       invoice_sent: 'Faktura skickad!'
     };
     
@@ -375,7 +400,7 @@ const Payments = ({
               <p>Total: {formatPrice(total)}</p>
               <p>Återstående: {formatPrice(remainingAmount)}</p>
             </div>
-    
+  
             {partialPayments.length > 0 && (
               <ul className="partial-payments-list">
                 {partialPayments.map((p, i) => (
@@ -383,80 +408,110 @@ const Payments = ({
                 ))}
               </ul>
             )}
-            <select
-          value={splitPaymentMethod}
-          onChange={(e) => setSplitPaymentMethod(e.target.value)}
-          className="payment-input"
-          disabled={paymentStatus !== 'idle'}
-        >
-          <option value="">Välj betalningsmetod</option>
-          <option value="card">Kort</option>
-          <option value="cash">Kontant</option>
-          <option value="swish">Swish</option>
-          <option value="giftcard">Presentkort</option>
-        </select>
-    
-        {splitPaymentMethod && (
-          <div className="split-payment-options">
-            <div className="amount-options">
+  
+            <button 
+              onClick={() => setIsMethodSelectorOpen(true)}
+              className="payment-input touch-select-button"
+              disabled={paymentStatus !== 'idle'}
+            >
+              {splitPaymentMethod ? 
+                `Vald metod: ${
+                  splitPaymentMethod === 'card' ? 'Kort' :
+                  splitPaymentMethod === 'cash' ? 'Kontant' :
+                  splitPaymentMethod === 'swish' ? 'Swish' :
+                  'Presentkort'
+                }` : 
+                'Välj betalningsmetod'
+              }
+            </button>
+  
+            <PaymentMethodSelector 
+              isOpen={isMethodSelectorOpen}
+              onClose={() => setIsMethodSelectorOpen(false)}
+              onSelect={(method) => {
+                setSplitPaymentMethod(method);
+                setIsMethodSelectorOpen(false);
+              }}
+            />
+  
+            {splitPaymentMethod && (
+              <div className="split-payment-options">
+                <div className="amount-options">
+                  <button 
+                    onClick={() => setSplitPaymentAmount(remainingAmount / 2)}
+                    className="split-option-button"
+                  >
+                    50% ({formatPrice(remainingAmount / 2)})
+                  </button>
+                  <button 
+                    onClick={() => setSplitPaymentAmount(remainingAmount / 4)}
+                    className="split-option-button"
+                  >
+                    25% ({formatPrice(remainingAmount / 4)})
+                  </button>
+                  {partialPayments.length > 0 && (
+                    <button 
+                      onClick={() => handleSplitPayment(remainingAmount)}
+                      className="split-option-button remaining"
+                    >
+                      Betala resterande ({formatPrice(remainingAmount)})
+                    </button>
+                  )}
+                </div>
+  
+                <p className="or-divider">eller</p>
+  
+                <input
+                  type="number"
+                  className="payment-input"
+                  value={splitPaymentAmount}
+                  onChange={(e) => setSplitPaymentAmount(e.target.value)}
+                  placeholder="Ange valfritt belopp"
+                  disabled={paymentStatus !== 'idle'}
+                />
+              </div>
+            )}
+  
+            {splitPaymentAmount && splitPaymentMethod && (
               <button 
-                onClick={() => setSplitPaymentAmount(remainingAmount / 2)}
-                className="split-option-button"
+                onClick={() => handleSplitPayment()}
+                disabled={paymentStatus !== 'idle'}
+                className="primary-button"
               >
-                50% ({formatPrice(remainingAmount / 2)})
+                Lägg till betalning
               </button>
-              <button 
-                onClick={() => setSplitPaymentAmount(remainingAmount / 4)}
-                className="split-option-button"
-              >
-                25% ({formatPrice(remainingAmount / 4)})
-              </button>
-              {partialPayments.length > 0 && (
+            )}
+  
+            <div className="split-payment-actions">
+              {partialPayments.length > 0 ? (
                 <button 
-                  onClick={() => setSplitPaymentAmount(remainingAmount)}
-                  className="split-option-button remaining"
+                  className="method-back-button cancel-split"
+                  onClick={() => {
+                    if (window.confirm('Vill du avbryta alla delbetalningar och börja om?')) {
+                      resetAllStates();
+                    }
+                  }}
+                  disabled={paymentStatus !== 'idle'}
                 >
-                  Betala resterande ({formatPrice(remainingAmount)})
+                  <XCircle size={20} />
+                  <span>Avbryt betalning</span>
+                </button>
+              ) : (
+                <button 
+                  className="method-back-button"
+                  onClick={() => setIsSplitPayment(false)}
+                  disabled={paymentStatus !== 'idle'}
+                >
+                  <ArrowLeft size={20} />
+                  <span>Tillbaka</span>
                 </button>
               )}
             </div>
-            
-            <p className="or-divider">eller</p>
-            
-            <input
-              type="number"
-              className="payment-input"
-              value={splitPaymentAmount}
-              onChange={(e) => setSplitPaymentAmount(e.target.value)}
-              placeholder="Ange valfritt belopp"
-              disabled={paymentStatus !== 'idle'}
-            />
           </div>
-        )}
-    
-    {splitPaymentAmount && splitPaymentMethod && (
-          <button 
-            onClick={handleSplitPayment}
-            disabled={paymentStatus !== 'idle'}
-            className="primary-button"
-          >
-            Lägg till betalning
-          </button>
-        )}
-        
-        <button 
-          className="method-back-button"
-          onClick={() => setIsSplitPayment(false)}
-          disabled={paymentStatus !== 'idle'}
-        >
-          <ArrowLeft size={20} />
-          <span>Tillbaka</span>
-        </button>
-      </div>
-      {renderPaymentStatus()}
-    </>
-  );
-}
+          {renderPaymentStatus()}
+        </>
+      );
+    }
   
     return (
       <>

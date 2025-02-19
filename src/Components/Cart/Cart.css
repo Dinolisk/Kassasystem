@@ -233,7 +233,7 @@
 }
 
 .payment-footer .cancel-button:hover {
-  background-color: #de4050;
+  background-color: #b92533;
 }
 
 .payment-footer .pay-button {
@@ -366,7 +366,7 @@
 }
 
 .confirmation-dialog[data-type="cancel"] .dialog-buttons button:last-child:hover {
-  background-color: #de4050;
+  background-color: #de162a;
 }
 
 /* Parkera köp knappen (höger i parkera-dialog) */
