@@ -1,8 +1,29 @@
-# React + Vite
+# Gardeco Kassasystem
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Beskrivning
+Ett modernt och användarvänligt kassasystem utvecklat för butiker, med fokus på effektiv försäljningshantering och kundservice. Systemet erbjuder omfattande funktionalitet för produktsökning, kundhantering och transaktionsbearbetning.
 
-Currently, two official plugins are available:
+## Huvudfunktioner
+- Snabb produktsökning och artikelregistrering
+- Flexibel kundvagnshantering
+- Registrering av nya och befintliga kunder
+- Generera och skicka digitala kvitton till kunderna
+- Stöd för olika kassaoperationer som:
+  * Öppna kassalåda
+  * Dagsavslut
+  * Generera Z- och X-rapporter
+  * Returhantering
+  * Pausförsäljning
+  * Parkera köp
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Teknologier
+- React
+- Vite
+- Local Storage för datalagring
+
+## Installation
+1. Klona repositoryt
+2. Installera beroenden: `npm install`
+
+## Starta projektet
+Kör utvecklingsservern: `npm run dev`
