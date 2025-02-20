@@ -7,7 +7,7 @@ Ett modernt och användarvänligt kassasystem utvecklat för butiker, med fokus 
 - Snabb produktsökning och artikelregistrering
 - Flexibel kundvagnshantering
 - Registrering av nya och befintliga kunder
-- Generera och skicka digitala kvitton till kunderna
+- Generering och digital distribution av kvitton till kunder
 - Stöd för olika kassaoperationer som:
   * Öppna kassalåda
   * Dagsavslut

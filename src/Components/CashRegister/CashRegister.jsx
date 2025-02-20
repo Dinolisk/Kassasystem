@@ -7,6 +7,7 @@ import Payments from '../Payments/Payments.jsx';
 import MenuModal from './MenuModal.jsx';
 
 
+
 function CashRegister() {
   // State-hantering
   const [cart, setCart] = useState(() => {
