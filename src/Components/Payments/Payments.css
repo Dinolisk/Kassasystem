@@ -246,7 +246,6 @@
     box-shadow: 0 0 0 3px rgba(46, 58, 78, 0.2);
   }
   
-  
   /* ============================================
      Status & Summary Components
      ============================================ */
@@ -320,6 +319,155 @@
   }
   
   /* ============================================
+     Gift Card Specific Styles
+     ============================================ */
+  .gift-card-input-container {
+    position: relative;
+    margin-bottom: 1.25rem;
+  }
+  
+  .gift-card-input-container .input-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6B7280;
+  }
+  
+  .gift-card-input-container .payment-input {
+    padding-left: 2.75rem;
+  }
+  
+  .button-with-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .gift-card-button {
+    margin-top: 0.5rem;
+  }
+  
+  /* Dialog styling för presentkort */
+  .giftcard-dialog {
+    max-width: 550px;
+  }
+  
+  .giftcard-info-container {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .giftcard-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e9ecef;
+  }
+  
+  .giftcard-info-row:last-child {
+    border-bottom: none;
+  }
+  
+  .giftcard-info-row.highlight {
+    background-color: rgba(16, 185, 129, 0.05);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+  }
+  
+  .info-label {
+    font-weight: 500;
+    color: #4B5563;
+  }
+  
+  .info-value {
+    font-weight: 600;
+    color: #2E3A4E;
+  }
+  
+  .info-value.positive {
+    color: #10B981;
+  }
+  
+  .info-value.negative {
+    color: #EF4444;
+  }
+  
+  .giftcard-button-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .confirm-button {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  }
+  
+  .confirm-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+  }
+  
+  .cancel-button {
+    background: #6B7280;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 1rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .cancel-button:hover {
+    background: #4B5563;
+  }
+  
+  .split-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1.25rem;
+  }
+  
+  .button-subtext {
+    font-size: 0.85rem;
+    font-weight: normal;
+    opacity: 0.9;
+    margin-top: 0.5rem;
+    text-align: center;
+  }
+  
+  .alt-button {
+    background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  }
+  
+  .alt-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  }
+  .payment-message {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background-color: rgba(16, 185, 129, 0.1);
+    border-radius: 8px;
+    color: #10B981;
+    font-weight: 500;
+  }
+  .total-amount {
+    background: #f8f9fa;
+    padding: 1.25rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  /* ============================================
      Utility Classes
      ============================================ */
   .text-green-500 { color: #10B981; }
@@ -385,5 +533,19 @@
   
     .split-buttons {
       grid-template-columns: 1fr;
+    }
+    
+    .giftcard-dialog {
+      width: 95%;
+      padding: 1.25rem;
+    }
+    
+    .giftcard-info-row {
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    
+    .button-subtext {
+      font-size: 0.75rem;
     }
   }

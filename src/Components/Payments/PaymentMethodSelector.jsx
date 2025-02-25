@@ -25,26 +25,41 @@ const PaymentMethodSelector = ({
   const [selectedMethod, setSelectedMethod] = useState(null);
   const [customAmount, setCustomAmount] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('idle');
-  
+  const [giftCardNumber, setGiftCardNumber] = useState('');
+  const [giftCardBalance, setGiftCardBalance] = useState(null);
+  const [giftCardError, setGiftCardError] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+
+  // Simulera en databas med presentkort
+  const giftCardDatabase = {
+    '1234': 500,
+    '5678': 1000,
+    '9012': 250
+  };
+
   const resetPaymentStates = () => {
     setRemainingAmount(total);
     setPartialPayments([]);
     setSelectedMethod(null);
     setCustomAmount('');
     setPaymentStatus('idle');
+    setGiftCardNumber('');
+    setGiftCardBalance(null);
+    setGiftCardError('');
+    setShowDeleteConfirm(false);
   };
 
   useEffect(() => {
     if (!isOpen) {
       resetPaymentStates();
     }
-  }, [isOpen]);
+  }, [isOpen, total]);
 
   if (!isOpen) return null;
 
   const methods = [
     { id: 'card', icon: CreditCard, label: 'Kort' },
-    { id: 'cash', icon: Banknote, label: 'Kontant' },
+    { id: 'cash', icon: Banknote, label: 'Kontanter' },
     { id: 'swish', icon: Smartphone, label: 'Swish' },
     { id: 'giftcard', icon: Gift, label: 'Presentkort' },
   ];
@@ -52,6 +67,67 @@ const PaymentMethodSelector = ({
   const handleMethodSelection = (methodId) => {
     setSelectedMethod(methods.find(m => m.id === methodId));
     setCustomAmount('');
+    setGiftCardNumber('');
+    setGiftCardBalance(null);
+    setGiftCardError('');
+    setShowDeleteConfirm(false);
+  };
+
+  const verifyGiftCard = async () => {
+    setPaymentStatus('verifying_giftcard');
+    
+    // Simulera en verklig verifiering med fördröjning
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    const balance = giftCardDatabase[giftCardNumber];
+    if (balance) {
+      setGiftCardBalance(balance);
+      setGiftCardError('');
+      setPaymentStatus('idle');
+      return balance;
+    } else {
+      setGiftCardError('Ogiltigt presentkortsnummer');
+      setGiftCardBalance(null);
+      setPaymentStatus('idle');
+      return null;
+    }
+  };
+
+  const handleGiftCardPayment = async () => {
+    const balance = giftCardBalance;
+    if (!balance) return;
+  
+    const paymentAmount = parseFloat(customAmount);
+    if (isNaN(paymentAmount) || paymentAmount <= 0 || paymentAmount > balance || paymentAmount > remainingAmount) return;
+  
+    const remainingBalance = balance - paymentAmount;
+    const success = await simulatePayment('giftcard', paymentAmount);
+    
+    if (success) {
+      setPartialPayments(prev => [...prev, { 
+        method: 'giftcard',
+        amount: paymentAmount,
+        label: 'Presentkort',
+        cardNumber: giftCardNumber,
+        remainingBalance: remainingBalance
+      }]);
+      setRemainingAmount(prev => prev - paymentAmount);
+      setSelectedMethod(null);
+      setGiftCardNumber('');
+      setGiftCardBalance(null);
+      setCustomAmount('');
+      setPaymentStatus('idle');  // Direkt återställning som med andra metoder
+      
+      if (remainingBalance > 0) {
+        alert(`Presentkortet har ${formatPrice(remainingBalance)} kvar i saldo efter köpet.`);
+      }
+  
+      if (remainingAmount - paymentAmount <= 0) {
+        resetPaymentStates();
+        onPaymentComplete();
+        onClose();
+      }
+    }
   };
 
   const simulatePayment = async (methodId, amount) => {
@@ -73,7 +149,7 @@ const PaymentMethodSelector = ({
     };
 
     const steps = simulationSteps[methodId];
-    if (!steps) return true; // För kontant, ingen simulering
+    if (!steps) return true;
 
     for (const step of steps) {
       setPaymentStatus(step.status);
@@ -84,26 +160,33 @@ const PaymentMethodSelector = ({
   };
 
   const handleAddPayment = async (amount) => {
+    if (selectedMethod.id === 'giftcard') {
+      await handleGiftCardPayment();
+      return;
+    }
+  
     const paymentAmount = parseFloat(amount || customAmount);
     if (isNaN(paymentAmount) || paymentAmount <= 0 || paymentAmount > remainingAmount) return;
-
+  
     const success = await simulatePayment(selectedMethod.id, paymentAmount);
     if (!success) {
       setPaymentStatus('declined');
       setTimeout(() => setPaymentStatus('idle'), 2000);
       return;
     }
-
+  
     setPartialPayments(prev => [...prev, { 
       method: selectedMethod.id, 
       amount: paymentAmount,
       label: selectedMethod.label
     }]);
     setRemainingAmount(prev => prev - paymentAmount);
+    
+    // Removed the setTimeout
+    setPaymentStatus('idle');
     setSelectedMethod(null);
     setCustomAmount('');
-    setPaymentStatus('idle');
-
+  
     if (remainingAmount - paymentAmount <= 0) {
       resetPaymentStates();
       onPaymentComplete();
@@ -126,6 +209,201 @@ const PaymentMethodSelector = ({
     setCustomAmount(amount.toFixed(2));
   };
 
+  const renderGiftCardInput = () => (
+    <div className="gift-card-input">
+      {!giftCardBalance ? (
+        <div className="gift-card-verification">
+          <div className="verification-input">
+            <Gift className="gift-icon" size={20} />
+            <input
+              type="text"
+              className="payment-input"
+              value={giftCardNumber}
+              onChange={(e) => {
+                // Only allow digits
+                const value = e.target.value.replace(/[^\d]/g, '');
+                setGiftCardNumber(value);
+              }}
+              placeholder="Ange presentkortsnummer"
+              maxLength={4}
+              disabled={paymentStatus === 'verifying_giftcard'}
+            />
+          </div>
+          {giftCardError && (
+            <div className="error-message">
+              <XCircle size={16} className="mr-1" />
+              <p className="text-red-500 text-sm">{giftCardError}</p>
+            </div>
+          )}
+          <button 
+            onClick={verifyGiftCard}
+            className="payment-button mt-4"
+            disabled={giftCardNumber.length !== 4 || paymentStatus === 'verifying_giftcard'}
+          >
+            {paymentStatus === 'verifying_giftcard' ? (
+              <div className="flex items-center justify-center">
+                <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                <span>Kontrollerar...</span>
+              </div>
+            ) : (
+              'Verifiera presentkort'
+            )}
+          </button>
+        </div>
+      ) : (
+        <div className="gift-card-confirmed">
+          {/* Improved gift card info row */}
+          <div className="gift-card-info-row">
+            <div className="card-details">
+              <Gift size={20} className="text-green-600" />
+              <p className="card-label">Presentkort</p>
+              <p className="card-number">{giftCardNumber}</p>
+              {showDeleteConfirm ? (
+                <div className="flex items-center space-x-2">
+                  <button
+                    onClick={() => {
+                      setGiftCardNumber('');
+                      setGiftCardBalance(null);
+                      setShowDeleteConfirm(false);
+                    }}
+                    className="text-xs bg-red-500 text-white py-1 px-2 rounded hover:bg-red-600"
+                  >
+                    Ta bort
+                  </button>
+                  <button
+                    onClick={() => setShowDeleteConfirm(false)}
+                    className="text-xs bg-gray-200 text-gray-700 py-1 px-2 rounded hover:bg-gray-300"
+                  >
+                    Avbryt
+                  </button>
+                </div>
+              ) : (
+                <button 
+                  onClick={() => setShowDeleteConfirm(true)} 
+                  className="card-delete-btn"
+                  title="Ta bort presentkort"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+            <div className="balance">
+              <span>Saldo: {formatPrice(giftCardBalance)}</span>
+            </div>
+          </div>
+
+          <div className="section-separator">
+            <span className="label">Välj belopp</span>
+          </div>
+
+          {/* Payment amount selection section */}
+          <div className="amount-options">
+            <button
+              onClick={() => {
+                const fiftyPercentAmount = Math.min(calculatePercentageAmount(50), giftCardBalance, remainingAmount);
+                setCustomAmount(fiftyPercentAmount.toFixed(2));
+              }}
+              className="split-option-button"
+            >
+              50% ({formatPrice(Math.min(calculatePercentageAmount(50), giftCardBalance, remainingAmount))})
+            </button>
+            <button
+              onClick={() => {
+                const twentyFivePercentAmount = Math.min(calculatePercentageAmount(25), giftCardBalance, remainingAmount);
+                setCustomAmount(twentyFivePercentAmount.toFixed(2));
+              }}
+              className="split-option-button"
+            >
+              25% ({formatPrice(Math.min(calculatePercentageAmount(25), giftCardBalance, remainingAmount))})
+            </button>
+            {partialPayments.length > 0 && (
+              <button
+                onClick={async () => {
+                  const remainingPaymentAmount = Math.min(remainingAmount, giftCardBalance);
+                  
+                  // Verify amount is valid
+                  if (remainingPaymentAmount <= 0) return;
+
+                  // Validate and process payment
+                  if (remainingPaymentAmount > giftCardBalance || remainingPaymentAmount > remainingAmount) return;
+
+                  const success = await simulatePayment('giftcard', remainingPaymentAmount);
+                  
+                  if (success) {
+                    const remainingBalance = giftCardBalance - remainingPaymentAmount;
+                    
+                    setPartialPayments(prev => [...prev, { 
+                      method: 'giftcard',
+                      amount: remainingPaymentAmount,
+                      label: 'Presentkort',
+                      cardNumber: giftCardNumber,
+                      remainingBalance: remainingBalance
+                    }]);
+                    
+                    setRemainingAmount(prev => prev - remainingPaymentAmount);
+                    setSelectedMethod(null);
+                    setGiftCardNumber('');
+                    setGiftCardBalance(null);
+                    setCustomAmount('');
+                    setPaymentStatus('idle');
+                    
+                    if (remainingBalance > 0) {
+                      alert(`Presentkortet har ${formatPrice(remainingBalance)} kvar i saldo efter köpet.`);
+                    }
+                
+                    if (remainingAmount - remainingPaymentAmount <= 0) {
+                      resetPaymentStates();
+                      onPaymentComplete();
+                      onClose();
+                    }
+                  }
+                }}
+                className="split-option-button remaining"
+                disabled={paymentStatus !== 'idle'}
+              >
+                Betala resterande ({formatPrice(Math.min(remainingAmount, giftCardBalance))})
+              </button>
+            )}
+          </div>
+
+          <div className="section-separator">
+            <span className="label">eller</span>
+          </div>
+
+          <div className="custom-amount">
+            <label htmlFor="custom-amount" className="text-sm text-gray-600 mb-1 block">Ange valfritt belopp:</label>
+            <input
+              id="custom-amount"
+              type="number"
+              className="payment-input"
+              value={customAmount}
+              onChange={(e) => setCustomAmount(e.target.value)}
+              placeholder="0.00"
+              max={Math.min(giftCardBalance, remainingAmount)}
+              min={0}
+              disabled={paymentStatus !== 'idle'}
+            />
+
+            <button 
+              onClick={handleGiftCardPayment}
+              className="payment-button mt-4"
+              disabled={!customAmount || customAmount <= 0 || 
+                parseFloat(customAmount) > giftCardBalance || 
+                parseFloat(customAmount) > remainingAmount || 
+                paymentStatus !== 'idle'}
+            >
+              {!customAmount || customAmount <= 0 ? (
+                'Använd presentkort'
+              ) : (
+                `Använd ${formatPrice(parseFloat(customAmount))} från presentkortet`
+              )}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
   const renderPaymentStatus = () => {
     if (paymentStatus === 'idle') return null;
     
@@ -135,12 +413,13 @@ const PaymentMethodSelector = ({
       processing: 'Behandlar betalning...',
       approved: 'Betalning godkänd!',
       declined: 'Betalning nekad. Försök igen.',
-      awaiting_scan: 'Väntar på QR-kod scanning...'
+      awaiting_scan: 'Väntar på QR-kod scanning...',
+      verifying_giftcard: 'Kontrollerar presentkort...'
     };
     
     return (
       <div className="payment-status">
-        {['processing', 'awaiting_card', 'awaiting_scan', 'verifying_card'].includes(paymentStatus) && (
+        {['processing', 'awaiting_card', 'awaiting_scan', 'verifying_card', 'verifying_giftcard'].includes(paymentStatus) && (
           <>
             <Loader2 className="animate-spin h-8 w-8" />
             <p>{statusMessages[paymentStatus]}</p>
@@ -206,51 +485,57 @@ const PaymentMethodSelector = ({
           </div>
         ) : (
           <div className="split-payment-options">
-            <h3>Betalningsmetod vald: {selectedMethod.label}</h3>
+            <h3>Betalningsmetod: <strong>{selectedMethod.label}</strong></h3>
             
-            <div className="amount-options">
-              <button
-                onClick={() => handlePercentageClick(50)}
-                className="split-option-button"
-              >
-                50% ({formatPrice(calculatePercentageAmount(50))})
-              </button>
-              <button
-                onClick={() => handlePercentageClick(25)}
-                className="split-option-button"
-              >
-                25% ({formatPrice(calculatePercentageAmount(25))})
-              </button>
-              {partialPayments.length > 0 && (
-                <button
-                  onClick={() => handleAddPayment(remainingAmount)}
-                  className="split-option-button remaining"
-                >
-                  Betala resterande ({formatPrice(remainingAmount)})
-                </button>
-              )}
-            </div>
+            {selectedMethod.id === 'giftcard' ? (
+              renderGiftCardInput()
+            ) : (
+              <>
+                <div className="amount-options">
+                  <button
+                    onClick={() => handlePercentageClick(50)}
+                    className="split-option-button"
+                  >
+                    50% ({formatPrice(calculatePercentageAmount(50))})
+                  </button>
+                  <button
+                    onClick={() => handlePercentageClick(25)}
+                    className="split-option-button"
+                  >
+                    25% ({formatPrice(calculatePercentageAmount(25))})
+                  </button>
+                  {partialPayments.length > 0 && (
+                    <button
+                      onClick={() => handleAddPayment(remainingAmount)}
+                      className="split-option-button remaining"
+                    >
+                      Betala resterande ({formatPrice(remainingAmount)})
+                    </button>
+                  )}
+                </div>
 
-            <p className="or-divider">eller</p>
+                <p className="or-divider">eller</p>
 
-            <div className="custom-amount">
-              <input
-                type="number"
-                className="payment-input"
-                value={customAmount}
-                onChange={(e) => setCustomAmount(e.target.value)}
-                placeholder="Ange valfritt belopp"
-                disabled={paymentStatus !== 'idle'}
-              />
+                <div className="custom-amount">
+                  <input
+                    type="number"
+                    className="payment-input"
+                    value={customAmount}
+                    onChange={(e) => setCustomAmount(e.target.value)}
+                    placeholder="Ange valfritt belopp"
+                    disabled={paymentStatus !== 'idle'}
+                  />
 
-              <button 
-                onClick={() => handleAddPayment()}
-                className="payment-button"
-                disabled={!customAmount || paymentStatus !== 'idle'}
-              >
-                Lägg till betalning {customAmount ? formatPrice(parseFloat(customAmount)) : ''}
-              </button>
-            </div>
+                  <button 
+                    onClick={() => handleAddPayment()}
+                    className="payment-button"
+                    disabled={!customAmount || paymentStatus !== 'idle'}
+                  >
+                    Lägg till betalning {customAmount ? formatPrice(parseFloat(customAmount)) : ''}
+                  </button>
+                </div>
+              </>
+            )}
 
             <button 
               className="payment-back-button"
@@ -268,7 +553,7 @@ const PaymentMethodSelector = ({
 
         {!selectedMethod && (
           <button 
-            className="payment-back-button"
+          className="payment-back-button"
             onClick={onClose}
           >
             <ArrowLeft />

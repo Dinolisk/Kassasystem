@@ -6,56 +6,58 @@
     align-items: center;
     justify-content: center;
     z-index: 50;
-  }
-  
-  .modal-content.payment-selector {
+}
+
+.modal-content.payment-selector {
     background: linear-gradient(to bottom, #ffffff, #f8f9fa);
-    padding: 1.5rem;
+    max-height: 95vh;     /* Lägg till denna */
+    overflow-y: auto;  
+    padding: 2rem;
     border-radius: 16px;
     width: 100%;
-    max-width: 600px;
+    max-width: 850px;
     margin: 1rem;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
     position: relative;
-  }
-  
-  .split-payment-summary {
-    background: #f8f9fa;
-    padding: 1.25rem;
+}
+
+.split-payment-summary {
+    background: #f2f2f2;
+    padding: 0.5rem;
     border-radius: 10px;
-    margin-bottom: 1.5rem;
-  }
-  
-  .split-payment-summary h2 {
+    margin-bottom: 1rem;
+}
+
+.split-payment-summary h2 {
     font-size: 1.25rem;
     color: #2E3A4E;
     font-weight: 600;
-    margin-bottom: 0.75rem;
-  }
-  
-  .split-payment-summary p {
+    margin-top: 0.2rem;
+}
+
+.split-payment-summary p {
     font-size: 1rem;
     color: #2E3A4E;
     margin: 0.25rem 0;
-  }
-  
-  .payments-list {
-    margin-top: 1rem;
+}
+
+.payments-list {
+    margin-top: 0.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-  }
-  
-  .payment-item {
+}
+
+.payment-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 0.5rem;
     background: white;
     border-radius: 8px;
-  }
-  
-  .remove-payment-btn {
+}
+
+.remove-payment-btn {
     background: none;
     border: none;
     color: #EF4444;
@@ -63,159 +65,173 @@
     padding: 0.25rem;
     display: flex;
     align-items: center;
-  }
-  
-  .remove-payment-btn:hover {
+}
+
+.remove-payment-btn:hover {
     color: #DC2626;
-  }
-  
-  .payment-methods-container {
+}
+
+.payment-methods-container {
     margin-top: 1rem;
-  }
-  
-  .payment-methods-container h3 {
+    width: 100%;
+}
+
+.payment-methods-container h3 {
     text-align: center;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: #2E3A4E;
     margin-bottom: 1.5rem;
-  }
-  
-  .payment-method-options {
+}
+
+.payment-method-options {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
-  }
-  
-  .payment-method-option {
+    width: 100%;
+}
+
+.payment-method-option {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
-    gap: 0.75rem;
+    padding: 0.75rem;
+    gap: 0.5rem;
     background: white;
     border: 2px solid #e5e7eb;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
-    height: 100px;
-  }
-  
-  .payment-method-option:hover {
+    height: 90px;
+}
+
+.payment-method-option:hover {
     background: #f5f5f5;
     transform: translateY(-2px);
-  }
-  
-  .payment-method-option svg {
+}
+
+.payment-method-option svg {
     width: 32px;
     height: 32px;
     color: #2E3A4E;
-  }
-  
-  .payment-method-option span {
+}
+
+.payment-method-option span {
     font-size: 0.9rem;
     font-weight: 600;
     color: #2E3A4E;
     text-align: center;
-  }
-  
-  .split-payment-options {
+}
+
+.split-payment-options {
     margin-top: 1rem;
-  }
-  
-  .split-payment-options h3 {
+    width: 100%;
+}
+
+.split-payment-options h3 {
     text-align: center;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: #2E3A4E;
-    margin-bottom: 1.5rem;
-  }
-  
-  .amount-options {
+    margin-bottom: 1rem;
+}
+
+.amount-options {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
-  }
-  
-  .amount-options .remaining {
+    gap: 0.5rem;
+}
+
+.amount-options .remaining {
     grid-column: 1 / -1;
-  }
-  
-  .split-option-button {
-    padding: 0.75rem;
+}
+
+.split-option-button {
+    padding: 1.25rem;
     border: 1px solid #e5e7eb;
     border-radius: 12px;
     background: #f8f9fa;
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: 600;
     color: #2E3A4E;
     transition: all 0.2s ease;
     cursor: pointer;
-  }
-  
-  .split-option-button:hover {
+}
+
+.split-option-button:hover {
     background: #e9ecef;
-  }
-  
-  .split-option-button.remaining {
+}
+
+.split-option-button.remaining {
     background: #2E3A4E;
     color: white;
     border: none;
-  }
-  
-  .split-option-button.remaining:hover {
+}
+
+.split-option-button.remaining:hover {
     background: #404E68;
-  }
-  
-  .or-divider {
+}
+
+.or-divider {
     text-align: center;
     color: #4b5563;
     font-size: 1rem;
     margin: 1rem 0;
-  }
-  
-  .custom-amount {
+}
+
+.custom-amount {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .payment-input {
+    gap: 1rem;
     width: 100%;
-    padding: 0.75rem;
-    border: 1px solid #e5e7eb;
+}
+
+.payment-input {
+    width: 100%;
+    padding: 1.25rem;
+    border: 2px solid #e9ecef;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 1.25rem;
     background: white;
-  }
-  
-  .payment-input:focus {
+}
+
+.payment-input:focus {
     outline: none;
     border-color: #2E3A4E;
-  }
-  
-  .payment-button {
+    box-shadow: 0 0 0 3px rgba(46, 58, 78, 0.2);
+}
+
+.payment-input:disabled {
+    background: #f8f9fa;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.payment-button {
     width: 100%;
-    padding: 0.75rem;
+    padding: 1.25rem;
     background: #2E3A4E;
     color: white;
     border: none;
     border-radius: 12px;
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-  }
-  
-  .payment-button:disabled {
+    box-shadow: 0 4px 12px rgba(46, 58, 78, 0.15);
+}
+
+.payment-button:disabled {
     background: #e5e7eb;
     cursor: not-allowed;
-  }
-  
-  .payment-button:hover:not(:disabled) {
+}
+
+.payment-button:hover:not(:disabled) {
     background: #404E68;
-  }
-  
-  .payment-back-button {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(46, 58, 78, 0.2);
+}
+
+.payment-back-button {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -224,25 +240,28 @@
     color: white;
     border: none;
     border-radius: 10px;
-    padding: 0.75rem 1.5rem;
-    font-size: 1rem;
+    padding: 1.25rem;
+    font-size: 1.25rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     width: 100%;
-  }
-  
-  .payment-back-button:hover {
+    box-shadow: 0 4px 12px rgba(46, 58, 78, 0.15);
+}
+
+.payment-back-button:hover {
     background: #4B5563;
-  }
-  
-  .payment-back-button:disabled {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(46, 58, 78, 0.2);
+}
+
+.payment-back-button:disabled {
     background: #e5e7eb;
     cursor: not-allowed;
-  }
-  
-  .payment-status {
+}
+
+.payment-status {
     position: absolute;
     left: 50%;
     top: 50%;
@@ -258,25 +277,192 @@
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: auto;
     min-width: 200px;
-  }
-  
-  .payment-status p {
-    font-size: 1rem;
+}
+
+.payment-status p {
+    font-size: 1.25rem;
     font-weight: 500;
     color: #2E3A4E;
-  }
-  
-  @media (max-width: 640px) {
+}
+
+/* Improved gift card styling */
+.gift-card-input h3 {
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
+
+.gift-card-input .mt-4 {
+    margin-top: 0.75rem;
+}
+
+.text-sm.text-gray-500 {
+    margin: 0.1rem 0;
+}
+
+/* Improved gift card info row */
+.gift-card-info-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 1.5rem;
+    background-color: #F3F4F6;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border-left: 4px solid #10B981; /* Green accent border */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: background-color 0.2s ease;
+}
+
+.gift-card-info-row:hover {
+    background-color: #F9FAFB;
+}
+
+.gift-card-info-row .card-details {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.gift-card-info-row .card-label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.gift-card-info-row .card-number {
+    font-family: monospace;
+    font-size: 1.1rem;
+    background: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: 1px solid #E5E7EB;
+    letter-spacing: 0.05em;
+}
+
+/* Improved delete button */
+.gift-card-info-row .card-delete-btn {
+    color: #6B7280; /* Neutral color by default */
+    background: transparent;
+    border: none;
+    padding: 6px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gift-card-info-row .card-delete-btn:hover {
+    background-color: #FEE2E2; /* Light red background on hover */
+    color: #EF4444; /* Red icon on hover */
+}
+
+.gift-card-info-row .card-delete-btn:focus {
+    outline: 2px solid #EF4444;
+    outline-offset: 2px;
+}
+
+.gift-card-info-row .balance {
+    margin-left: auto;
+    text-align: right;
+    font-weight: 600;
+    color: #10B981;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 0.25rem 0.75rem;
+    border-radius: 6px;
+}
+
+/* Improved verification section */
+.gift-card-verification {
+    margin-bottom: 1.5rem;
+    border-radius: 12px;
+    padding: 1rem;
+    background-color: #F9FAFB;
+    border: 1px solid #E5E7EB;
+}
+
+.gift-card-verification .verification-input {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+.gift-card-verification .verification-input input {
+    padding-left: 2.5rem;
+}
+
+.gift-card-verification .verification-input .gift-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6B7280;
+}
+
+/* Error message formatting */
+.error-message {
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+    color: #EF4444;
+}
+
+/* Separator with label */
+.section-separator {
+    position: relative;
+    height: 1px;
+    background-color: #E5E7EB;
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.section-separator .label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    padding: 0 1rem;
+    color: #6B7280;
+    font-size: 0.875rem;
+}
+
+@media (max-width: 640px) {
     .payment-method-options {
-      grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
     
     .amount-options {
-      grid-template-columns: 1fr;
+        grid-template-columns: 1fr;
     }
     
     .modal-content.payment-selector {
-      margin: 0.5rem;
-      padding: 1rem;
+        margin: 0.5rem;
+        padding: 1rem;
     }
-  }
+
+    .payment-input,
+    .payment-button,
+    .payment-back-button,
+    .split-option-button {
+        padding: 1rem;
+        font-size: 1rem;
+    }
+    
+    /* Mobile-specific adjustments for gift card UI */
+    .gift-card-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+    
+    .gift-card-info-row .balance {
+        margin-left: 0;
+        width: 100%;
+        text-align: center;
+    }
+    
+    .gift-card-info-row .card-details {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
