@@ -123,9 +123,8 @@ const PaymentMethodSelector = ({
       }
   
       if (remainingAmount - paymentAmount <= 0) {
-        resetPaymentStates();
-        onPaymentComplete();
-        onClose();
+        // Pass the complete payment information to the callback
+        completePayment();
       }
     }
   };
@@ -159,40 +158,95 @@ const PaymentMethodSelector = ({
     return true;
   };
 
-  const handleAddPayment = async (amount) => {
-    if (selectedMethod.id === 'giftcard') {
-      await handleGiftCardPayment();
-      return;
-    }
-  
-    const paymentAmount = parseFloat(amount || customAmount);
-    if (isNaN(paymentAmount) || paymentAmount <= 0 || paymentAmount > remainingAmount) return;
-  
-    const success = await simulatePayment(selectedMethod.id, paymentAmount);
-    if (!success) {
-      setPaymentStatus('declined');
-      setTimeout(() => setPaymentStatus('idle'), 2000);
-      return;
-    }
-  
-    setPartialPayments(prev => [...prev, { 
-      method: selectedMethod.id, 
-      amount: paymentAmount,
-      label: selectedMethod.label
-    }]);
-    setRemainingAmount(prev => prev - paymentAmount);
+  // New function to handle payment completion and send all payment methods to receipt
+  const completePayment = () => {
+    // Log what we're about to send
+    console.log("completePayment called with partialPayments:", partialPayments);
     
-    // Removed the setTimeout
-    setPaymentStatus('idle');
-    setSelectedMethod(null);
-    setCustomAmount('');
-  
-    if (remainingAmount - paymentAmount <= 0) {
-      resetPaymentStates();
-      onPaymentComplete();
-      onClose();
+    // Verify that we have payment methods
+    if (!partialPayments.length) {
+      console.error("No payment methods found!");
+      return;
     }
+    
+    // Check total paid amount
+    const totalPaid = partialPayments.reduce((sum, payment) => sum + parseFloat(payment.amount || 0), 0);
+    console.log(`Total paid: ${totalPaid}, Total required: ${total}`);
+    
+    if (totalPaid < total - 0.01) { // Allow small rounding differences
+      console.warn(`Warning: Total paid (${totalPaid}) is less than cart total (${total})`);
+      alert("Betalat belopp täcker inte hela köpet. Lägg till ytterligare betalning.");
+      return;
+    }
+    
+    // Make sure we have a deep copy of partialPayments to avoid any reference issues
+    const finalPayments = JSON.parse(JSON.stringify(partialPayments));
+    
+    // Add timestamp to each payment method if missing
+    const paymentsWithTimestamps = finalPayments.map(payment => ({
+      ...payment,
+      timestamp: payment.timestamp || new Date().toISOString()
+    }));
+    
+    // Send the payments array to the parent
+    console.log("Sending final payments:", paymentsWithTimestamps);
+    onPaymentComplete(paymentsWithTimestamps);
+    
+    // Reset component state and close
+    resetPaymentStates();
+    onClose();
   };
+      
+const handleAddPayment = async (amount) => {
+  if (selectedMethod.id === 'giftcard') {
+    await handleGiftCardPayment();
+    return;
+  }
+
+  const paymentAmount = parseFloat(amount || customAmount);
+  if (isNaN(paymentAmount) || paymentAmount <= 0 || paymentAmount > remainingAmount) return;
+
+  const success = await simulatePayment(selectedMethod.id, paymentAmount);
+  if (!success) {
+    setPaymentStatus('declined');
+    setTimeout(() => setPaymentStatus('idle'), 2000);
+    return;
+  }
+
+  // Create new payment object
+  const newPayment = { 
+    method: selectedMethod.id, 
+    amount: paymentAmount,
+    label: selectedMethod.label,
+    timestamp: new Date().toISOString()
+  };
+
+  // Update partialPayments state with the new payment
+  const updatedPayments = [...partialPayments, newPayment];
+  setPartialPayments(updatedPayments);
+  
+  console.log("Updated payments after adding new payment:", updatedPayments);
+  
+  // Calculate new remaining amount
+  const newRemainingAmount = remainingAmount - paymentAmount;
+  setRemainingAmount(newRemainingAmount);
+  
+  // Reset UI state
+  setPaymentStatus('idle');
+  setSelectedMethod(null);
+  setCustomAmount('');
+
+  // If we've paid exactly or more than the remaining amount, complete the payment
+  if (newRemainingAmount <= 0.01) { // Use small threshold for floating point issues
+    // Important: Use the updated payments array directly here
+    console.log("Payment complete. All payment methods:", updatedPayments);
+    
+    // Instead of calling completePayment(), we'll handle it right here to ensure we use the most up-to-date array
+    onPaymentComplete(updatedPayments);
+    resetPaymentStates();
+    onClose();
+  }
+};
 
   const handleRemoveLastPayment = () => {
     const lastPayment = partialPayments[partialPayments.length - 1];
@@ -317,53 +371,52 @@ const PaymentMethodSelector = ({
               25% ({formatPrice(Math.min(calculatePercentageAmount(25), giftCardBalance, remainingAmount))})
             </button>
             {partialPayments.length > 0 && (
-              <button
-                onClick={async () => {
-                  const remainingPaymentAmount = Math.min(remainingAmount, giftCardBalance);
-                  
-                  // Verify amount is valid
-                  if (remainingPaymentAmount <= 0) return;
+  <button
+    onClick={async () => {
+      const remainingPaymentAmount = Math.min(remainingAmount, giftCardBalance);
+      
+      // Verify amount is valid
+      if (remainingPaymentAmount <= 0) return;
 
-                  // Validate and process payment
-                  if (remainingPaymentAmount > giftCardBalance || remainingPaymentAmount > remainingAmount) return;
+      // Validate and process payment
+      if (remainingPaymentAmount > giftCardBalance || remainingPaymentAmount > remainingAmount) return;
 
-                  const success = await simulatePayment('giftcard', remainingPaymentAmount);
-                  
-                  if (success) {
-                    const remainingBalance = giftCardBalance - remainingPaymentAmount;
-                    
-                    setPartialPayments(prev => [...prev, { 
-                      method: 'giftcard',
-                      amount: remainingPaymentAmount,
-                      label: 'Presentkort',
-                      cardNumber: giftCardNumber,
-                      remainingBalance: remainingBalance
-                    }]);
-                    
-                    setRemainingAmount(prev => prev - remainingPaymentAmount);
-                    setSelectedMethod(null);
-                    setGiftCardNumber('');
-                    setGiftCardBalance(null);
-                    setCustomAmount('');
-                    setPaymentStatus('idle');
-                    
-                    if (remainingBalance > 0) {
-                      alert(`Presentkortet har ${formatPrice(remainingBalance)} kvar i saldo efter köpet.`);
-                    }
-                
-                    if (remainingAmount - remainingPaymentAmount <= 0) {
-                      resetPaymentStates();
-                      onPaymentComplete();
-                      onClose();
-                    }
-                  }
-                }}
-                className="split-option-button remaining"
-                disabled={paymentStatus !== 'idle'}
-              >
-                Betala resterande ({formatPrice(Math.min(remainingAmount, giftCardBalance))})
-              </button>
-            )}
+      const success = await simulatePayment('giftcard', remainingPaymentAmount);
+      
+      if (success) {
+        const remainingBalance = giftCardBalance - remainingPaymentAmount;
+        
+        // Create new payment object
+        const newPayment = { 
+          method: 'giftcard',
+          amount: remainingPaymentAmount,
+          label: 'Presentkort',
+          cardNumber: giftCardNumber,
+          remainingBalance: remainingBalance,
+          timestamp: new Date().toISOString()
+        };
+        
+        // Update partial payments with the new payment
+        const updatedPayments = [...partialPayments, newPayment];
+        
+        console.log("Final payments (including gift card):", updatedPayments);
+        
+        // Instead of updating state and then completing payment, send the updated array directly
+        onPaymentComplete(updatedPayments);
+        resetPaymentStates();
+        onClose();
+        
+        if (remainingBalance > 0) {
+          alert(`Presentkortet har ${formatPrice(remainingBalance)} kvar i saldo efter köpet.`);
+        }
+      }
+    }}
+    className="split-option-button remaining"
+    disabled={paymentStatus !== 'idle'}
+  >
+    Betala resterande ({formatPrice(Math.min(remainingAmount, giftCardBalance))})
+  </button>
+)}
           </div>
 
           <div className="section-separator">
@@ -482,6 +535,16 @@ const PaymentMethodSelector = ({
                 </button>
               ))}
             </div>
+            
+            {/* Add a complete payment button when partial payments exist */}
+            {partialPayments.length > 0 && remainingAmount === 0 && (
+              <button 
+                onClick={completePayment}
+                className="complete-payment-button mt-4"
+              >
+                Slutför betalning
+              </button>
+            )}
           </div>
         ) : (
           <div className="split-payment-options">

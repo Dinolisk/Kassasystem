@@ -97,12 +97,19 @@
 }
 
 .product-info .price {
-  color: #245fbe;
+  color: #1C76BC;  /* Gardeco-logotypens blå */
   font-weight: bold;
   font-size: 1.2rem;
   margin: 10px 0;
+  background-color: rgba(28, 118, 188, 0.05);  /* Subtil bakgrund */
+  padding: 5px 10px;
+  border-radius: 6px;
+  display: inline-block;
 }
 
+.product-card:hover .product-info .price {
+  background-color: rgba(28, 118, 188, 0.1);  /* Lätt färgändring vid hover */
+}
 /* Media Queries */
 @media (max-width: 1024px) {
   .products-list {

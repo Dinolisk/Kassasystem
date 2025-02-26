@@ -67,12 +67,71 @@ const Payments = ({
    setPartialPayments([]); 
  };
 
- const handleSplitPaymentComplete = () => {
-   setIsSplitPaymentOpen(false);
-   onPaymentComplete();
-   onClose();
- };
- const completePayment = (method, amount) => {
+ // 2. Next, in Payments.jsx, modify the handleSplitPaymentComplete function:
+const handleSplitPaymentComplete = (splitPayments) => {
+  setIsSplitPaymentOpen(false);
+  
+  console.log("handleSplitPaymentComplete received:", splitPayments);
+  
+  // Create a local variable to store the payment methods we'll pass forward
+  let methodsToPass = [];
+  
+  if (splitPayments) {
+    if (Array.isArray(splitPayments)) {
+      console.log("Received array directly:", splitPayments);
+      methodsToPass = splitPayments;
+    } else if (splitPayments.paymentMethods && Array.isArray(splitPayments.paymentMethods)) {
+      console.log("Extracting paymentMethods from object:", splitPayments.paymentMethods);
+      methodsToPass = splitPayments.paymentMethods;
+    } else {
+      console.log("Unknown format, using fallback");
+      methodsToPass = [{ 
+        method: 'split', 
+        amount: total, 
+        label: 'Delad betalning',
+        timestamp: new Date().toISOString()
+      }];
+    }
+  } else {
+    console.log("No payment data received");
+    methodsToPass = [{ 
+      method: 'split', 
+      amount: total, 
+      label: 'Delad betalning',
+      timestamp: new Date().toISOString()
+    }];
+  }
+  
+  // Ensure all payment methods have labels
+  methodsToPass = methodsToPass.map(method => {
+    if (!method.label) {
+      const methodLabels = {
+        'card': 'Kort',
+        'cash': 'Kontanter',
+        'swish': 'Swish',
+        'invoice': 'Faktura',
+        'giftcard': 'Presentkort',
+        'split': 'Delad betalning'
+      };
+      return {
+        ...method,
+        label: methodLabels[method.method] || method.method,
+        timestamp: method.timestamp || new Date().toISOString()
+      };
+    }
+    return {
+      ...method,
+      timestamp: method.timestamp || new Date().toISOString()
+    };
+  });
+  
+  console.log("Final methods being passed to parent:", methodsToPass);
+  onPaymentComplete(methodsToPass);
+  onClose();
+};
+
+
+const completePayment = (method, amount) => {
   // Start payment simulation process
   setPaymentStatus('processing');
   
@@ -107,69 +166,79 @@ const Payments = ({
 
   const stages = paymentStages[method] || paymentStages['default'];
 
+  // Mappning för korrekta betalningsmetodnamn
+  const methodLabels = {
+    'card': 'Kort',
+    'cash': 'Kontanter',
+    'swish': 'Swish',
+    'invoice': 'Faktura',
+    'giftcard': 'Presentkort'
+  };
+
+  // In the simulatePaymentProcess function inside completePayment:
   const simulatePaymentProcess = async () => {
-   for (const stage of stages) {
-     setPaymentStatus(stage.status);
-     await new Promise(resolve => setTimeout(resolve, stage.duration));
-   }
+  for (const stage of stages) {
+    setPaymentStatus(stage.status);
+    await new Promise(resolve => setTimeout(resolve, stage.duration));
+  }
 
-   // Om detta är en delbetalning och det fortfarande finns belopp kvar att betala
-   if (partialPayments.length > 0 && amount < remainingTotal) {
-     // Lägg till denna betalning i partialPayments-arrayen
-     setPartialPayments(prev => [...prev, { 
-       method: method, 
-       amount: amount,
-       timestamp: new Date().toISOString()
-     }]);
-     
-     // Beräkna nytt återstående belopp
-     const newRemainingTotal = remainingTotal - amount;
-     
-     if (newRemainingTotal <= 0) {
-       // Om allt är betalt, slutför köpet
-       const allPayments = [...partialPayments, { 
-         method: method, 
-         amount: amount,
-         timestamp: new Date().toISOString()
-       }];
-       
-       // Här kan du skicka med alla delbetalningar till onPaymentComplete
-       // så att de kan visas på kvittot
-       onPaymentComplete(allPayments);
-       resetAllStates(); // Viktigt för att rensa alla tillstånd
-       onClose();
-     } else {
-       // Om det fortfarande finns belopp kvar att betala, uppdatera UI
-       setRemainingTotal(newRemainingTotal);
-       setPaymentStatus('idle');
-       setPaymentMessage(`${method} betalning: ${formatPrice(amount)}. Återstående: ${formatPrice(newRemainingTotal)}`);
-       
-       // Återgå till betalningsmenyn för att välja nästa betalningsmetod
-       setSelectedPaymentMethod('');
-     }
-   } else {
-     // Om detta är en fullständig betalning (original eller sista delbetalningen)
-     // slutför köpet som vanligt
-     
-     // Om vi har delbetalningar, lägg till den här sista betalningen
-     if (partialPayments.length > 0) {
-       const allPayments = [...partialPayments, { 
-         method: method, 
-         amount: amount,
-         timestamp: new Date().toISOString()
-       }];
-       onPaymentComplete(allPayments);
-     } else {
-       // Annars skicka endast denna betalning
-       onPaymentComplete(method, amount);
-     }
-     
-     resetAllStates(); // Viktigt för att rensa alla tillstånd
-     onClose();
-   }
- };
+  console.log("Current partialPayments:", partialPayments);
+  console.log("Adding new payment:", method, amount);
 
- simulatePaymentProcess();
+  // Create the payment object
+  const newPayment = { 
+    method: method, 
+    amount: amount,
+    label: methodLabels[method] || method,
+    timestamp: new Date().toISOString()
+  };
+  
+  if (partialPayments.length > 0) {
+    // We have previous payments, handle multiple payment scenario
+    console.log("Multiple payments scenario:");
+    console.log("- Existing payments:", partialPayments);
+    console.log("- New payment:", newPayment);
+
+    const newRemainingTotal = remainingTotal - amount;
+    
+    if (newRemainingTotal <= 0) {
+      // When everything is paid, collect all payments
+      const updatedPayments = [...partialPayments, newPayment];
+      console.log("Completing payment with all payments:", updatedPayments);
+      
+      onPaymentComplete(updatedPayments);
+      
+      // Clean up
+      resetAllStates();
+      onClose();
+    } else {
+      setPartialPayments(prev => [...prev, newPayment]);
+      setRemainingTotal(newRemainingTotal);
+      setPaymentStatus('idle');
+      setPaymentMessage(`${methodLabels[method] || method} betalning: ${formatPrice(amount)}. Återstående: ${formatPrice(newRemainingTotal)}`);
+      setSelectedPaymentMethod('');
+    }
+  } else {
+    // First payment, simple payment
+    console.log("Single payment scenario");
+    if (amount >= remainingTotal) {
+      onPaymentComplete([newPayment]);
+    } else {
+      setPartialPayments([newPayment]);
+      setRemainingTotal(remainingTotal - amount);
+      setPaymentStatus('idle');
+      setPaymentMessage(`${methodLabels[method] || method} betalning: ${formatPrice(amount)}. Återstående: ${formatPrice(remainingTotal - amount)}`);
+      setSelectedPaymentMethod('');
+    }
+    
+    if (amount >= remainingTotal) {
+      resetAllStates();
+      onClose();
+    }
+  }
+};
+
+  simulatePaymentProcess();
 };
 
 const handlePaymentMethodSelect = (method) => {
@@ -213,6 +282,7 @@ const handleSwishPayment = () => {
 const handleInvoicePayment = () => {
   completePayment('invoice', remainingTotal); // Använd remainingTotal istället för total
 };
+
 const handleGiftCardPayment = () => {
   setPaymentStatus('verifying_card');
   setTimeout(() => {
@@ -256,10 +326,11 @@ const handleInsufficientBalanceOption = (option) => {
      
      // Lägg till presentkortsbetalningen i partialPayments
      setPartialPayments([{
-       method: 'giftcard',
-       amount: balance,
-       timestamp: new Date().toISOString()
-     }]);
+      method: 'giftcard',
+      amount: balance,
+      label: 'Presentkort', // Lägg till label för korrekt visning i kvittot
+      timestamp: new Date().toISOString()
+    }]);
      
      // Beräkna återstående belopp att betala
      const remainingToPay = remainingTotal - balance;
@@ -294,6 +365,7 @@ const handleInsufficientBalanceOption = (option) => {
      break;
  }
 };
+
 const renderPaymentStatus = () => {
   if (paymentStatus === 'idle') return null;
   
@@ -449,7 +521,7 @@ const renderInsufficientBalanceModal = () => {
     </div>
   );
 };
-// Resten av koden (renderPaymentMethod, renderContent, return) förblir oförändrad
+
 const renderPaymentMethod = () => {
   switch (selectedPaymentMethod) {
     case 'cash':

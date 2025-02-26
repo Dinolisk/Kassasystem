@@ -217,12 +217,12 @@ input[type="number"] {
  }
  
  .customer-button.existing {
-  background-color: #228e4c;
+  background-color: var(--action-green);
   color: white;
  }
  
  .customer-button:not(.existing) {
-  background-color: #6f6f6f;
+  background-color: var(--neutral-gray);
   color: white;
  }
  

@@ -222,17 +222,144 @@ function CashRegister() {
       personnummer: ''
     });
   };
-  // Kvittogenerering
-  const generateReceipt = () => {
-    const currentDate = new Date();
-    const dateString = currentDate.toLocaleDateString();
-    const timeString = currentDate.toLocaleTimeString();
-    const momssats = 0.25;
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const moms = total * momssats;
-    const netto = total - moms;
-    const brutto = total;
+  
+  // Uppdaterad handlePaymentComplete-funktion med debugging
+  // I CashRegister.jsx, uppdatera handlePaymentComplete-funktionen:
+
+// Implement this in CashRegister.jsx
+const handlePaymentComplete = (paymentMethods) => {
+  console.log("handlePaymentComplete called with:", paymentMethods);
+  
+  // Ensure paymentMethods is an array
+  let methodsArray = [];
+  
+  if (Array.isArray(paymentMethods)) {
+    console.log("Payment data is an array with", paymentMethods.length, "methods");
+    methodsArray = JSON.parse(JSON.stringify(paymentMethods)); // Create a deep copy
+  } else if (paymentMethods && paymentMethods.paymentMethods && Array.isArray(paymentMethods.paymentMethods)) {
+    console.log("Payment data has paymentMethods property");
+    methodsArray = JSON.parse(JSON.stringify(paymentMethods.paymentMethods)); // Create a deep copy
+  } else {
+    console.log("Payment data is not in an expected format:", typeof paymentMethods);
+    // Try to create a default payment method
+    if (paymentMethods && typeof paymentMethods === 'object') {
+      methodsArray = [paymentMethods];
+    } else {
+      methodsArray = [{
+        method: 'unknown',
+        amount: total,
+        label: 'Okänd betalning',
+        timestamp: new Date().toISOString()
+      }];
+    }
+  }
+
+  // Debug log each payment method
+  methodsArray.forEach((method, index) => {
+    console.log(`Method ${index + 1}:`, method.method, method.amount, method.label || "missing label");
+  });
+
+  // Ensure all methods have a label
+  methodsArray = methodsArray.map(method => {
+    if (!method.label) {
+      const methodLabels = {
+        'card': 'Kort',
+        'cash': 'Kontanter',
+        'swish': 'Swish',
+        'invoice': 'Faktura',
+        'giftcard': 'Presentkort',
+        'split': 'Delad betalning'
+      };
+      return { 
+        ...method, 
+        label: methodLabels[method.method] || method.method 
+      };
+    }
+    return method;
+  });
+
+  // Validate the payment amounts
+  const paymentTotal = methodsArray.reduce((sum, method) => sum + (parseFloat(method.amount) || 0), 0);
+  const cartTotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  
+  console.log(`Payment total: ${paymentTotal}, Cart total: ${cartTotal}`);
+  
+  if (Math.abs(paymentTotal - cartTotal) > 0.1) { // Allow for small rounding differences
+    console.warn(`Warning: Payment total (${paymentTotal}) doesn't match cart total (${cartTotal})`);
     
+    // Add this check to prevent receipt generation with incomplete payment
+    if (paymentTotal < cartTotal * 0.99) { // If less than 99% of cart total
+      console.error("Payment amount insufficient, not generating receipt");
+      alert("Fel: Betalningsbeloppet är lägre än det totala köpbeloppet. Kvitto kunde inte genereras.");
+      return; // Exit without generating receipt or clearing cart
+    }
+  }
+  
+  console.log("Final payment methods array:", methodsArray);
+  
+  generateReceipt(methodsArray);
+  setCart([]); // Clear cart after payment
+};
+
+// 5. One final improvement: Make sure generateReceipt correctly formats and displays all payment methods
+const generateReceipt = (paymentMethods = []) => {
+  console.log("generateReceipt called with:", paymentMethods);
+  
+  const currentDate = new Date();
+  const dateString = currentDate.toLocaleDateString();
+  const timeString = currentDate.toLocaleTimeString();
+  const momssats = 0.25;
+  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const moms = total * momssats;
+  const netto = total - moms;
+  const brutto = total;
+  
+  // Format payment methods for receipt with improved method name conversion
+  let paymentMethodsHTML = '';
+  
+  if (Array.isArray(paymentMethods) && paymentMethods.length > 0) {
+    console.log("Formatting", paymentMethods.length, "payment methods for receipt");
+    
+    // Map internal payment codes to receipt text
+    const methodNames = {
+      'card': 'Kortbetalning',
+      'cash': 'Kontant',
+      'swish': 'Swish',
+      'invoice': 'Faktura',
+      'giftcard': 'Presentkort',
+      'split': 'Delad betalning'
+    };
+    
+    paymentMethodsHTML = `
+      <div class="payment-methods">
+        <h3>Betalningssätt</h3>
+        ${paymentMethods.map(payment => {
+          // Check if payment has both method and amount
+          if (!payment || typeof payment !== 'object') {
+            console.error("Invalid payment object:", payment);
+            return '';
+          }
+          
+          const amount = parseFloat(payment.amount) || 0;
+          const displayName = payment.label || methodNames[payment.method] || payment.method || 'Okänd';
+          
+          console.log(`Formatting payment: ${payment.method} -> ${displayName}, amount: ${amount}`);
+          
+          return `
+            <div class="payment-method">
+              <span>${displayName}:</span>
+              <span>${formatPrice(amount)} kr</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  } else {
+    console.log("No payment methods to display in receipt");
+  }
+  
+  console.log("paymentMethodsHTML:", paymentMethodsHTML ? "Contains data" : "Empty");
+  
     const receiptContent = `
       <html>
         <head>
@@ -279,6 +406,20 @@ function CashRegister() {
               justify-content: space-between;
               margin-top: 5px;
             }
+            .payment-methods {
+              margin-top: 15px;
+            }
+            .payment-methods h3 {
+              font-size: 14px;
+              font-weight: bold;
+              margin-bottom: 5px;
+              text-align: center;
+            }
+            .payment-method {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 5px;
+            }
             .thank-you {
               text-align: center;
               margin-top: 20px;
@@ -319,6 +460,12 @@ function CashRegister() {
               <span>Totalt SEK:</span>
               <span>${formatPrice(brutto)}</span>
             </div>
+            
+            ${paymentMethodsHTML ? `
+              <div class="separator"></div>
+              ${paymentMethodsHTML}
+            ` : '<!-- Inga betalningsmetoder att visa -->'}
+            
             <div class="separator"></div>
             <div class="thank-you">
               <div>Tack för ditt köp!</div>
@@ -332,11 +479,6 @@ function CashRegister() {
     const newWindow = window.open('', '', 'width=400,height=600');
     newWindow.document.write(receiptContent);
     newWindow.document.close();
-  };
-  // Add a method to handle payment completion
-  const handlePaymentComplete = () => {
-    generateReceipt();
-    setCart([]); // Clear the cart after successful payment
   };
 
   return (

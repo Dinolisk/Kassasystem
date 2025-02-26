@@ -1,3 +1,10 @@
+:root {
+  --primary-blue: #1C76BC;    /* Från logotypen */
+  --secondary-blue: #2E5077;  /* Mörkare blue för kontrast */
+  --action-green: #228E4C;    /* Behåll den gröna för positiva aktioner */
+  --action-red: #BD263B;      /* Behåll den röda för kritiska aktioner */
+  --neutral-gray: #6B7280;    /* Neutral grå för sekundära aktioner */
+}
 .cart-container {
   flex: 1;
   display: flex;
@@ -141,7 +148,7 @@
   width: 30px;
   height: 30px;
   padding: 0;
-  background: #dc3545;
+  background-color: var(--action-red);
   color: white;
   border: none;
   border-radius: 4px;
@@ -211,41 +218,46 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .payment-footer .more-button,
 .payment-footer .park-button {
-  background-color: #6f6f6f;
-  border: 1px solid #000000;
+  background-color: var(--primary-blue);
+  border-color: var(--secondary-blue);
   color: white;
 }
 
 .payment-footer .more-button:hover,
 .payment-footer .park-button:hover {
-  background-color: #5a5a5a;
+  background-color: var(--secondary-blue);
 }
 
 .payment-footer .cancel-button {
-  background-color: #c83548;
-  border: 1px solid #000000;
+  background-color: #BD263B;  /* Behåller den röda färgen för avbryt */
+  border: 1px solid #8C1D2E;
   color: white;
 }
 
 .payment-footer .cancel-button:hover {
-  background-color: #b92533;
+  background-color: var(--action-red);
 }
 
 .payment-footer .pay-button {
-  background-color: #228e4c;
-  border: 1px solid #000000;
+  background-color: var(--action-green); /* Behåller den gröna färgen för betala */
+  border: 1px solid #1A6C3A;
   color: white;
   gap: 20px;
   flex: 2;  
 }
 
 .payment-footer .pay-button:hover {
-  background-color: #1d7831;  
+  background-color: #26A557;  /* Ljusare vid hover */
+
+}
+.payment-footer button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* More dropdown */
