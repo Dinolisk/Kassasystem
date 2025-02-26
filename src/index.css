@@ -1,0 +1,238 @@
+/*
+Gemensamma stilvariabler för Gardeco-applikationen
+ *
+ * Detta är en centraliserad fil för färger, typsnitt och andra grundläggande
+ * stilvariabler som används i hela applikationen.
+ */
+ :root {
+    /* Primära färger */
+    --primary-dark: #1E1E1E; /* Svart/mörkgrå - Primärfärg för huvudåtgärder */
+    --primary-hover: #2E2E2E; /* Mörkare svart för hover-effekt */
+    /* Accent-färger */
+    --accent-green: #2A8749; /* Nedtonad grön för Betala-knappen */
+    --accent-hover: #236F3D; /* Hover-variant för grön */
+    /* Varningsfärger */
+    --danger-red: #ae3241; /* Nedtonad röd för Avbryt-knappen */
+    --danger-hover: #943038; /* Hover-variant för röd */
+    /* Betalningsmenyfärger */
+    --payment-cash: #4CAF50; /* Grön för kontantbetalning */
+    --payment-card: #2196F3; /* Blå för kortbetalning */
+    --payment-swish: #9C27B0; /* Lila för Swish */
+    --payment-invoice: #FF9800; /* Orange för faktura */
+    --payment-gift: #E91E63; /* Rosa för presentkort */
+    --payment-split: #3F51B5; /* Indigo för delad betalning */
+    /* Tillbaka-knapparnas färger */
+    --back-primary: #5b616d; /* Gråblå som primär bakåtfärg */
+    --back-hover: #737b88; /* Mörkare variant för hover */
+    /* Neutrala färger */
+    --neutral-gray: #555555; /* Grå - För sekundära/neutrala åtgärder */
+    --neutral-hover: #444444; /* Mörkare grå för hover-effekt */
+    --light-bg: #F5F7FA; /* Ljusgrå - För bakgrunder */
+    --lighter-gray: #E2E6EA; /* Ljusare grå för borders och alternativa bakgrunder */
+    --border-color: #E1E5EB; /* Standardfärg för borders */
+    /* Text och innehåll */
+    --text-primary: #1F2937; /* Primär textfärg */
+    --text-secondary: #4B5563; /* Sekundär textfärg */
+    --text-muted: #6B7280; /* Dämpad textfärg */
+    /* Design-variabler */
+    --border-radius: 4px; /* Minimal avrundning för plattare design */
+    --border-width: 1px; /* Standardbredd för borders */
+    --box-shadow: none; /* Ingen standard box-shadow för platt design */
+    --transition-speed: 0.2s; /* Standardtid för övergångar */
+    /* Spacing-variabler */
+    --spacing-xs: 4px; /* Extra liten margin/padding */
+    --spacing-sm: 8px; /* Liten margin/padding */
+    --spacing-md: 16px; /* Medium margin/padding */
+    --spacing-lg: 24px; /* Stor margin/padding */
+    --spacing-xl: 32px; /* Extra stor margin/padding */
+    /* Storlekar för element */
+    --button-height: 45px; /* Standard knapphöjd */
+    --input-height: 45px; /* Standard inputhöjd */
+    --icon-size-sm: 16px; /* Liten ikonstorlek */
+    --icon-size-md: 24px; /* Medium ikonstorlek */
+    --icon-size-lg: 32px; /* Stor ikonstorlek */
+ }
+
+/* ============================================
+   Gemensamma Modal & Knappstilar
+   ============================================ */
+.modal-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+/* Mjuka Meny-Alternativ Styling */
+.soft-menu-button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  border: none;
+  border-radius: 8px; /* Mjukare kanter */
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1.25rem;
+  font-weight: 500;
+  min-height: 90px;
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtil skugga */
+  width: 100%;
+  /* Grundfärg för alla knappar */
+  background: #2E3A4E;
+}
+
+.soft-menu-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.soft-menu-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* SVG Ikon-styling med färgindikator */
+.soft-menu-button svg {
+  width: 45px;
+  height: 45px;
+  margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+/* Små färgindikatorer på ikoner */
+.payment-cash-button svg {
+  color: var(--payment-cash);
+}
+
+.payment-card-button svg {
+  color: var(--payment-card);
+}
+
+.payment-swish-button svg {
+  color: var(--payment-swish);
+}
+
+.payment-invoice-button svg {
+  color: var(--payment-invoice);
+}
+
+.payment-gift-button svg {
+  color: var(--payment-gift);
+}
+
+.payment-split-button svg {
+  color: var(--payment-split);
+}
+
+/* Hover-effekter för specifika betalningsmetoder */
+.payment-cash-button:hover {
+  background: linear-gradient(135deg, var(--payment-cash) 0%, color-mix(in srgb, var(--payment-cash) 80%, black) 100%);
+}
+
+.payment-card-button:hover {
+  background: linear-gradient(135deg, var(--payment-card) 0%, color-mix(in srgb, var(--payment-card) 80%, black) 100%);
+}
+
+.payment-swish-button:hover {
+  background: linear-gradient(135deg, var(--payment-swish) 0%, color-mix(in srgb, var(--payment-swish) 80%, black) 100%);
+}
+
+.payment-invoice-button:hover {
+  background: linear-gradient(135deg, var(--payment-invoice) 0%, color-mix(in srgb, var(--payment-invoice) 80%, black) 100%);
+}
+
+.payment-gift-button:hover {
+  background: linear-gradient(135deg, var(--payment-gift) 0%, color-mix(in srgb, var(--payment-gift) 80%, black) 100%);
+}
+
+.payment-split-button:hover {
+  background: linear-gradient(135deg, var(--payment-split) 0%, color-mix(in srgb, var(--payment-split) 80%, black) 100%);
+}
+
+/* När de hovras, gör ikonerna vita */
+.soft-menu-button:hover svg {
+  color: white;
+}
+
+.modal-back-button,
+.method-back-button {
+  grid-column: span 3;
+  background: var(--back-primary) !important; /* Använd den gråblå färgen */
+  display: flex;
+  flex-direction: row !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 90px !important;
+  border-radius: 8px !important;
+  color: white;
+  padding: 1.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border: none;
+  gap: 0.5rem;
+  font-size: 1.25rem !important;
+  font-weight: 500 !important;
+  cursor: pointer; 
+}
+
+.modal-back-button:hover,
+.method-back-button:hover {
+  background: var(--back-hover) !important; /* Mörkare gråblå vid hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Ikonfärg */
+.modal-back-button svg,
+.method-back-button svg {
+  color: white; /* Vit ikon för bättre synlighet */
+}
+
+/* Responsiva justeringar */
+@media (max-width: 1024px) {
+  .modal-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .soft-menu-button {
+    padding: 1rem;
+    font-size: 1rem;
+    min-height: 80px;
+  }
+
+  .soft-menu-button svg {
+    width: 35px;
+    height: 35px;
+  }
+
+  .modal-back-button,
+  .method-back-button {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .soft-menu-button {
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    min-height: 70px;
+  }
+
+  .soft-menu-button svg {
+    width: 30px;
+    height: 30px;
+  }
+
+  .modal-back-button,
+  .method-back-button {
+    grid-column: span 1;
+  }
+}

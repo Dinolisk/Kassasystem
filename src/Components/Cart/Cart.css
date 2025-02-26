@@ -1,10 +1,4 @@
-:root {
-  --primary-blue: #1C76BC;    /* Från logotypen */
-  --secondary-blue: #2E5077;  /* Mörkare blue för kontrast */
-  --action-green: #228E4C;    /* Behåll den gröna för positiva aktioner */
-  --action-red: #BD263B;      /* Behåll den röda för kritiska aktioner */
-  --neutral-gray: #6B7280;    /* Neutral grå för sekundära aktioner */
-}
+
 .cart-container {
   flex: 1;
   display: flex;
@@ -126,14 +120,20 @@
   font-size: 12px;
 }
 
+/* Uppdatera kvantitetknappar för plattare stil */
 .cart-quantity button {
   width: 24px;
   height: 24px;
   padding: 0;
-  background: #f0f0f0;
+  background: var(--primary-dark);
+  color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   cursor: pointer;
+}
+
+.cart-quantity button:hover {
+  background: var(--primary-hover);
 }
 
 .cart-quantity input {
@@ -141,17 +141,18 @@
   text-align: center;
   padding: 3px;
   border: 1px solid #ddd;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
 }
 
+/* Ta bort knapp */
 .cart-remove {
   width: 30px;
   height: 30px;
   padding: 0;
-  background-color: var(--action-red);
+  background-color: var(--danger-red);
   color: white;
   border: none;
-  border-radius: 4px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -159,7 +160,7 @@
 }
 
 .cart-remove:hover {
-  background-color: #c82333;
+  background-color: var(--danger-hover);
 }
 
 /* Cart footer */
@@ -182,9 +183,11 @@
 .cart-total span {
   font-weight: bold;
 }
+
 .cart-total span:first-child {
   word-spacing: 15px;
 }
+
 .cart-total div:last-child span {
   font-size: 18px;
   font-weight: 600;
@@ -195,7 +198,7 @@
 .payment-footer {
   padding: 5px;
   background: white;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-top: auto; 
 }
@@ -207,57 +210,60 @@
   position: relative;
 }
 
+/* Uppdatera knappstil för att matcha den nya, plattare designen */
 .payment-footer button {
   flex: 1;
-  height: 60px;
+  height: 70px; /* Lite lägre höjd för ett plattare utseende */
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
-  font-size: 18px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s;
 }
 
+/* "Mer" och "Parkera" knappar */
 .payment-footer .more-button,
 .payment-footer .park-button {
-  background-color: var(--primary-blue);
-  border-color: var(--secondary-blue);
+  background-color: var(--primary-dark);
   color: white;
 }
 
 .payment-footer .more-button:hover,
 .payment-footer .park-button:hover {
-  background-color: var(--secondary-blue);
+  background-color: var(--primary-hover);
 }
 
+/* Avbryt-knapp */
 .payment-footer .cancel-button {
-  background-color: #BD263B;  /* Behåller den röda färgen för avbryt */
-  border: 1px solid #8C1D2E;
+  background-color: var(--danger-red);
   color: white;
 }
 
 .payment-footer .cancel-button:hover {
-  background-color: var(--action-red);
+  background-color: var(--danger-hover);
 }
 
+/* Betala-knapp */
 .payment-footer .pay-button {
-  background-color: var(--action-green); /* Behåller den gröna färgen för betala */
-  border: 1px solid #1A6C3A;
+  background-color: var(--accent-green); 
   color: white;
-  gap: 20px;
+  gap: 10px;
   flex: 2;  
 }
 
 .payment-footer .pay-button:hover {
-  background-color: #26A557;  /* Ljusare vid hover */
-
+  background-color: var(--accent-hover);
 }
+
+/* Ta bort upphöjningseffekten för en plattare design */
 .payment-footer button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  transform: none;
+  box-shadow: none;
+  filter: brightness(1.05);
 }
 
 /* More dropdown */
@@ -266,8 +272,8 @@
   bottom: 100%;
   left: 50%;          
   transform: translateX(-50%); 
-  background-color: #f8f9fa;
-  border-radius: 12px;  
+  background-color: white;
+  border-radius: var(--border-radius);  
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   width: 250px;    
   z-index: 1000;
@@ -278,26 +284,26 @@
 
 .more-dropdown button {
   width: 100%;
-  padding: 20px 25px;
+  padding: 15px 20px;
   border: none;
-  background: none;
+  background: var(--primary-dark);
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s;
-  color: #333;
+  transition: background-color 0.2s;
+  color: white;
   font-size: 16px;
   font-weight: 500;
   justify-content: flex-start;
   align-items: center;
+  margin-bottom: 2px;
 }
 
 .more-dropdown button:hover {
-  background-color: #007bff;
-  color: white;
+  background-color: var(--primary-hover);
 }
 
 .more-dropdown button:not(:last-child) {
-  border-bottom: 2px solid #eee;
+  border-bottom: 1px solid var(--primary-hover);
 }
 
 /* Modal och Dialog */
@@ -316,7 +322,7 @@
 
 .confirmation-dialog {
   background: white;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   padding: 24px;
   width: 100%;
   max-width: 400px;
@@ -349,59 +355,58 @@
 /* Dialog knappar bas-stil */
 .dialog-buttons button {
   padding: 10px 16px;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   min-width: 100px;
-  transition: all 0.2s;
+  transition: background-color 0.2s;
   pointer-events: auto;
 }
+
 /* Fortsätt handla/Avbryt knappen (vänster) */
-.confirmation-dialog[data-type="cancel"] .dialog-buttons button:first-child,
-.confirmation-dialog[data-type="park"] .dialog-buttons button:first-child {
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
+.confirmation-dialog .dialog-buttons button:first-child {
+  background-color: var(--neutral-gray);
+  color: white;
+  border: none;
 }
 
-.confirmation-dialog[data-type="cancel"] .dialog-buttons button:first-child:hover,
-.confirmation-dialog[data-type="park"] .dialog-buttons button:first-child:hover {
-  background-color: #e5e7eb;
+.confirmation-dialog .dialog-buttons button:first-child:hover {
+  background-color: var(--neutral-hover);
 }
 
 /* Avbryt köp knappen (höger i avbryt-dialog) */
 .confirmation-dialog[data-type="cancel"] .dialog-buttons button:last-child {
-  background-color: #bd263b;
+  background-color: var(--danger-red);
   color: white;
-  border: 1px solid #000000;
+  border: none;
 }
 
 .confirmation-dialog[data-type="cancel"] .dialog-buttons button:last-child:hover {
-  background-color: #de162a;
+  background-color: var(--danger-hover);
 }
 
 /* Parkera köp knappen (höger i parkera-dialog) */
 .confirmation-dialog[data-type="park"] .dialog-buttons button:last-child {
-  background-color: #6f6f6f;
+  background-color: var(--primary-dark);
   color: white;
-  border: 1px solid #000000;
+  border: none;
 }
 
 .confirmation-dialog[data-type="park"] .dialog-buttons button:last-child:hover {
-  background-color: #5a5a5a;
+  background-color: var(--primary-hover);
 }
 
 /* Accessibility */
 button:focus-visible,
 input:focus-visible {
-  outline: 2px solid #007bff;
+  outline: 2px solid var(--primary-dark);
   outline-offset: 2px;
-  box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 4px rgba(30, 30, 30, 0.25);
 }
 
 .cart-row:focus-within {
-  background-color: rgba(0, 123, 255, 0.05);
+  background-color: rgba(30, 30, 30, 0.05);
 }
 
 .skip-link {
@@ -417,4 +422,12 @@ input:focus-visible {
 .skip-link:focus {
   left: 50%;
   transform: translateX(-50%);
+}
+
+/* Button with icon */
+.button-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }

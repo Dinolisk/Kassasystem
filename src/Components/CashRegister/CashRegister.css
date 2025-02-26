@@ -3,28 +3,28 @@ input[type="number"] {
   -moz-appearance: textfield;
   -webkit-appearance: none;
   margin: 0;
- }
+}
  
- *, *:before, *:after {
+*, *:before, *:after {
   box-sizing: border-box;
- }
+}
  
- html, body {
+html, body {
   height: 100%;
   overflow-y: auto;
- }
- 
- /* Layout */
- .cash-register {
+}
+
+/* Layout */
+.cash-register {
   width: 100%;
   padding: 15px 40px;
- }
+}
  
- .cash-register-content {
+.cash-register-content {
   width: 100%;
- }
+}
  
- .main-section {
+.main-section {
   display: flex;
   gap: 20px;
   height: calc(100vh - 100px);
@@ -32,31 +32,31 @@ input[type="number"] {
   justify-content: center;
   max-width: 1800px;
   margin: 0 auto;
- }
+}
  
- /* Logo */
- .logo-container {
+/* Logo */
+.logo-container {
   text-align: center;
   margin-bottom: 10px;
- }
+}
  
- .logo {
+.logo {
   height: 55px;
   width: auto;
- }
+}
  
- /* Sektioner */
- .left-section,
- .right-section {
+/* Sektioner */
+.left-section,
+.right-section {
   flex: 1;
   display: flex;
   flex-direction: column;
   width: 50%;
   min-width: 500px;
- }
+}
  
- /* Produkter och kundvagn */
- .products-column {
+/* Produkter och kundvagn */
+.products-column {
   flex: 1;
   background-color: #e2e6ea9c;
   border-radius: 7px;
@@ -64,11 +64,11 @@ input[type="number"] {
   overflow-y: auto;
   height: 0;
   border: 1px solid rgba(0, 0, 0, 0.1);
- }
+}
  
- .cart-column {
+.cart-column {
   flex: 1;
-  background-color: #f5f7fa;
+  background-color: var(--light-bg);
   border-radius: 7px;
   padding: 10px 10px 5px 10px;
   overflow: hidden;
@@ -76,21 +76,20 @@ input[type="number"] {
   flex-direction: column;
   height: 0;
   border: 1px solid #e1e5eb;
- }
- 
- /* Meny */
- .menu-container {
-  position: relative;
- }
+}
  
 /* Meny */
+.menu-container {
+  position: relative;
+}
+ 
 .menu-button {
   height: 45px;
   padding: 0 25px;
-  background-color: #6e6e6e;  /* Behåller originalfärgen */
+  background-color: var(--primary-dark);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-size: 22px;
   display: flex;
@@ -101,14 +100,14 @@ input[type="number"] {
 }
 
 .menu-button:hover {
-  background-color: #5a5a5a;  /* Behåller original hover */
+  background-color: var(--primary-hover);
 }
 
 .menu-dropdown {
   position: absolute;
   top: 100%;
   left: 0;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   width: 300px;
   z-index: 1000;
@@ -120,7 +119,7 @@ input[type="number"] {
   width: 100%;
   padding: 20px 25px;
   border: none;
-  background: #374151;  /* Ny mörkgrå för menyalternativen */
+  background: var(--primary-dark);
   color: white;
   text-align: left;
   cursor: pointer;
@@ -130,12 +129,12 @@ input[type="number"] {
   min-height: 70px;
   display: flex;
   align-items: center;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   margin-bottom: 8px;
 }
 
 .menu-option:hover {
-  background-color: #4b5563;
+  background-color: var(--primary-hover);
 }
 
 .menu-option:last-child {
@@ -146,32 +145,32 @@ input[type="number"] {
   border-bottom: none;
 }
  
- /* Sökbox */
- .search-box {
+/* Sökbox */
+.search-box {
   width: 100%;
-    position: relative;
-    margin-bottom: 15px;
-    display: flex;  /* Ny */
-    gap: 12px;   
- }
+  position: relative;
+  margin-bottom: 15px;
+  display: flex;
+  gap: 12px;   
+}
  
- .search-box input {
+.search-box input {
   flex: 1;
   width: 100%;
   height: 45px;
   padding: 10px 15px;
   border: 1px solid #aeadad;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   font-size: 16px;
- }
+}
  
- .search-box input:focus {
+.search-box input:focus {
   outline: none;
-  border-color: #007bff;
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
- }
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(30, 30, 30, 0.1);
+}
  
- .clear-search {
+.clear-search {
   position: absolute;
   right: 15px;
   top: 50%;
@@ -189,53 +188,119 @@ input[type="number"] {
   height: 30px;
   border-radius: 50%;
   transition: background-color 0.2s;
- }
+}
  
- .clear-search:hover {
+.clear-search:hover {
   background-color: rgba(0, 0, 0, 0.05);
- }
+}
  
- /* Kund-knappar */
- .top-button-container {
+/* Kund-knappar */
+.top-button-container {
   display: flex;
   gap: 15px;
   width: 100%;
   margin-bottom: 15px;
- }
+}
  
- .customer-button {
+.customer-button {
   height: 45px;
   padding: 0 25px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--border-radius);
   cursor: pointer;
   font-weight: 500;
   font-size: 16px;
   white-space: nowrap;
   min-width: 140px;
   flex: 1;
- }
+  transition: background-color 0.2s;
+}
  
- .customer-button.existing {
-  background-color: var(--action-green);
+.customer-button.existing {
+  background-color: var(--primary-dark);
   color: white;
- }
+}
  
- .customer-button:not(.existing) {
+.customer-button:not(.existing) {
   background-color: var(--neutral-gray);
   color: white;
- }
+}
  
- .customer-button:hover {
-  background-color: #5a5a5a;
- }
+.customer-button:hover {
+  filter: brightness(1.1);
+}
  
- .customer-button.existing:hover {
-  background-color: #1d7831;
- }
- 
- /* Modal */
- .modal-overlay {
+.customer-button.existing:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Kassaåtgärdsknappar */
+.cart-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+  padding-top: 15px;
+}
+
+.cart-buttons button {
+  flex: 1;
+  height: 45px;
+  padding: 0 15px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 100px;
+  transition: background-color 0.2s;
+}
+
+.cart-buttons .button-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.cancel-action-button {
+  background-color: var(--danger-red);
+  color: white;
+}
+
+.cancel-action-button:hover {
+  background-color: var(--danger-hover);
+}
+
+.park-action-button {
+  background-color: var(--primary-dark);
+  color: white;
+}
+
+.park-action-button:hover {
+  background-color: var(--primary-hover);
+}
+
+.betala-button {
+  background-color: var(--accent-green);
+  color: white;
+}
+
+.betala-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.betala-button:disabled,
+.cart-buttons button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  filter: none;
+}
+
+/* Modal */
+.modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -246,94 +311,92 @@ input[type="number"] {
   align-items: center;
   justify-content: center;
   z-index: 1000;
- }
+}
  
- .confirmation-dialog {
+.modal-content {
   background: white;
-  border-radius: 12px;
+  border-radius: var(--border-radius);
+  padding: 24px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.confirmation-dialog {
+  background: white;
+  border-radius: var(--border-radius);
   padding: 24px;
   width: 100%;
   max-width: 400px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
- }
+}
  
- .confirmation-dialog h2 {
+.confirmation-dialog h2 {
   margin: 0 0 24px 0;
   font-size: 20px;
   font-weight: 600;
   color: #1f2937;
- }
+}
  
- /* Formulär */
- .form-fields {
+/* Formulär */
+.form-fields {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-bottom: 24px;
   width: 100%;
- }
+}
  
- .form-fields input {
+.form-fields input {
   width: 100%;
   padding: 12px;
   border: 1px solid #d1d5db;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 14px;
- }
+}
  
- /* Dialog knappar */
- .dialog-buttons {
+/* Dialog knappar */
+.dialog-buttons {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
   margin-top: 24px;
- }
+}
  
- .dialog-buttons button {
+.dialog-buttons button {
   padding: 10px 16px;
-  border-radius: 6px;
+  border-radius: var(--border-radius);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   min-width: 100px;
   transition: all 0.2s;
- }
+}
  
- .dialog-buttons button:first-child {
-  background-color: #f3f4f6;
-  color: #374151;
-  border: 1px solid #d1d5db;
- }
- 
- .dialog-buttons button:first-child:hover {
-  background-color: #e5e7eb;
- }
- 
- .confirmation-dialog[data-type="register"] .dialog-buttons button:last-child,
- .confirmation-dialog[data-type="search"] .dialog-buttons button:last-child {
+.dialog-buttons button:first-child {
+  background-color: var(--neutral-gray);
   color: white;
-  border: 1px solid #000000;
- }
+  border: none;
+}
  
- .confirmation-dialog[data-type="register"] .dialog-buttons button:last-child {
-  background-color: #208546;
- }
+.dialog-buttons button:first-child:hover {
+  background-color: var(--neutral-hover);
+}
  
- .confirmation-dialog[data-type="register"] .dialog-buttons button:last-child:hover {
-  background-color: #218838;
- }
+.dialog-buttons button.primary-button,
+.dialog-buttons button:last-child {
+  background-color: var(--primary-dark);
+  color: white;
+  border: none;
+}
  
- .confirmation-dialog[data-type="search"] .dialog-buttons button:last-child {
-  background-color: #007bff;
- }
- 
- .confirmation-dialog[data-type="search"] .dialog-buttons button:last-child:hover {
-  background-color: #0056b3;
- }
- 
+.dialog-buttons button.primary-button:hover,
+.dialog-buttons button:last-child:hover {
+  background-color: var(--primary-hover);
+}
 
- /* Responsiv design */
- @media (max-width: 1024px) {
+/* Responsiv design */
+@media (max-width: 1024px) {
   .main-content {
     gap: 10px;
   }
@@ -341,4 +404,4 @@ input[type="number"] {
   .cash-register {
     padding: 15px 20px;
   }
- }
+}

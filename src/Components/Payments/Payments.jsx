@@ -43,15 +43,17 @@ const Payments = ({
 
  // Uppdatera remainingTotal när total ändras
  useEffect(() => {
-   setRemainingTotal(total);
- }, [total]);
+   if (isOpen && total > 0) {
+     setRemainingTotal(total);
+   }
+ }, [total, isOpen]);
 
+ // VIKTIGT: Fixat villkoret i useEffect - endast återställ när dialogrutan öppnas
  useEffect(() => {
-  // Återställ när dialogrutan stängs ELLER när ett nytt totalt belopp sätts (nytt köp)
-  if (!isOpen || isOpen) {
-    resetAllStates();
-  }
-}, [isOpen, total]);
+   if (isOpen) {
+     resetAllStates();
+   }
+ }, [isOpen]); // Ta bort 'total' beroendet för att förhindra återställningar under betalning
 
  const resetAllStates = () => {
    setSelectedPaymentMethod('');
@@ -66,9 +68,7 @@ const Payments = ({
    setPaymentMessage(''); // Rensa eventuella meddelanden
    setPartialPayments([]); 
  };
-
- // 2. Next, in Payments.jsx, modify the handleSplitPaymentComplete function:
-const handleSplitPaymentComplete = (splitPayments) => {
+ const handleSplitPaymentComplete = (splitPayments) => {
   setIsSplitPaymentOpen(false);
   
   console.log("handleSplitPaymentComplete received:", splitPayments);
@@ -126,10 +126,11 @@ const handleSplitPaymentComplete = (splitPayments) => {
   });
   
   console.log("Final methods being passed to parent:", methodsToPass);
+  
+  // Kör direkt utan fördröjningar
   onPaymentComplete(methodsToPass);
   onClose();
 };
-
 
 const completePayment = (method, amount) => {
   // Start payment simulation process
@@ -175,72 +176,77 @@ const completePayment = (method, amount) => {
     'giftcard': 'Presentkort'
   };
 
-  // In the simulatePaymentProcess function inside completePayment:
+  // Uppdaterad simulatePaymentProcess funktion med bättre felhantering men utan fördröjningar
   const simulatePaymentProcess = async () => {
-  for (const stage of stages) {
-    setPaymentStatus(stage.status);
-    await new Promise(resolve => setTimeout(resolve, stage.duration));
-  }
+    try {
+      // Process each stage
+      for (const stage of stages) {
+        setPaymentStatus(stage.status);
+        await new Promise(resolve => setTimeout(resolve, stage.duration));
+      }
 
-  console.log("Current partialPayments:", partialPayments);
-  console.log("Adding new payment:", method, amount);
+      console.log("Current partialPayments:", partialPayments);
+      console.log("Adding new payment:", method, amount);
 
-  // Create the payment object
-  const newPayment = { 
-    method: method, 
-    amount: amount,
-    label: methodLabels[method] || method,
-    timestamp: new Date().toISOString()
+      // Create the payment object
+      const newPayment = { 
+        method: method, 
+        amount: amount,
+        label: methodLabels[method] || method,
+        timestamp: new Date().toISOString()
+      };
+      
+      if (partialPayments.length > 0) {
+        // We have previous payments, handle multiple payment scenario
+        console.log("Multiple payments scenario:");
+        console.log("- Existing payments:", partialPayments);
+        console.log("- New payment:", newPayment);
+
+        const newRemainingTotal = remainingTotal - amount;
+        
+        if (newRemainingTotal <= 0) {
+          // When everything is paid, collect all payments
+          const updatedPayments = [...partialPayments, newPayment];
+          console.log("Completing payment with all payments:", updatedPayments);
+          
+          // Direct completion without delays
+          onPaymentComplete(updatedPayments);
+          resetAllStates();
+          onClose();
+        } else {
+          setPartialPayments(prev => [...prev, newPayment]);
+          setRemainingTotal(newRemainingTotal);
+          setPaymentStatus('idle');
+          setPaymentMessage(`${methodLabels[method] || method} betalning: ${formatPrice(amount)}. Återstående: ${formatPrice(newRemainingTotal)}`);
+          setSelectedPaymentMethod('');
+        }
+      } else {
+        // First payment, simple payment
+        console.log("Single payment scenario");
+        if (amount >= remainingTotal) {
+          // Direct completion without delays
+          onPaymentComplete([newPayment]);
+          resetAllStates();
+          onClose();
+        } else {
+          setPartialPayments([newPayment]);
+          setRemainingTotal(remainingTotal - amount);
+          setPaymentStatus('idle');
+          setPaymentMessage(`${methodLabels[method] || method} betalning: ${formatPrice(amount)}. Återstående: ${formatPrice(remainingTotal - amount)}`);
+          setSelectedPaymentMethod('');
+        }
+      }
+    } catch (error) {
+      console.error("Error during payment processing:", error);
+      setPaymentStatus('declined');
+      setTimeout(() => {
+        setPaymentStatus('idle');
+      }, 2000);
+    }
   };
-  
-  if (partialPayments.length > 0) {
-    // We have previous payments, handle multiple payment scenario
-    console.log("Multiple payments scenario:");
-    console.log("- Existing payments:", partialPayments);
-    console.log("- New payment:", newPayment);
-
-    const newRemainingTotal = remainingTotal - amount;
-    
-    if (newRemainingTotal <= 0) {
-      // When everything is paid, collect all payments
-      const updatedPayments = [...partialPayments, newPayment];
-      console.log("Completing payment with all payments:", updatedPayments);
-      
-      onPaymentComplete(updatedPayments);
-      
-      // Clean up
-      resetAllStates();
-      onClose();
-    } else {
-      setPartialPayments(prev => [...prev, newPayment]);
-      setRemainingTotal(newRemainingTotal);
-      setPaymentStatus('idle');
-      setPaymentMessage(`${methodLabels[method] || method} betalning: ${formatPrice(amount)}. Återstående: ${formatPrice(newRemainingTotal)}`);
-      setSelectedPaymentMethod('');
-    }
-  } else {
-    // First payment, simple payment
-    console.log("Single payment scenario");
-    if (amount >= remainingTotal) {
-      onPaymentComplete([newPayment]);
-    } else {
-      setPartialPayments([newPayment]);
-      setRemainingTotal(remainingTotal - amount);
-      setPaymentStatus('idle');
-      setPaymentMessage(`${methodLabels[method] || method} betalning: ${formatPrice(amount)}. Återstående: ${formatPrice(remainingTotal - amount)}`);
-      setSelectedPaymentMethod('');
-    }
-    
-    if (amount >= remainingTotal) {
-      resetAllStates();
-      onClose();
-    }
-  }
-};
 
   simulatePaymentProcess();
 };
-
 const handlePaymentMethodSelect = (method) => {
   if (!cartItems || cartItems.length === 0) {
     alert('Kundvagnen är tom');
@@ -248,7 +254,7 @@ const handlePaymentMethodSelect = (method) => {
   }
 
   if (method === 'card') {
-    completePayment('card', remainingTotal); // Använd remainingTotal istället för total
+    completePayment('card', remainingTotal);
   } else {
     setSelectedPaymentMethod(method);
   }
@@ -260,7 +266,7 @@ const handleCashAmount = (e) => {
   
   const cashAmountNum = parseFloat(inputAmount);
   if (!isNaN(cashAmountNum) && cashAmountNum >= remainingTotal) {
-    setChange(cashAmountNum - remainingTotal); // Använd remainingTotal istället för total
+    setChange(cashAmountNum - remainingTotal);
   } else {
     setChange(0);
   }
@@ -272,15 +278,15 @@ const handleCashPayment = () => {
     alert('Ogiltigt belopp');
     return;
   }
-  completePayment('cash', remainingTotal); // Använd remainingTotal istället för total
+  completePayment('cash', remainingTotal);
 };
 
 const handleSwishPayment = () => {
-  completePayment('swish', remainingTotal); // Använd remainingTotal istället för total
+  completePayment('swish', remainingTotal);
 };
 
 const handleInvoicePayment = () => {
-  completePayment('invoice', remainingTotal); // Använd remainingTotal istället för total
+  completePayment('invoice', remainingTotal);
 };
 
 const handleGiftCardPayment = () => {
@@ -328,7 +334,7 @@ const handleInsufficientBalanceOption = (option) => {
      setPartialPayments([{
       method: 'giftcard',
       amount: balance,
-      label: 'Presentkort', // Lägg till label för korrekt visning i kvittot
+      label: 'Presentkort', 
       timestamp: new Date().toISOString()
     }]);
      
@@ -365,7 +371,6 @@ const handleInsufficientBalanceOption = (option) => {
      break;
  }
 };
-
 const renderPaymentStatus = () => {
   if (paymentStatus === 'idle') return null;
   
@@ -521,7 +526,6 @@ const renderInsufficientBalanceModal = () => {
     </div>
   );
 };
-
 const renderPaymentMethod = () => {
   switch (selectedPaymentMethod) {
     case 'cash':
@@ -665,7 +669,6 @@ const renderPaymentMethod = () => {
       return null;
   }
 };
-
 const renderContent = () => {
   if (selectedPaymentMethod) {
     return (
@@ -698,24 +701,48 @@ const renderContent = () => {
         )}
       </div>
       <div className="modal-grid">
-        <button onClick={() => handlePaymentMethodSelect('card')}>
+        <button 
+          className="soft-menu-button payment-card-button" 
+          onClick={() => handlePaymentMethodSelect('card')}
+        >
           <CreditCard /> Kortbetalning
         </button>
-        <button onClick={() => handlePaymentMethodSelect('cash')}>
+
+        <button 
+          className="soft-menu-button payment-cash-button" 
+          onClick={() => handlePaymentMethodSelect('cash')}
+        >
           <Banknote /> Kontanter
         </button>
-        <button onClick={() => handlePaymentMethodSelect('swish')}>
+
+        <button 
+          className="soft-menu-button payment-swish-button" 
+          onClick={() => handlePaymentMethodSelect('swish')}
+        >
           <Smartphone /> Swish
         </button>
-        <button onClick={() => handlePaymentMethodSelect('invoice')}>
+
+        <button 
+          className="soft-menu-button payment-invoice-button" 
+          onClick={() => handlePaymentMethodSelect('invoice')}
+        >
           <FileText /> Faktura
         </button>
-        <button onClick={() => handlePaymentMethodSelect('giftcard')}>
+
+        <button 
+          className="soft-menu-button payment-gift-button" 
+          onClick={() => handlePaymentMethodSelect('giftcard')}
+        >
           <Gift /> Presentkort
         </button>
-        <button onClick={() => setIsSplitPaymentOpen(true)}>
+
+        <button 
+          className="soft-menu-button payment-split-button" 
+          onClick={() => setIsSplitPaymentOpen(true)}
+        >
           <CreditCard /> Delad betalning
         </button>
+        
         <button 
           className="modal-back-button" 
           onClick={onClose}

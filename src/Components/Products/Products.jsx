@@ -11,6 +11,7 @@ function Products({
     product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product.id.toString().includes(searchTerm)
   );
+  
   return (
     <div className="products-list">
       {filteredProducts.map(product => (
@@ -28,12 +29,15 @@ function Products({
         >
           <div className="product-image-container">
             <img src={product.thumbnail} alt={product.title} />
-            <div className="product-id">ID Nr: {product.id}</div>
+            <div className="product-id">Artikelnummer: {product.id}</div>
           </div>
           <div className="product-info">
             <h3>{product.title}</h3>
             <p className="product-description">{product.description}</p>
-            <p className="price">{formatProductPrice(product.price)}</p>
+            {/* Lägg till price-container div runt priset */}
+            <div className="price-container">
+              <span className="price">{formatProductPrice(product.price)}</span>
+            </div>
           </div>
         </div>
       ))}

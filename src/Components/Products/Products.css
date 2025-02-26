@@ -12,33 +12,30 @@
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #e8e8e8;
   border-radius: 12px;
   padding: 15px;
   text-align: center;
   min-height: 380px;
-  background-color: #f8f9fa;
+  background-color: #f9fafb; /* Mycket ljusare, nästan vit bakgrund */
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .product-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-  background-color: #addbf3e4;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  background-color: #f5f7fa; /* Subtil förändring vid hover */
 }
 
 .product-card:active {
   transform: scale(0.98);
-  background-color: #addbf3e4;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .product-image-container {
   position: relative;
   width: 100%;
- 
 }
 
 .product-card img {
@@ -49,7 +46,9 @@
   background-color: white;
   padding: 10px;
   box-sizing: border-box;
-  margin-bottom: 0;  /* Changed from 0.5rem since we now have the ID below */
+  margin-bottom: 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05) inset;
+  border: 1px solid #f3f3f3;
 }
 
 .product-id {
@@ -60,7 +59,6 @@
   border-bottom-right-radius: 8px;
   margin-top: 0;
   border-top: none;
- 
 }
 
 .product-info {
@@ -68,11 +66,12 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  justify-content: space-between; /* Viktigt för att skapa utrymme mellan beskrivning och pris */
 }
 
 .product-info h3 {
   color: #2c3e50;
-  margin-top: 5px; 
+  margin-top: 5px;
   margin-bottom: 10px;
   font-size: 1.2rem;
   min-height: 1.5em;
@@ -94,22 +93,28 @@
   line-height: 1.5;
   height: 3em;
   flex-grow: 0;
+  margin-bottom: 15px; /* Lägg till marginal under beskrivningen för att ge plats åt priset */
 }
 
 .product-info .price {
-  color: #1C76BC;  /* Gardeco-logotypens blå */
-  font-weight: bold;
-  font-size: 1.2rem;
-  margin: 10px 0;
-  background-color: rgba(28, 118, 188, 0.05);  /* Subtil bakgrund */
-  padding: 5px 10px;
-  border-radius: 6px;
   display: inline-block;
+  background-color: #176297; /* Lite mjukare blå */
+  color: white;
+  font-weight: 600;
+  font-size: 1.15rem;
+  padding: 6px 16px;
+  border-radius: 50px;
+  min-width: 80px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(43, 124, 180, 0.15);
+  margin-top: auto; /* Skjut priset nedåt så mycket som möjligt inom flex-containern */
 }
 
 .product-card:hover .product-info .price {
-  background-color: rgba(28, 118, 188, 0.1);  /* Lätt färgändring vid hover */
+  background-color: #1c496a;
+  box-shadow: 0 3px 8px rgba(43, 124, 180, 0.2);
 }
+
 /* Media Queries */
 @media (max-width: 1024px) {
   .products-list {
