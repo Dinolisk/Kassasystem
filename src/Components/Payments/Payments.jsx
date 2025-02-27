@@ -564,7 +564,7 @@ const renderPaymentMethod = () => {
   return (
     <div className="payment-method-container">
       <h3>
-        <Banknote size={24} />
+        <Banknote size={24} className="mr-2" />
         Kontanter
       </h3>
       <p className="amount-display">
@@ -616,64 +616,76 @@ const renderPaymentMethod = () => {
   );
 
 
-    case 'swish':
-      return (
-        <div className="payment-method-container">
-          <h3>Swish</h3>
-          <p>Total att betala: {formatPrice(remainingTotal)}</p>
-          <div className="swish-qr-placeholder">
-            <p>Skanna QR-kod för att betala</p>
-          </div>
+  case 'swish':
+    return (
+      <div className="payment-method-container">
+        <h3>
+  <Smartphone size={24} className="mr-2" /> {/* margin right */}
+  Swish
+</h3>
+        <p className="amount-display">
+          <span>Total att betala:</span>
+          <span>{formatPrice(remainingTotal)}</span>
+        </p>
+        <div className="swish-qr-placeholder" style={{textAlign: 'center'}}>
+        <p>Skanna QR-kod för att betala</p>
+      </div>
+        <button 
+          onClick={handleSwishPayment}
+          disabled={paymentStatus !== 'idle'}
+          className="primary-button"
+        >
+          Bekräfta Swish-betalning
+        </button>
+      </div>
+    );
+  
+  case 'invoice':
+    return (
+      <div className="payment-method-container">
+         <h3>
+        <FileText size={24} className="mr-2" />
+         Faktura
+      </h3>
+        <p className="amount-display">
+          <span>Total att betala:</span>
+          <span>{formatPrice(remainingTotal)}</span>
+        </p>
+        <input
+          type="text"
+          className="payment-input"
+          placeholder="Personnummer"
+          value={personnummer}
+          onChange={(e) => setPersonnummer(e.target.value)}
+          disabled={paymentStatus !== 'idle'}
+        />
+        <input
+          type="email"
+          className="payment-input"
+          placeholder="E-postadress"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          disabled={paymentStatus !== 'idle'}
+        />
+        {personnummer && email && (
           <button 
-            onClick={handleSwishPayment}
+            onClick={handleInvoicePayment}
             disabled={paymentStatus !== 'idle'}
             className="primary-button"
           >
-            Bekräfta Swish-betalning
+            Skicka faktura
           </button>
-        </div>
-      );
-
-    case 'invoice':
-      return (
-        <div className="payment-method-container">
-          <h3>Faktura</h3>
-          <p>Total att betala: {formatPrice(remainingTotal)}</p>
-          <input
-            type="text"
-            className="payment-input"
-            placeholder="Personnummer"
-            value={personnummer}
-            onChange={(e) => setPersonnummer(e.target.value)}
-            disabled={paymentStatus !== 'idle'}
-          />
-          <input
-            type="email"
-            className="payment-input"
-            placeholder="E-postadress"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            disabled={paymentStatus !== 'idle'}
-          />
-          {personnummer && email && (
-            <button 
-              onClick={handleInvoicePayment}
-              disabled={paymentStatus !== 'idle'}
-              className="primary-button"
-            >
-              Skicka faktura
-            </button>
-          )}
-        </div>
-      );
+        )}
+      </div>
+    );
 
       case 'giftcard':
         return (
           <div className="payment-method-container">
             <h3>
-              <Gift size={24} />
-              Presentkort
-            </h3>
+        <Gift size={24} className="mr-2" /> 
+        Presentkort
+      </h3>
             <p className="amount-display">
               <span>Total att betala:</span>
               <span>{formatPrice(remainingTotal)}</span>
@@ -747,7 +759,6 @@ const renderContent = () => {
   return (
     <>
       <h2>
-        <CreditCard size={28} />
         Betalningsalternativ
       </h2>
       <div className="total-amount">
@@ -801,7 +812,7 @@ const renderContent = () => {
           className="soft-menu-button payment-split-button" 
           onClick={() => setIsSplitPaymentOpen(true)}
         >
-          <CreditCard /> Delad betalning
+          <CreditCard /> Blandad betalning
         </button>
         
         <button 

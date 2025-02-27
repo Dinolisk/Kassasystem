@@ -358,129 +358,128 @@ const generateReceipt = (paymentMethods = []) => {
     console.log("No payment methods to display in receipt");
   }
   
-  console.log("paymentMethodsHTML:", paymentMethodsHTML ? "Contains data" : "Empty");
-  
-    const receiptContent = `
-      <html>
-        <head>
-          <style>
-            .receipt-container {
-              font-family: "SF Mono", "Segoe UI", "Arial", sans-serif;
-              padding: 20px;
-              max-width: 400px;
-              margin: 0 auto;
-              background: white;
-              font-size: 14px;
-            }
-            .company-name {
-              font-size: 24px;
-              font-weight: bold;
-              text-align: center;
-              margin-bottom: 10px;
-            }
-            .company-info {
-              text-align: center;
-              margin-bottom: 20px;
-            }
-            .date-time {
-              text-align: center;
-              margin-bottom: 20px;
-              font-size: 14px;
-            }
-            .separator {
-              border-top: 1px dashed #000;
-              margin: 15px 0;
-            }
-            .item-list {
-              list-style: none;
-              padding: 0;
-              margin: 0;
-            }
-            .item-list li {
-              display: flex;
-              justify-content: space-between;
-              margin-bottom: 5px;
-            }
-            .price-info {
-              display: flex;
-              justify-content: space-between;
-              margin-top: 5px;
-            }
-            .payment-methods {
-              margin-top: 15px;
-            }
-            .payment-methods h3 {
-              font-size: 14px;
-              font-weight: bold;
-              margin-bottom: 5px;
-              text-align: center;
-            }
-            .payment-method {
-              display: flex;
-              justify-content: space-between;
-              margin-bottom: 5px;
-            }
-            .thank-you {
-              text-align: center;
-              margin-top: 20px;
-              font-size: 14px;
-            }
-          </style>
-        </head>
-        <body>
-          <div class="receipt-container">
-            <div class="company-name">GARDECO</div>
-            <div class="company-info">
-              <div>Storgatan 12, 123 45 Stockholm</div>
-              <div>Tel: 08-123 45 67</div>
-              <div>Org. nr: 556123-4567</div>
-            </div>
-            <div class="date-time">
-              ${dateString} ${timeString}
-            </div>
-            <div class="separator"></div>
-            <ul class="item-list">
-              ${cart.map(item => `
-                <li>
-                  <span>${item.title} x${item.quantity}</span>
-                  <span>${formatPrice(item.price * item.quantity)}</span>
-                </li>
-              `).join('')}
-            </ul>
-            <div class="separator"></div>
-            <div class="price-info">
-              <span>Netto:</span>
-              <span>${formatPrice(netto)}</span>
-            </div>
-            <div class="price-info">
-              <span>Moms (25%):</span>
-              <span>${formatPrice(moms)}</span>
-            </div>
-            <div class="price-info" style="font-weight: bold; margin-top: 10px;">
-              <span>Totalt SEK:</span>
-              <span>${formatPrice(brutto)}</span>
-            </div>
-            
-            ${paymentMethodsHTML ? `
-              <div class="separator"></div>
-              ${paymentMethodsHTML}
-            ` : '<!-- Inga betalningsmetoder att visa -->'}
-            
-            <div class="separator"></div>
-            <div class="thank-you">
-              <div>Tack för ditt köp!</div>
-              <div>Välkommen åter!</div>
-            </div>
+  const receiptContent = `
+    <html>
+      <head>
+        <style>
+          .receipt-container {
+            font-family: "SF Mono", "Segoe UI", "Arial", sans-serif;
+            padding: 20px;
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            font-size: 14px;
+          }
+          .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+          }
+          .company-info {
+            text-align: center;
+            margin-bottom: 20px;
+          }
+          .date-time {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 14px;
+          }
+          .separator {
+            border-top: 1px dashed #000;
+            margin: 15px 0;
+          }
+          .item-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+          }
+          .item-list li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+          }
+          .price-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+          }
+          .payment-methods {
+            margin-top: 15px;
+          }
+          .payment-methods h3 {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: center;
+          }
+          .payment-method {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+          }
+          .thank-you {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="receipt-container">
+          <div class="company-name">GARDECO</div>
+          <div class="company-info">
+            <div>Storgatan 12, 123 45 Stockholm</div>
+            <div>Tel: 08-123 45 67</div>
+            <div>Org. nr: 556123-4567</div>
           </div>
-        </body>
-      </html>
-    `;
+          <div class="date-time">
+            ${dateString} ${timeString}
+          </div>
+          
+          ${paymentMethodsHTML ? `
+            <div class="separator"></div>
+            ${paymentMethodsHTML}
+            <div class="separator"></div>
+          ` : ''}
+          
+          <ul class="item-list">
+            ${cart.map(item => `
+              <li>
+                <span>${item.title} x${item.quantity}</span>
+                <span>${formatPrice(item.price * item.quantity)}</span>
+              </li>
+            `).join('')}
+          </ul>
+          
+          <div class="separator"></div>
+          <div class="price-info">
+            <span>Netto:</span>
+            <span>${formatPrice(netto)}</span>
+          </div>
+          <div class="price-info">
+            <span>Moms (25%):</span>
+            <span>${formatPrice(moms)}</span>
+          </div>
+          <div class="price-info" style="font-weight: bold; margin-top: 10px;">
+            <span>Totalt SEK:</span>
+            <span>${formatPrice(brutto)}</span>
+          </div>
+          
+          <div class="separator"></div>
+          <div class="thank-you">
+            <div>Tack för ditt köp!</div>
+            <div>Välkommen åter!</div>
+          </div>
+        </div>
+      </body>
+    </html>
+  `;
    
-    const newWindow = window.open('', '', 'width=400,height=600');
-    newWindow.document.write(receiptContent);
-    newWindow.document.close();
-  };
-
+  const newWindow = window.open('', '', 'width=400,height=600');
+  newWindow.document.write(receiptContent);
+  newWindow.document.close();
+};
   return (
     <div className="cash-register">
       <div className="cash-register-content"></div>

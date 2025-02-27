@@ -231,7 +231,7 @@ p:contains("Totalt att betala"),
     align-self: stretch;
     box-sizing: border-box;
     box-shadow: 0 4px 12px rgba(46, 58, 78, 0.15);
-    min-height: 45px;
+    min-height: 70px;
   }
   
   .back-button {
