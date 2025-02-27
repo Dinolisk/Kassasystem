@@ -40,6 +40,9 @@ const Payments = ({
  const [remainingTotal, setRemainingTotal] = useState(total);
  const [paymentMessage, setPaymentMessage] = useState('');
  const [partialPayments, setPartialPayments] = useState([]);
+ const [declineReason, setDeclineReason] = useState('');
+
+
 
  // Uppdatera remainingTotal när total ändras
  useEffect(() => {
@@ -179,6 +182,25 @@ const completePayment = (method, amount) => {
   // Uppdaterad simulatePaymentProcess funktion med bättre felhantering men utan fördröjningar
   const simulatePaymentProcess = async () => {
     try {
+      if (method === 'card' && Math.random() < 0.1) {
+        // Simulera betalningsförsök innan den nekas
+        setPaymentStatus('awaiting_card');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        setPaymentStatus('processing');
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        // Neka betalningen med meddelande om otillräckligt saldo
+        setPaymentStatus('declined');
+        setDeclineReason('insufficient_funds');
+        
+        // Återställ status efter 3 sekunder
+        setTimeout(() => {
+          setPaymentStatus('idle');
+          setDeclineReason('');
+        }, 3000);
+        
+        return; // Avbryt fortsatt betalningsprocess
+      }
       // Process each stage
       for (const stage of stages) {
         setPaymentStatus(stage.status);
@@ -384,6 +406,13 @@ const renderPaymentStatus = () => {
     verifying: 'Verifierar kundinformation...',
     invoice_sent: 'Faktura skickad!'
   };
+    // Hantera specifika nekningsorsaker
+  const declineMessages = {
+    insufficient_funds: 'Betalning nekad: Otillräckligt saldo på kortet.',
+    card_expired: 'Betalning nekad: Kortet har gått ut.',
+    default: 'Betalning nekad. Försök igen.'
+  };
+  
   
   return (
     <div className="payment-status">
@@ -402,7 +431,7 @@ const renderPaymentStatus = () => {
       {paymentStatus === 'declined' && (
         <>
           <XCircle className="text-red-500" size={48} />
-          <p>{statusMessages[paymentStatus]}</p>
+          <p>{declineReason ? declineMessages[declineReason] || declineMessages.default : declineMessages.default}</p>
         </>
       )}
     </div>
@@ -422,8 +451,11 @@ const renderInsufficientBalanceModal = () => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content giftcard-dialog" onClick={e => e.stopPropagation()}>
-        <h2>{isConfirmation ? 'Bekräfta presentkort' : 'Otillräckigt presentkortssaldo'}</h2>
+    <div className="modal-content giftcard-dialog" onClick={e => e.stopPropagation()}>
+      <h2>
+        <Gift size={28} />
+        {isConfirmation ? 'Bekräfta presentkort' : 'Otillräckigt presentkortssaldo'}
+      </h2>
         
         {isConfirmation ? (
           <div className="giftcard-confirmation">
@@ -529,43 +561,60 @@ const renderInsufficientBalanceModal = () => {
 const renderPaymentMethod = () => {
   switch (selectedPaymentMethod) {
     case 'cash':
-      return (
-        <div className="payment-method-container">
-          <h3>Kontant</h3>
-          <p>Total att betala: {formatPrice(remainingTotal)}</p>
-          <input
-            type="number"
-            className="payment-input"
-            value={cashAmount}
-            onChange={handleCashAmount}
-            placeholder="Ange mottaget belopp"
-            disabled={paymentStatus !== 'idle'}
-          />
-          {cashAmount && (
-            <div className="cash-summary">
-              <div className="received-amount">
-                Mottaget belopp: {formatPrice(parseFloat(cashAmount) || 0)}
-              </div>
-              <div className="change-amount">
-                {parseFloat(cashAmount) >= remainingTotal ? (
-                  `Växel att ge tillbaka: ${formatPrice(change)}`
-                ) : (
-                  'Otillräckligt belopp'
-                )}
-              </div>
-            </div>
-          )}
-          {parseFloat(cashAmount) >= remainingTotal && (
-            <button 
-              onClick={handleCashPayment}
-              disabled={paymentStatus !== 'idle'}
-              className="primary-button"
-            >
-              Bekräfta betalning
-            </button>
-          )}
+  return (
+    <div className="payment-method-container">
+      <h3>
+        <Banknote size={24} />
+        Kontanter
+      </h3>
+      <p className="amount-display">
+        <span>Total att betala:</span>
+        <span>{formatPrice(remainingTotal)}</span>
+      </p>
+      <input
+        type="number"
+        className="payment-input"
+        value={cashAmount}
+        onChange={handleCashAmount}
+        placeholder="Ange mottaget belopp"
+        disabled={paymentStatus !== 'idle'}
+      />
+      {cashAmount && (
+        <div className="cash-summary">
+          <div className="received-amount">
+            <span>Mottaget belopp:</span>
+            <span>{formatPrice(parseFloat(cashAmount) || 0)}</span>
+          </div>
+          <div className="change-amount">
+            {parseFloat(cashAmount) >= remainingTotal ? (
+              <>
+                <span>Växel att ge tillbaka:</span> 
+                <span>{formatPrice(change)}</span>
+              </>
+            ) : (
+              <>
+                <span>Status:</span>
+                <span className="negative">Otillräckligt belopp</span>
+              </>
+            )}
+          </div>
         </div>
-      );
+      )}
+      {parseFloat(cashAmount) >= remainingTotal && (
+        <button 
+          onClick={handleCashPayment}
+          disabled={paymentStatus !== 'idle'}
+          className="primary-button confirm-button"
+        >
+          <div className="button-with-icon">
+            <CheckCircle2 size={20} />
+            <span>Bekräfta betalning</span>
+          </div>
+        </button>
+      )}
+    </div>
+  );
+
 
     case 'swish':
       return (
@@ -619,56 +668,62 @@ const renderPaymentMethod = () => {
       );
 
       case 'giftcard':
-      return (
-    <div className="payment-method-container">
-      <h3>Presentkort</h3>
-      <p>Total att betala: {formatPrice(remainingTotal)}</p>
-      
-      {/* Input för presentkortsnummer */}
-      <div className="gift-card-input-container">
-        <Gift className="input-icon" size={20} />
-        <input
-          type="text"
-          className="payment-input"
-          placeholder="Ange presentkortsnummer"
-          value={giftCardNumber}
-          onChange={(e) => {
-            // Endast siffror tillåts
-            const value = e.target.value.replace(/[^\d]/g, '');
-            setGiftCardNumber(value);
-          }}
-          maxLength={4}
-          disabled={paymentStatus !== 'idle'}
-        />
-      </div>
-      
-      {/* Verifiera presentkort knapp */}
-      {giftCardNumber && giftCardNumber.length === 4 && (
-        <button 
-          onClick={handleGiftCardPayment}
-          disabled={paymentStatus !== 'idle'}
-          className="primary-button gift-card-button"
-        >
-          {paymentStatus === 'verifying_card' ? (
-            <div className="button-with-icon">
-              <Loader2 className="animate-spin" size={20} />
-              <span>Verifierar...</span>
+        return (
+          <div className="payment-method-container">
+            <h3>
+              <Gift size={24} />
+              Presentkort
+            </h3>
+            <p className="amount-display">
+              <span>Total att betala:</span>
+              <span>{formatPrice(remainingTotal)}</span>
+            </p>
+            
+            {/* Input för presentkortsnummer */}
+            <div className="gift-card-input-container">
+              <Gift className="input-icon" size={20} />
+              <input
+                type="text"
+                className="payment-input"
+                placeholder="Ange presentkortsnummer"
+                value={giftCardNumber}
+                onChange={(e) => {
+                  // Endast siffror tillåts
+                  const value = e.target.value.replace(/[^\d]/g, '');
+                  setGiftCardNumber(value);
+                }}
+                maxLength={4}
+                disabled={paymentStatus !== 'idle'}
+              />
             </div>
-          ) : (
-            <div className="button-with-icon">
-              <CheckCircle2 size={20} />
-              <span>Verifiera presentkort</span>
-            </div>
-          )}
-        </button>
-      )}
-    </div>
-  );
-
+            
+            {/* Verifiera presentkort knapp */}
+            {giftCardNumber && giftCardNumber.length === 4 && (
+              <button 
+                onClick={handleGiftCardPayment}
+                disabled={paymentStatus !== 'idle'}
+                className="primary-button gift-card-button"
+              >
+                {paymentStatus === 'verifying_card' ? (
+                  <div className="button-with-icon">
+                    <Loader2 className="animate-spin" size={20} />
+                    <span>Verifierar...</span>
+                  </div>
+                ) : (
+                  <div className="button-with-icon">
+                    <CheckCircle2 size={20} />
+                    <span>Verifiera presentkort</span>
+                  </div>
+                )}
+              </button>
+            )}
+          </div>
+        );
     default:
       return null;
   }
 };
+// Uppdatera renderContent-funktionen för att få konsekvent styling på huvudmenyn
 const renderContent = () => {
   if (selectedPaymentMethod) {
     return (
@@ -691,9 +746,15 @@ const renderContent = () => {
 
   return (
     <>
-      <h2>Betalningsalternativ</h2>
+      <h2>
+        <CreditCard size={28} />
+        Betalningsalternativ
+      </h2>
       <div className="total-amount">
-        <p>Totalt att betala: {formatPrice(remainingTotal)}</p>
+        <p className="amount-display">
+          <span>Totalt att betala:</span>
+          <span>{formatPrice(remainingTotal)}</span>
+        </p>
         {paymentMessage && (
           <div className="payment-message">
             {paymentMessage}
@@ -755,6 +816,7 @@ const renderContent = () => {
     </>
   );
 };
+
 
 if (!isOpen) return null;
 

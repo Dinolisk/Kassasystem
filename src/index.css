@@ -167,7 +167,7 @@ Gemensamma stilvariabler för Gardeco-applikationen
   flex-direction: row !important;
   align-items: center;
   justify-content: center;
-  min-height: 90px !important;
+  min-height: 75px !important;
   border-radius: 8px !important;
   color: white;
   padding: 1.5rem;

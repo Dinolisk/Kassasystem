@@ -29,7 +29,54 @@
     color: var(--text-primary);
     font-weight: 600;
   }
-  
+  /* ============================================
+   Global styling för beloppstext och information
+   ============================================ */
+
+/* Generell styling för alla beloppstexter i hela applikationen */
+.total-amount p,
+p:contains("Total att betala"),
+p:contains("Totalt att betala"),
+.payment-method-container p:first-of-type,
+.modal-content p:contains("Total"),
+.modal-content p:contains("Mottaget"),
+.modal-content p:contains("Växel") {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  padding: 12px 16px;
+  margin: 12px 0;
+  background-color: var(--light-bg, #f8f9fa);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-dark, #0f766e);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Skapa separat klass för att använda explicit också */
+.amount-display {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary, #333);
+  padding: 12px 16px;
+  margin: 12px 0;
+  background-color: var(--light-bg, #f8f9fa);
+  border-radius: 8px;
+  border-left: 4px solid var(--primary-dark, #0f766e);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Betalningsmodalens totalsumma */
+.total-amount {
+  margin-bottom: 20px;
+}
+
+.total-amount p {
+  margin: 0 0 8px 0;
+}
   /* ============================================
      Grid & Layout Components
      ============================================ */
@@ -282,6 +329,25 @@
     color: var(--accent-green);
     font-weight: 500;
   }
+  /* Styling för knappar i giftcard-dialogen */
+.giftcard-dialog .button-with-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; /* Mer mellanrum mellan ikon och text */
+}
+
+/* Lägg till margin mellan knapparna */
+.giftcard-button-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* Bra mellanrum mellan varje knapp */
+}
+
+/* Förbättra presentationssaldo-modalen */
+.giftcard-info-container {
+  margin-bottom: 24px; /* Mer space mellan info och knappar */
+}
   
   /* ============================================
      Utility Classes

@@ -522,7 +522,7 @@ const handleAddPayment = async (amount) => {
 
         {!selectedMethod ? (
           <div className="payment-methods-container">
-            <h3>{partialPayments.length > 0 ? 'Välj ny betalningsmetod' : 'Välj betalningsmetod'}</h3>
+            <h3>{partialPayments.length > 0 ? 'Välj ny betalningsmetod' : 'Välj betalningsmetod:'}</h3>
             <div className="payment-method-options">
               {methods.map(method => (
                 <button

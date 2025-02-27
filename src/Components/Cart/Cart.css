@@ -430,4 +430,5 @@ input:focus-visible {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  padding: 8px; /* Lite mer intern padding för att göra knapparna större */
 }

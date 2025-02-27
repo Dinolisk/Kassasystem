@@ -22,27 +22,41 @@
 }
 
 .split-payment-summary {
-    background: #f2f2f2;
-    padding: 0.5rem;
-    border-radius: 10px;
-    margin-bottom: 1rem;
+    background: linear-gradient(to bottom, #f8f9fa, #f2f2f2);
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
 }
 
 .split-payment-summary h2 {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
     color: #2E3A4E;
-    font-weight: 600;
+    font-weight: 700;
     margin-top: 0.2rem;
+    margin-bottom: 0.8rem;
+    text-align: center;
 }
 
 .split-payment-summary p {
-    font-size: 1rem;
+    font-size: 1.1rem;
     color: #2E3A4E;
-    margin: 0.25rem 0;
+    margin: 0.5rem 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0.4rem 0.5rem;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+.split-payment-summary p:last-of-type {
+    font-weight: 600;
+    background-color: rgba(227, 227, 227, 0.789);
 }
 
 .payments-list {
-    margin-top: 0.5rem;
+    margin-top: 1rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
@@ -52,9 +66,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem;
+    padding: 0.75rem 1rem;
     background: white;
     border-radius: 8px;
+    border-left: 3px solid #2E3A4E;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .remove-payment-btn {
@@ -62,18 +78,22 @@
     border: none;
     color: #EF4444;
     cursor: pointer;
-    padding: 0.25rem;
+    padding: 0.4rem;
+    border-radius: 6px;
     display: flex;
     align-items: center;
+    transition: all 0.2s ease;
 }
 
 .remove-payment-btn:hover {
+    background-color: #FEE2E2;
     color: #DC2626;
 }
 
 .payment-methods-container {
     margin-top: 1rem;
     width: 100%;
+    margin-bottom: 1.75rem;
 }
 
 .payment-methods-container h3 {
@@ -88,6 +108,7 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 1rem;
     width: 100%;
+    
 }
 
 .payment-method-option {
@@ -102,7 +123,7 @@
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
-    height: 90px;
+    height: 120px;
 }
 
 .payment-method-option:hover {
@@ -111,13 +132,13 @@
 }
 
 .payment-method-option svg {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     color: #2E3A4E;
 }
 
 .payment-method-option span {
-    font-size: 0.9rem;
+    font-size: 1rem;
     font-weight: 600;
     color: #2E3A4E;
     text-align: center;
@@ -247,6 +268,7 @@
     transition: all 0.2s ease;
     margin-top: 1rem;
     width: 100%;
+    min-height: 60px;
     box-shadow: 0 4px 12px rgba(46, 58, 78, 0.15);
 }
 
