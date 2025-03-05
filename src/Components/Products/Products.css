@@ -102,7 +102,7 @@
 
 .price-container {
   margin-top: auto;
-  padding: var(--spacing-xs) 0 0; /* Minskat från var(--spacing-sm) 0 var(--spacing-xs) till var(--spacing-xs) 0 0 */
+  padding: var(--spacing-xs) 0 var(--spacing-sm); /* Minskat från var(--spacing-sm) 0 var(--spacing-xs) till var(--spacing-xs) 0 0 */
 }
 
 .product-info .price {
