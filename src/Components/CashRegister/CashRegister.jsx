@@ -120,7 +120,7 @@ function CashRegister() {
     }
   }, [cart]);
   // Kundvagnshantering
-  const addToCart = (product) => {
+  const addToCart = useCallback((product) => {
     setCart(prevCart => {
       const existingItem = prevCart.find(item => item.id === product.id);
       if (existingItem) {
@@ -132,7 +132,7 @@ function CashRegister() {
       }
       return [...prevCart, { ...product, quantity: 1 }];
     });
-  };
+  }, []);
 
   const removeFromCart = (productId) => {
     setCart(cart.filter(item => item.id !== productId));

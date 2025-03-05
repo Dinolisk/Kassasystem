@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import './Products.css';
 
 function Products({
@@ -7,11 +7,15 @@ function Products({
   addToCart,
   formatProductPrice
 }) {
-  const filteredProducts = productsData.filter(product =>
-    product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    product.id.toString().includes(searchTerm)
+  // Memoize the filtered products to prevent unnecessary recalculations
+  const filteredProducts = useMemo(() => 
+    productsData.filter(product =>
+      product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.id.toString().includes(searchTerm)
+    ), 
+    [productsData, searchTerm]  // Only recalculate when these dependencies change
   );
-  
+
   return (
     <div className="products-list">
       {filteredProducts.map(product => (
