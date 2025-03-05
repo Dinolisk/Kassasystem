@@ -42,6 +42,7 @@ const CartMoreModal = ({ isOpen, onClose, handleMoreOptions }) => {
                   handleMoreOptions(option.action);
                   onClose();
                 }}
+                className="soft-menu-button"
               >
                 <IconComponent size={45} />
                 <span>{option.label}</span>
@@ -50,7 +51,7 @@ const CartMoreModal = ({ isOpen, onClose, handleMoreOptions }) => {
           })}
           <button
             onClick={onClose}
-            className="back-button"
+            className="modal-back-button"
           >
             <ArrowLeft size={45} />
             <span>Tillbaka</span>

@@ -1,8 +1,8 @@
 // MenuModal.jsx
 import './MenuModal.css';
 import React from 'react';
-import { 
-  FileText, 
+import {
+  FileText,
   ArrowLeft,
   DollarSign,
   BarChart2,
@@ -45,23 +45,23 @@ const MenuModal = ({ isOpen, onClose, menuOptions }) => {
         <div className="menu-grid">
           {menuOptions.map(option => (
             <button
-              className="menu-item"
+              className="soft-menu-button"
               key={option.id}
               onClick={() => {
                 option.action();
                 onClose();
               }}
             >
-              <span>{option.label}</span>
               {getIconForOption(option.label)}
+              <span>{option.label}</span>
             </button>
           ))}
           <button
             onClick={onClose}
-            className="back-button"
+            className="modal-back-button"
           >
+            <ArrowLeft size={45} />
             <span>Tillbaka</span>
-            <ArrowLeft size={24} />
           </button>
         </div>
       </div>

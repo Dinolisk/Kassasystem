@@ -34,36 +34,20 @@
   padding: 15px;
 }
 
-.cart-grid button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  padding: 1.5rem;
-  border: none;
-  border-radius: 8px;
-  background: #2E3A4E;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.2s;
-  height: 130px;
-  font-size: 18px;
-  font-weight: 500;
+/* Ta bort de ursprungliga knappstilarna och använd de gemensamma stilarna från index.css istället */
+/* Den gamla .cart-grid button stilarna tas bort här */
+
+/* Ta bort den gamla .back-button stilen då vi nu använder modal-back-button */
+
+/* Responsiva justeringar för cart-grid som liknar modal-grid i index.css */
+@media (max-width: 1024px) {
+  .cart-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.cart-grid button:hover {
-  background: #3d4b63;
-}
-
-.cart-grid button svg {
-  color: white;
-  width: 45px;
-  height: 45px;
-}
-
-.back-button {
-  grid-column: 1 / -1;
-  background: #6B7280 !important;
-  margin-top: 1rem;
+@media (max-width: 480px) {
+  .cart-grid {
+    grid-template-columns: 1fr;
+  }
 }
