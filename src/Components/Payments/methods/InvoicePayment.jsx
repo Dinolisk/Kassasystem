@@ -52,3 +52,4 @@ export const InvoicePayment = ({
 };
 
 export default InvoicePayment;
+

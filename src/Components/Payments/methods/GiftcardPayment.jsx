@@ -61,3 +61,4 @@ export const GiftCardPayment = ({
   );
 };
 export default GiftCardPayment;
+
