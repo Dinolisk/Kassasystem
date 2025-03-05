@@ -1,7 +1,6 @@
 // src/Components/Payments/methods/GiftCardPayment.jsx
 import React from 'react';
 import { Gift, CheckCircle2, Loader2 } from 'lucide-react';
-
 export const GiftCardPayment = ({
   remainingTotal,
   paymentStatus,
