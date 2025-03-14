@@ -1,0 +1,96 @@
+/* src/styles/buttons.css */
+.modal-back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1.2rem; /* Specifikt för modal-back-button */
+    border: none;
+    border-radius: 8px; /* Explicit definierad */
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--back-primary, #4a5568);
+    min-height: 100px;
+    font-size: 1.25rem;
+    margin-bottom: 0;
+}
+
+.modal-back-button:hover {
+    background: var(--back-hover, #2d3748);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(46, 58, 78, 0.2);
+}
+
+.modal-back-button:disabled {
+    background: #a5c6f0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.modal-back-button svg {
+    color: white;
+    width: 16px;
+    height: 16px;
+}
+
+.payment-method-back-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background: var(--back-primary, #4a5568);
+    min-height: 60px;
+    font-size: 1.2rem;
+}
+
+.payment-method-back-button:hover {
+    background: var(--back-hover, #2d3748);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.payment-method-back-button:disabled {
+    background: #a5c6f0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.payment-method-back-button svg {
+    color: white;
+    width: 16px;
+    height: 16px;
+}
+
+/* Media Queries */
+@media (max-width: 1024px) {
+    .modal-back-button {
+        min-height: 80px;
+    }
+    .payment-method-back-button {
+        min-height: 60px;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal-back-button {
+        min-height: 60px;
+    }
+    .payment-method-back-button {
+        min-height: 50px;
+    }
+}

@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './CashRegister.css';
 import Products from "../Products/Products.jsx";
 import Cart from '../Cart/Cart.jsx';
-import Payments from '../Payments/Payments.jsx';  
+import { Payments } from '../Payments/Payments.jsx';
 import MenuModal from './MenuModal.jsx';
 
 
@@ -677,12 +677,14 @@ const generateReceipt = (paymentMethods = []) => {
         </div>
       )}
        {/* Here you'll add the Payments component */}
-      <Payments
+       <Payments
         isOpen={isPaymentOpen}
         onClose={() => setIsPaymentOpen(false)}
         total={total}
+        remainingTotal={total}
         onPaymentComplete={handlePaymentComplete}
         formatPrice={formatCartPrice}
+        formatProductName={formatProductName}
         cartItems={cart}
       />
     </div>

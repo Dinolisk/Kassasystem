@@ -1,0 +1,302 @@
+/* Klarna - Huvudcontainer */
+.klarna-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-md, 20px);
+    padding-top: 0;
+  }
+  
+  /* Rubrik */
+  .klarna-container h2 {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 1.4rem;
+    color: var(--text-primary, #1a1a1a);
+    font-weight: 600;
+  }
+  
+  /* Beloppssektion */
+  .klarna-amount-total {
+    margin-bottom: 16px;
+    background: var(--light-bg, #f8f9fa);
+    border-radius: 8px;
+    padding: 8px 12px;
+    border-left: 4px solid var(--payment-klarna, #ffb3c7);
+  }
+  
+  .klarna-amount-layout {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .klarna-amount-label {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    width: 30%;
+    text-align: left;
+  }
+  
+  .klarna-amount-center-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    width: 40%;
+  }
+  
+  .klarna-amount-spacer {
+    width: 30%;
+  }
+  
+  .klarna-amount-display {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 180px;
+  }
+  
+  .klarna-amount-input {
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 4px;
+    text-align: center;
+    color: var(--text-primary, #1a1a1a);
+    width: 100%;
+    max-width: 100px;
+  }
+  
+  .klarna-amount-input:focus {
+    outline: none;
+  }
+  
+  .klarna-amount-input::-webkit-inner-spin-button,
+  .klarna-amount-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .klarna-currency {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #666;
+    padding-left: 4px;
+  }
+  
+  .klarna-amount-button {
+    width: 36px;
+    height: 36px;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #333;
+    transition: all 0.2s ease;
+  }
+  
+  .klarna-amount-button:hover {
+    background: #f0f0f0;
+  }
+  
+  .klarna-amount-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  
+  .klarna-reset-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: color 0.2s ease;
+  }
+  
+  .klarna-reset-button:hover {
+    color: var(--payment-klarna, #ffb3c7);
+  }
+  
+  .klarna-reset-button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Metod-flikar */
+  .klarna-method-tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    width: 100%;
+  }
+  
+  .klarna-method-tab {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--light-bg, #f8f9fa);
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 12px 8px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary, #333);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .klarna-method-tab svg {
+    color: #666;
+  }
+  
+  .klarna-method-tab:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .klarna-method-tab.active {
+    background-color: rgba(255, 179, 199, 0.1);
+    border-color: var(--payment-klarna, #ffb3c7);
+    color: #eb6f93;
+  }
+  
+  .klarna-method-tab.active svg {
+    color: #eb6f93;
+  }
+  
+  .klarna-method-tab:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Formulärgrupper */
+  .klarna-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .klarna-form-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+  }
+  
+  .klarna-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+  }
+  
+  .klarna-form-group label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .klarna-form-group input {
+    padding: 10px 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease;
+  }
+  
+  .klarna-form-group input:focus {
+    border-color: var(--payment-klarna, #ffb3c7);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 179, 199, 0.1);
+  }
+  
+  .klarna-form-group input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+  }
+  
+  .klarna-form-help {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 4px;
+  }
+  
+  /* Informationsruta */
+  .klarna-info-box {
+    background-color: rgba(255, 179, 199, 0.08);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    color: #555;
+    border-left: 4px solid var(--payment-klarna, #ffb3c7);
+  }
+  
+  /* Klarna-betalningsknapp */
+  .klarna-payment-button {
+    background: var(--payment-klarna, #eb6f93);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    min-height: 55px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .klarna-payment-button:hover {
+    background: #e05c82;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .klarna-payment-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .klarna-payment-button:disabled {
+    background: #ffc8d6;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Specifika färger för Klarna-bearbetning */
+  .payment-status-modal.processing.klarna {
+    background: #fff0f5;
+    color: #eb6f93;
+  }
+  
+  /* Responsiv design för mindre skärmar */
+  @media (max-width: 768px) {
+    .klarna-method-tabs {
+      flex-direction: column;
+    }
+    
+    .klarna-method-tab {
+      padding: 12px 10px;
+    }
+  }

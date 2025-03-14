@@ -1,0 +1,373 @@
+/* Fakturabetalning - Huvudcontainer */
+.invoice-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  padding: var(--spacing-md, 20px);
+  padding-top: 0;
+}
+
+/* Rubrik */
+.invoice-container h2 {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.5rem;
+  color: var(--text-primary, #1a1a1a);
+  font-weight: 600;
+}
+
+/* Beloppssektion */
+.invoice-amount-section {
+  margin-bottom: 20px;
+  background: var(--light-bg, #f8f9fa); /* Samma bakgrund som andra menyer */
+  border-radius: 8px; /* Rundade hörn */
+  padding: 8px 12px; /* Padding för att matcha andra menyer */
+  border-left: 4px solid var(--payment-invoice, #f0ad4e); /* Faktura-temafärg */
+  display: flex;
+  align-items: center;
+}
+
+.invoice-amount-layout {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.invoice-amount-label {
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+  width: 30%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+}
+
+.invoice-amount-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 40%;
+  gap: 10px;
+}
+
+.invoice-amount-center {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.invoice-amount-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 180px;
+  height: 40px;
+}
+
+.invoice-amount-input {
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 4px;
+  text-align: center;
+  color: var(--text-primary, #1a1a1a);
+  width: 100%;
+  max-width: 100px;
+  height: 100%;
+  line-height: 1.5;
+}
+
+.invoice-amount-input:focus {
+  outline: none;
+}
+
+.invoice-amount-input::-webkit-inner-spin-button,
+.invoice-amount-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.invoice-currency {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #666;
+  padding-left: 4px;
+}
+
+.invoice-amount-button {
+  width: 36px;
+  height: 36px;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #333;
+  transition: all 0.2s ease;
+}
+
+.invoice-amount-button:hover {
+  background: #f0f0f0;
+}
+
+.invoice-amount-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.invoice-reset-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  transition: color 0.2s ease;
+}
+
+.invoice-reset-button:hover {
+  color: var(--payment-invoice, #f0ad4e);
+}
+
+.invoice-reset-button:disabled {
+  color: #ccc;
+  cursor: not-allowed;
+}
+
+.invoice-amount-spacer {
+  width: 30%;
+}
+
+/* Metod-flikar */
+.invoice-method-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.invoice-method-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--light-bg, #f8f9fa);
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-primary, #333);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.invoice-method-tab svg {
+  color: #666;
+}
+
+.invoice-method-tab:hover {
+  background-color: #f0f0f0;
+}
+
+.invoice-method-tab.active {
+  background-color: rgba(240, 173, 78, 0.1);
+  border-color: var(--payment-invoice, #f0ad4e);
+  color: var(--payment-invoice, #f0ad4e);
+}
+
+.invoice-method-tab.active svg {
+  color: var(--payment-invoice, #f0ad4e);
+}
+
+.invoice-method-tab:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Formulärgrupper */
+.invoice-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.invoice-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.invoice-form-group label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.invoice-form-group input {
+  padding: 10px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.invoice-form-group input:focus {
+  border-color: var(--payment-invoice, #f0ad4e);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(240, 173, 78, 0.1);
+}
+
+.invoice-form-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+/* Informationsruta */
+.invoice-info-box {
+  background-color: rgba(240, 173, 78, 0.08);
+  border-radius: 8px;
+  padding: 12px 16px;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+/* Fakturabetalningsknapp */
+.invoice-payment-button {
+  background: var(--payment-invoice, #f0ad4e);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  min-height: 60px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-payment-button:hover {
+  background: #e0951c;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.invoice-payment-button:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-payment-button:disabled {
+  background: #f8d5a3;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Modal overlay */
+.payment-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Betalningsmodal */
+.payment-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  width: 90%;
+  max-width: 340px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  text-align: center;
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Status-modal */
+.payment-status-modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Status-ikon */
+.status-icon {
+  margin-bottom: 10px;
+}
+
+.status-icon.spinning {
+  animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Status-meddelande */
+.status-message {
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+/* Status för betalning som bearbetas */
+.payment-status-modal.processing {
+  background: #fff8e1;
+  color: #ff8f00;
+}
+
+/* Status för lyckad betalning */
+.payment-status-modal.success {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* Status för misslyckad betalning */
+.payment-status-modal.error {
+  background: #ffebee;
+  color: #d32f2f;
+}

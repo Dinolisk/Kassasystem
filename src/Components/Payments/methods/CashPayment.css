@@ -1,0 +1,264 @@
+/* Kontant - Huvudcontainer */
+.cash-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    padding: var(--spacing-md, 20px);
+    padding-top: 0;
+  }
+  
+  /* Rubrik */
+  .cash-container h2 {
+    margin-top: 16px;
+    margin-bottom: 16px;
+    text-align: center;
+    font-size: 1.4rem;
+    color: var(--text-primary, #1a1a1a);
+    font-weight: 600;
+  }
+  
+  /* Beloppssektion */
+  .cash-amount-total {
+    margin-bottom: 16px;
+    background: var(--light-bg, #f8f9fa);
+    border-radius: 8px;
+    padding: 8px 12px;
+    border-left: 4px solid var(--payment-cash, #43a047);
+  }
+  
+  .cash-amount-layout {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Ändrat för att sprida ut knapparna */
+    width: 100%;
+    position: relative; /* Lägg till för att stödja absolut positionering */
+  }
+  
+  .cash-amount-label {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    width: 30%;
+    text-align: left;
+  }
+  
+  .cash-amount-center-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centrerar innehållet */
+    gap: 12px; /* Skapar mellanrum mellan knapparna */
+    width: 40%;
+}
+
+.cash-amount-display {
+    flex-grow: 1; /* Ser till att beloppet hamnar i mitten */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-width: 180px;
+}
+    
+  .cash-amount-input {
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    font-weight: 600;
+    padding: 4px;
+    text-align: center;
+    color: var(--text-primary, #1a1a1a);
+    width: 100%;
+    max-width: 100px;
+  }
+  .cash-amount-input:focus {
+    outline: none;
+  }
+  
+  .cash-amount-input::-webkit-inner-spin-button,
+  .cash-amount-input::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  
+  .cash-currency {
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #666;
+    padding-left: 4px;
+  }
+  
+  .cash-amount-button {
+    width: 36px;
+    height: 36px;
+    background: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #333;
+    transition: all 0.2s ease;
+  }
+  
+  .cash-amount-button:hover {
+    background: #f0f0f0;
+  }
+  
+  .cash-amount-button:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+  
+  .cash-reset-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    transition: color 0.2s ease;
+  }
+  
+  .cash-amount-spacer {
+    width: 30%;
+  }
+  .cash-reset-button:hover {
+    color: var(--payment-cash, #43a047);
+  }
+  
+  .cash-reset-button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  /* Formulärsektioner */
+  .cash-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  
+  .cash-form-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #444;
+    text-align: center;
+  }
+  
+  .cash-received-input-container {
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    margin: 0 auto;
+    width: 80%;
+    max-width: 300px;
+  }
+  
+  .cash-received-input {
+    flex: 1;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-align: center;
+    color: var(--text-primary, #1a1a1a);
+    padding: 8px;
+    width: 100%;
+  }
+  
+  .cash-received-input:focus {
+    outline: none;
+  }
+  
+  .cash-received-currency {
+    font-size: 1.2rem;
+    color: #666;
+    margin-left: 4px;
+  }
+  
+  /* Växelsektion */
+  .cash-change-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #e8f5e9;
+    border-radius: 8px;
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  
+  .cash-change-label {
+    font-size: 1rem;
+    font-weight: 500;
+    color: #2e7d32;
+    margin-bottom: 8px;
+  }
+  
+  .cash-change-amount {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2e7d32;
+  }
+  
+  /* Informationsruta */
+  .cash-info-box {
+    background-color: rgba(67, 160, 71, 0.08);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+    margin-bottom: 16px;
+    font-size: 0.9rem;
+    color: #555;
+    border-left: 4px solid var(--payment-cash, #43a047);
+  }
+  
+  /* Kontant-betalningsknapp */
+  .cash-payment-button {
+    background: var(--payment-cash, #43a047);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+    min-height: 55px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cash-payment-button:hover {
+    background: #388e3c;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+  }
+  
+  .cash-payment-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cash-payment-button:disabled {
+    background: #a5d6a7;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  
+  /* Specifik färg för kontantbetalningsstatus */
+  .payment-status-modal.processing.cash {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }

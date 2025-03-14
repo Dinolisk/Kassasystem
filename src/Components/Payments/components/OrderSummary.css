@@ -1,0 +1,196 @@
+/* OrderSummary.css - Kompakt design med mindre textstorlek */
+.order-summary {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 0;
+  font-size: 0.85rem; /* Mindre baste>xtstorlek */
+  overflow: hidden;
+}
+
+.order-summary-header {
+  padding: 0.75rem 0.75rem 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa;
+  z-index: 10;
+}
+
+.order-summary h3 {
+  margin: 0;
+  font-size: 1.1rem; /* Mindre rubrikstorlek */
+  font-weight: 600;
+  text-align: left;
+  color: var(--text-primary, #333);
+}
+
+.order-header {
+  display: grid;
+  grid-template-columns: 1fr 50px 70px; /* Justerad kolumnbredd */
+  gap: 8px;
+  font-weight: 600;
+  color: var(--text-secondary, #666);
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 2.5rem; /* Justerad offsett */
+  background-color: #f8f9fa;
+  z-index: 10;
+}
+
+.column-product {
+  text-align: left;
+}
+
+.column-quantity {
+  text-align: center;
+}
+
+.column-price {
+  text-align: right;
+}
+
+.order-items {
+  flex: 1;
+  overflow-y: auto;
+  height: calc(100% - 10rem); /* Justerad höjd */
+  min-height: 150px;
+}
+
+.order-items-list {
+  padding: 0 0.75rem;
+}
+
+.order-item {
+  display: grid;
+  grid-template-columns: 1fr 50px 70px; /* Matchande kolumnbredd med header */
+  gap: 8px;
+  padding: 0.4rem 0; /* Minska padding för kompaktare design */
+  border-bottom: 1px solid #f1f1f1;
+  align-items: center; /* Centrera innehåll vertikalt */
+}
+
+.item-name {
+  font-weight: 500;
+  text-align: left;
+  font-size: 0.85rem; /* Mindre textstorlek */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-quantity {
+  color: var(--text-secondary, #666);
+  text-align: center;
+  font-size: 0.85rem; /* Mindre textstorlek */
+}
+
+.item-price {
+  font-weight: 500;
+  text-align: right;
+  font-size: 0.85rem; /* Mindre textstorlek */
+}
+
+.order-total {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  padding: 0.75rem 0.75rem;
+  font-weight: 700;
+  font-size: 1rem; /* Minska textstorlek */
+  border-top: 2px solid #e2e8f0;
+  background-color: #f8f9fa;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+/* Payment status section */
+.payment-status-section {
+  margin-top: 0.5rem;
+  border-top: 1px solid #e2e8f0;
+  padding: 0.5rem 0.75rem;
+  flex-shrink: 0;
+  font-size: 0.85rem; /* Mindre textstorlek */
+}
+
+.payment-status-section h4 {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem; /* Mindre rubrikstorlek */
+  font-weight: 600;
+}
+
+.payment-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem; /* Mindre gap */
+}
+
+.payment-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.2rem 0; /* Mindre padding */
+}
+
+.payment-row.paid {
+  color: var(--success, #38a169);
+}
+
+.payment-row.remaining {
+  font-weight: 600;
+  margin-top: 0.3rem;
+  padding-top: 0.3rem;
+  border-top: 1px dashed #e2e8f0;
+}
+
+/* Scrollbar styling */
+.order-items::-webkit-scrollbar {
+  width: 6px; /* Smalare scrollbar */
+}
+
+.order-items::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.order-items::-webkit-scrollbar-thumb {
+  background: #c1c1c1; /* Ljusare scrollbar */
+  border-radius: 3px;
+}
+
+.order-items::-webkit-scrollbar-thumb:hover {
+  background: #a0a0a0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .order-summary {
+    max-height: none;
+  }
+  
+  .order-header {
+    grid-template-columns: 1fr 40px 60px; /* Smalare för mindre skärmar */
+  }
+  
+  .order-item {
+    grid-template-columns: 1fr 40px 60px; /* Smalare för mindre skärmar */
+  }
+}
+
+@media (max-width: 768px) {
+  .order-summary {
+    font-size: 0.8rem; /* Ännu mindre text på små skärmar */
+  }
+  
+  .order-header {
+    grid-template-columns: 1fr 35px 55px; /* Smalare för mobiler */
+  }
+  
+  .order-item {
+    grid-template-columns: 1fr 35px 55px; /* Smalare för mobiler */
+  }
+}

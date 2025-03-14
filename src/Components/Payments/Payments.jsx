@@ -1,468 +1,322 @@
 import React, { useState, useEffect } from 'react';
-import PaymentMethodSelector from './PaymentMethodSelector.jsx';
 import './Payments.css';
-import { 
-  CreditCard, 
-  Smartphone, 
-  FileText, 
-  Banknote, 
-  Gift, 
-  ArrowLeft,
-  CheckCircle2,
-  XCircle,
-  Loader2
-} from 'lucide-react';
-
-// Importera komponenter
-import { CardPayment } from './methods/CardPayment';
+import { ArrowLeft, CreditCard, Banknote, Smartphone, FileText, Gift, Wallet } from 'lucide-react';
+import CardPayment from './methods/CardPayment';
 import CashPayment from './methods/CashPayment';
 import SwishPayment from './methods/SwishPayment';
 import InvoicePayment from './methods/InvoicePayment';
 import GiftCardPayment from './methods/GiftCardPayment';
+import KlarnaPayment from './methods/KlarnaPayment.jsx';
+import OrderSummary from './components/OrderSummary';
 import PaymentStatus from './components/PaymentStatus';
-import InsufficientBalanceModal from './components/InsufficientBalanceModal';
 
-// Importera utility-funktioner
-import { 
-  METHOD_LABELS,
-  createPaymentObject,
-  simulatePaymentProcess,
-  formatPartialPaymentMessage,
-  processPayment,
-  verifyGiftCard,
-  GIFT_CARD_DATABASE
-} from '../../utils/paymentUtils';
-
-const Payments = ({ 
-  isOpen, 
-  onClose, 
-  total, 
-  onPaymentComplete, 
+export const Payments = ({
+  isOpen,
+  onClose,
+  total,
+  remainingTotal,
+  cartItems,
   formatPrice,
-  cartItems
+  formatProductName,
+  onPaymentComplete,
 }) => {
-  // Gift card database hämtas nu från utils
-
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('');
   const [paymentStatus, setPaymentStatus] = useState('idle');
-  const [cashAmount, setCashAmount] = useState('');
-  const [change, setChange] = useState(0);
-  const [personnummer, setPersonnummer] = useState('');
-  const [email, setEmail] = useState('');
-  const [giftCardNumber, setGiftCardNumber] = useState('');
-  const [isSplitPaymentOpen, setIsSplitPaymentOpen] = useState(false);
-  const [insufficientBalanceModal, setInsufficientBalanceModal] = useState(null);
-  const [remainingTotal, setRemainingTotal] = useState(total);
+  const [declineReason, setDeclineReason] = useState('');
   const [paymentMessage, setPaymentMessage] = useState('');
   const [partialPayments, setPartialPayments] = useState([]);
-  const [declineReason, setDeclineReason] = useState('');
+  const [currentRemainingTotal, setCurrentRemainingTotal] = useState(total);
 
-  // Uppdatera remainingTotal när total ändras
-  useEffect(() => {
-    if (isOpen && total > 0) {
-      setRemainingTotal(total);
-    }
-  }, [total, isOpen]);
-
-  // VIKTIGT: Fixat villkoret i useEffect - endast återställ när dialogrutan öppnas
   useEffect(() => {
     if (isOpen) {
-      resetAllStates();
-    }
-  }, [isOpen]); // Ta bort 'total' beroendet för att förhindra återställningar under betalning
-
-  const resetAllStates = () => {
-    setSelectedPaymentMethod('');
-    setPaymentStatus('idle');
-    setCashAmount('');
-    setChange(0);
-    setPersonnummer('');
-    setEmail('');
-    setGiftCardNumber('');
-    setInsufficientBalanceModal(null);
-    setRemainingTotal(total); // Återställ till ursprungligt belopp
-    setPaymentMessage(''); // Rensa eventuella meddelanden
-    setPartialPayments([]); 
-    setDeclineReason('');
-  };
-  
-  const handleSplitPaymentComplete = (splitPayments) => {
-    setIsSplitPaymentOpen(false);
-    
-    // Create a local variable to store the payment methods we'll pass forward
-    let methodsToPass = [];
-    
-    if (splitPayments) {
-      if (Array.isArray(splitPayments)) {
-        methodsToPass = splitPayments;
-      } else if (splitPayments.paymentMethods && Array.isArray(splitPayments.paymentMethods)) {
-        methodsToPass = splitPayments.paymentMethods;
-      } else {
-        methodsToPass = [{ 
-          method: 'split', 
-          amount: total, 
-          label: 'Delad betalning',
-          timestamp: new Date().toISOString()
-        }];
-      }
-    } else {
-      methodsToPass = [{ 
-        method: 'split', 
-        amount: total, 
-        label: 'Delad betalning',
-        timestamp: new Date().toISOString()
-      }];
-    }
-    
-    // Ensure all payment methods have labels
-    methodsToPass = methodsToPass.map(method => {
-      if (!method.label) {
-        return {
-          ...method,
-          label: METHOD_LABELS[method.method] || method.method,
-          timestamp: method.timestamp || new Date().toISOString()
-        };
-      }
-      return {
-        ...method,
-        timestamp: method.timestamp || new Date().toISOString()
-      };
-    });
-    
-    // Kör direkt utan fördröjningar
-    onPaymentComplete(methodsToPass);
-    onClose();
-  };
-
-  const completePayment = (method, amount) => {
-    // Callback för att hantera statusuppdateringar
-    const handleStatusChange = (status, reason = '') => {
-      setPaymentStatus(status);
-      if (reason) setDeclineReason(reason);
-    };
-    
-    // Callback när betalningen är klar
-    const onSuccess = (updatedPayments) => {
-      onPaymentComplete(updatedPayments);
-      resetAllStates();
-      onClose();
-    };
-    
-    // Callback för delbetalning
-    const onPartialSuccess = (updatedPayments, newRemainingAmount, message) => {
-      setPartialPayments(updatedPayments);
-      setRemainingTotal(newRemainingAmount);
-      setPaymentStatus('idle');
-      setPaymentMessage(message);
       setSelectedPaymentMethod('');
-    };
+      setPaymentStatus('idle');
+      setDeclineReason('');
+      setPaymentMessage('');
+      setPartialPayments([]);
+      setCurrentRemainingTotal(remainingTotal || total);
+    }
+  }, [isOpen, remainingTotal, total]);
+
+  const simulatePayment = (method, amount, details) => {
+    if (amount > currentRemainingTotal) {
+      setPaymentStatus('declined');
+      setDeclineReason(`Beloppet överstiger resterande summa, max ${formatPrice(currentRemainingTotal)}`);
+      return;
+    }
+
+    const numericAmount = Number(amount);
     
-    // Använd processPayment-funktionen från utils
-    processPayment(
-      method,
-      amount,
-      remainingTotal,
-      partialPayments,
-      handleStatusChange,
-      onSuccess,
-      onPartialSuccess,
-      formatPrice
-    );
+    setPaymentStatus('processing');
+    setTimeout(() => {
+      const randomOutcome = Math.random();
+      if (randomOutcome < 0.9) {
+        const methodLabel = getPaymentMethodLabel(method);
+        const updatedPayments = [
+          ...partialPayments,
+          { 
+            method, 
+            amount: numericAmount, 
+            label: methodLabel,
+            details: details
+          },
+        ];
+        setPartialPayments(updatedPayments);
+        
+        const newRemainingTotal = Math.max(0, Number((currentRemainingTotal - numericAmount).toFixed(2)));
+        setCurrentRemainingTotal(newRemainingTotal);
+        
+        let successMessage = `Betalning på ${formatPrice(numericAmount)} genomförd med ${methodLabel}!`;
+        
+        if (method === 'invoice') {
+          const destination = details && details.email 
+            ? `e-post (${details.email})` 
+            : 'postadress';
+          
+          successMessage = `Faktura på ${formatPrice(numericAmount)} har skickats till ${destination}!`;
+          
+          if (details && details.reference) {
+            successMessage += ` Referens: ${details.reference}`;
+          }
+        }
+        
+        if (method === 'giftcard') {
+          const cardCount = details && details.cards ? details.cards.length : 0;
+          const cardWord = cardCount === 1 ? 'presentkort' : 'presentkort';
+          
+          successMessage = `Betalning på ${formatPrice(numericAmount)} genomförd med ${cardCount} ${cardWord}!`;
+        }
+        
+        if (method === 'klarna') {
+          successMessage = `Betalning på ${formatPrice(numericAmount)} har initierats med Klarna!`;
+          if (details && details.email) {
+            successMessage += ` Bekräftelse skickas till ${details.email}.`;
+          }
+        }
+
+        setPaymentMessage(successMessage);
+        
+        setPaymentStatus('success');
+        
+        if (newRemainingTotal > 0) {
+          setTimeout(() => {
+            setSelectedPaymentMethod('');
+            setPaymentStatus('idle');
+            setPaymentMessage('');
+          }, 1500);
+        } else {
+          setTimeout(() => {
+            finishPayment();
+          }, 2000);
+        }
+      } else {
+        setPaymentStatus('declined');
+        setDeclineReason('Betalningen avvisades. Försök igen.');
+      }
+    }, 1500);
+  };
+
+  const getPaymentMethodLabel = (method) => {
+    const labels = {
+      'card': 'Kort',
+      'cash': 'Kontant',
+      'swish': 'Swish',
+      'invoice': 'Faktura',
+      'giftcard': 'Presentkort',
+      'klarna': 'Klarna',
+    };
+    return labels[method] || method;
+  };
+
+  const finishPayment = () => {
+    setPaymentStatus('success');
+    setPaymentMessage(`Betalning slutförd! Totalt: ${formatPrice(total)}`);
+    
+    let finalPaymentData = [...partialPayments];
+    
+    const paidTotal = finalPaymentData.reduce((sum, payment) => sum + Number(payment.amount), 0);
+    
+    if (Math.abs(paidTotal - total) > 0.01) {
+      console.log(`Betalat belopp (${paidTotal}) matchar inte total (${total}), lägger till justering`);
+      
+      const lastPayment = finalPaymentData[finalPaymentData.length - 1];
+      const method = lastPayment ? lastPayment.method : 'card';
+      const label = lastPayment ? lastPayment.label : 'Kort';
+      
+      finalPaymentData.push({
+        method,
+        amount: Number((total - paidTotal).toFixed(2)),
+        label,
+        isAdjustment: true
+      });
+    }
+    
+    setTimeout(() => {
+      if (typeof onPaymentComplete === 'function') {
+        console.log("Calling onPaymentComplete with:", finalPaymentData);
+        onPaymentComplete(finalPaymentData);
+      } else {
+        console.warn("onPaymentComplete function is not provided");
+      }
+      
+      setPartialPayments([]);
+      setCurrentRemainingTotal(0);
+      
+      onClose();
+    }, 2500);
   };
 
   const handlePaymentMethodSelect = (method) => {
-    if (!cartItems || cartItems.length === 0) {
-      alert('Kundvagnen är tom');
-      return;
-    }
-
-    if (method === 'card') {
-      completePayment('card', remainingTotal);
-    } else {
-      setSelectedPaymentMethod(method);
-    }
+    setSelectedPaymentMethod(method);
+    setPaymentStatus('idle');
+    setDeclineReason('');
+    setPaymentMessage('');
   };
 
-  const handleCashAmount = (e) => {
-    const inputAmount = e.target.value;
-    setCashAmount(inputAmount);
-    
-    const cashAmountNum = parseFloat(inputAmount);
-    if (!isNaN(cashAmountNum) && cashAmountNum >= remainingTotal) {
-      setChange(cashAmountNum - remainingTotal);
-    } else {
-      setChange(0);
-    }
+  const handleCompletePayment = (method, amount, details) => {
+    simulatePayment(method, amount, details);
   };
 
-  const handleCashPayment = () => {
-    const cashAmountNum = parseFloat(cashAmount);
-    if (isNaN(cashAmountNum) || cashAmountNum < remainingTotal) {
-      alert('Ogiltigt belopp');
-      return;
-    }
-    completePayment('cash', remainingTotal);
-  };
-
-  const handleSwishPayment = () => {
-    completePayment('swish', remainingTotal);
-  };
-
-  const handleInvoicePayment = () => {
-    completePayment('invoice', remainingTotal);
-  };
-
-  const handleGiftCardPayment = () => {
-    setPaymentStatus('verifying_card');
-    setTimeout(() => {
-      // Verify gift card balance med verifyGiftCard från utils
-      const balance = verifyGiftCard(giftCardNumber);
-      
-      if (!balance) {
-        // Invalid gift card
-        alert('Ogiltigt presentkortsnummer');
-        setPaymentStatus('idle');
-        return;
-      }
-
-      if (balance < remainingTotal) {
-        // Insufficient balance
-        setInsufficientBalanceModal({
-          cardBalance: balance,
-          totalAmount: remainingTotal,
-          remainingAmount: remainingTotal - balance
-        });
-        setPaymentStatus('idle');
-        return;
-      }
-
-      // Sufficient balance, show confirmation modal
-      setInsufficientBalanceModal({
-        cardBalance: balance,
-        totalAmount: remainingTotal,
-        remainingBalance: balance - remainingTotal,
-        isConfirmation: true
-      });
-      setPaymentStatus('idle');
-    }, 2000);
-  };
-
-  const handleInsufficientBalanceOption = (option) => {
-    switch(option) {
-      case 'partial':
-        // Använd hela presentkortets saldo
-        const balance = verifyGiftCard(giftCardNumber);
-        
-        // Skapa betalningsobjektet med utility-funktionen
-        const newPayment = createPaymentObject('giftcard', balance);
-        
-        // Lägg till presentkortsbetalningen i partialPayments
-        setPartialPayments([newPayment]);
-        
-        // Beräkna återstående belopp att betala
-        const remainingToPay = remainingTotal - balance;
-        
-        // Stäng modalen för otillräckligt saldo
-        setInsufficientBalanceModal(null);
-        
-        // Återställ presentkortsfältet eftersom det nu är använt
-        setGiftCardNumber('');
-        
-        // Återgå till betalningsmenyn istället för att stänga
-        setSelectedPaymentMethod('');
-        
-        // Uppdatera totalbeloppet som återstår att betala
-        setRemainingTotal(remainingToPay);
-        
-        // Visa ett meddelande om använt presentkort med utility-funktionen
-        setPaymentMessage(formatPartialPaymentMessage('giftcard', balance, remainingToPay, formatPrice));
-        break;
-        
-      case 'new_method':
-        // Reset gift card and return to payment method selection
-        setGiftCardNumber('');
-        setSelectedPaymentMethod('');
-        setInsufficientBalanceModal(null);
-        break;
-        
-      case 'cancel':
-        // Close the payment modal
-        resetAllStates();
-        onClose();
-        break;
-    }
-  };
-
-  // Rendera InsufficientBalanceModal
-  const renderInsufficientBalanceModal = () => {
-    return (
-      <InsufficientBalanceModal 
-        insufficientBalanceModal={insufficientBalanceModal}
-        formatPrice={formatPrice}
-        handleInsufficientBalanceOption={handleInsufficientBalanceOption}
-        completePayment={completePayment}
-        setInsufficientBalanceModal={setInsufficientBalanceModal}
-      />
-    );
-  };
-
-  // Uppdatera renderPaymentMethod i Payments.jsx
   const renderPaymentMethod = () => {
+    const sharedProps = {
+      remainingTotal: currentRemainingTotal,
+      paymentStatus: paymentStatus,
+      formatPrice: formatPrice,
+      completePayment: handleCompletePayment,
+      onBack: () => setSelectedPaymentMethod(''),
+    };
+
     switch (selectedPaymentMethod) {
       case 'card':
-        return (
-          <CardPayment
-            remainingTotal={remainingTotal}
-            paymentStatus={paymentStatus}
-            formatPrice={formatPrice}
-            completePayment={completePayment}
-          />
-        );
-        
+        return <CardPayment {...sharedProps} />;
       case 'cash':
-        return (
-          <CashPayment
-            remainingTotal={remainingTotal}
-            paymentStatus={paymentStatus}
-            formatPrice={formatPrice}
-            cashAmount={cashAmount}
-            setCashAmount={setCashAmount}
-            change={change}
-            handleCashAmount={handleCashAmount}
-            handleCashPayment={handleCashPayment}
-          />
-        );
-
+        return <CashPayment {...sharedProps} />;
       case 'swish':
-        return (
-          <SwishPayment
-            remainingTotal={remainingTotal}
-            paymentStatus={paymentStatus}
-            formatPrice={formatPrice}
-            handleSwishPayment={handleSwishPayment}
-          />
-        );
-      
+        return <SwishPayment {...sharedProps} />;
       case 'invoice':
-        return (
-          <InvoicePayment
-            remainingTotal={remainingTotal}
-            paymentStatus={paymentStatus}
-            formatPrice={formatPrice}
-            handleInvoicePayment={handleInvoicePayment}
-            personnummer={personnummer}
-            setPersonnummer={setPersonnummer}
-            email={email}
-            setEmail={setEmail}
-          />
-        );
-
+        return <InvoicePayment {...sharedProps} />;
       case 'giftcard':
-        return (
-          <GiftCardPayment
-            remainingTotal={remainingTotal}
-            paymentStatus={paymentStatus}
-            formatPrice={formatPrice}
-            handleGiftCardPayment={handleGiftCardPayment}
-            giftCardNumber={giftCardNumber}
-            setGiftCardNumber={setGiftCardNumber}
-          />
-        );
-        
+        return <GiftCardPayment {...sharedProps} />;
+      case 'klarna':
+        return <KlarnaPayment {...sharedProps} />;
       default:
         return null;
     }
   };
 
-  // Uppdatera renderContent-funktionen för att få konsekvent styling på huvudmenyn
   const renderContent = () => {
+    if (paymentStatus === 'success' && currentRemainingTotal === 0) {
+      return (
+        <div className="payment-completed-view">
+          <div className="payment-success-icon">✓</div>
+          <h2>Betalning slutförd</h2>
+          <div className="payment-message">
+            {paymentMessage}
+          </div>
+          <div className="payment-summary">
+            Totalt: {formatPrice(total)}
+          </div>
+        </div>
+      );
+    }
+    
     if (selectedPaymentMethod) {
       return (
         <>
           <div className="payment-method-view">
             {renderPaymentMethod()}
-            <button 
-              className="method-back-button"
-              onClick={() => setSelectedPaymentMethod('')}
-              disabled={paymentStatus !== 'idle'}
-            >
-              <ArrowLeft size={20} />
-              <span>Tillbaka</span>
-            </button>
           </div>
           <PaymentStatus paymentStatus={paymentStatus} declineReason={declineReason} />
+          {paymentMessage && <div className="payment-message">{paymentMessage}</div>}
         </>
       );
     }
 
+    const paymentTitle = partialPayments.length > 0
+      ? 'Välj nästa betalningsmetod'
+      : 'Betalningsalternativ';
+
     return (
       <>
-        <h2>
-          Betalningsalternativ
-        </h2>
-        <div className="total-amount">
-          <p className="amount-display">
-            <span>Totalt att betala:</span>
-            <span>{formatPrice(remainingTotal)}</span>
-          </p>
-          {paymentMessage && (
-            <div className="payment-message">
-              {paymentMessage}
+        <h2>{paymentTitle}</h2>
+
+        {partialPayments.length > 0 && (
+          <div className="partial-payments-summary">
+            <div className="partial-payments-info">
+              <span>Betalat hittills:</span>
+              <span className="partial-amount">
+                {formatPrice(total - currentRemainingTotal)}
+              </span>
+              <span className="partial-remaining">
+                Återstående: {formatPrice(currentRemainingTotal)}
+              </span>
             </div>
-          )}
-        </div>
-        <div className="modal-grid">
-          <button 
-            className="soft-menu-button payment-card-button" 
-            onClick={() => handlePaymentMethodSelect('card')}
-          >
-            <CreditCard /> Kortbetalning
-          </button>
+            <div className="partial-payments-methods">
+              {partialPayments.map((payment, index) => (
+                <div key={index} className="partial-payment-tag">
+                  {payment.label}: {formatPrice(payment.amount)}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
-          <button 
-            className="soft-menu-button payment-cash-button" 
-            onClick={() => handlePaymentMethodSelect('cash')}
-          >
-            <Banknote /> Kontanter
-          </button>
+        <div className="payment-options-container">
+          <div className="modal-grid">
+            <button
+              className="soft-menu-button payment-card-button"
+              onClick={() => handlePaymentMethodSelect('card')}
+            >
+              <CreditCard /> Kortbetalning
+            </button>
 
-          <button 
-            className="soft-menu-button payment-swish-button" 
-            onClick={() => handlePaymentMethodSelect('swish')}
-          >
-            <Smartphone /> Swish
-          </button>
+            <button
+              className="soft-menu-button payment-cash-button"
+              onClick={() => handlePaymentMethodSelect('cash')}
+            >
+              <Banknote /> Kontanter
+            </button>
 
-          <button 
-            className="soft-menu-button payment-invoice-button" 
-            onClick={() => handlePaymentMethodSelect('invoice')}
-          >
-            <FileText /> Faktura
-          </button>
+            <button
+              className="soft-menu-button payment-swish-button"
+              onClick={() => handlePaymentMethodSelect('swish')}
+            >
+              <Smartphone /> Swish
+            </button>
 
-          <button 
-            className="soft-menu-button payment-gift-button" 
-            onClick={() => handlePaymentMethodSelect('giftcard')}
-          >
-            <Gift /> Presentkort
-          </button>
+            <button
+              className="soft-menu-button payment-invoice-button"
+              onClick={() => handlePaymentMethodSelect('invoice')}
+            >
+              <FileText /> Faktura
+            </button>
 
-          <button 
-            className="soft-menu-button payment-split-button" 
-            onClick={() => setIsSplitPaymentOpen(true)}
-          >
-            <CreditCard /> Blandad betalning
-          </button>
-          
-          <button 
-            className="modal-back-button" 
-            onClick={onClose}
-          >
-            <ArrowLeft size={16} />
-            <span>Tillbaka</span>
-          </button>
+            <button
+              className="soft-menu-button payment-gift-button"
+              onClick={() => handlePaymentMethodSelect('giftcard')}
+            >
+              <Gift /> Presentkort
+            </button>
+
+            <button
+              className="soft-menu-button payment-klarna-button"
+              onClick={() => handlePaymentMethodSelect('klarna')}
+            >
+              <Wallet /> Klarna
+            </button>
+
+            <button 
+              className="modal-back-button" 
+              onClick={onClose}
+              disabled={partialPayments.length > 0}
+            >
+              <ArrowLeft size={16} /> {/* Uppdatera till 16px för att matcha gamla designen */}
+              <span>Tillbaka</span>
+            </button>
+          </div>
         </div>
         <PaymentStatus paymentStatus={paymentStatus} declineReason={declineReason} />
+        {paymentMessage && <div className="payment-message">{paymentMessage}</div>}
       </>
     );
   };
@@ -470,22 +324,29 @@ const Payments = ({
   if (!isOpen) return null;
 
   return (
-    <div className="modal-overlay" onClick={(e) => {
-      if (e.target === e.currentTarget) {
-        onClose();
-      }
-    }}>
-      <div className="modal-content" onClick={e => e.stopPropagation()}>
-        {renderContent()}
-        {renderInsufficientBalanceModal()}
+    <div
+      className="modal-overlay"
+      onClick={(e) => {
+        if (e.target === e.currentTarget && paymentStatus === 'idle' && partialPayments.length === 0) {
+          onClose();
+        }
+      }}
+    >
+      <div className="payment-modal-content" onClick={(e) => e.stopPropagation()}>
+        <div className={`payment-main-content ${selectedPaymentMethod ? 'center-content' : ''}`}>
+          {renderContent()}
+        </div>
+        <div className="order-summary-sidebar">
+          <OrderSummary
+            cartItems={cartItems}
+            total={total}
+            partialPayments={partialPayments}
+            remainingTotal={currentRemainingTotal}
+            formatPrice={formatPrice}
+            formatProductName={formatProductName}
+          />
+        </div>
       </div>
-      <PaymentMethodSelector
-        isOpen={isSplitPaymentOpen}
-        onClose={() => setIsSplitPaymentOpen(false)}
-        total={total}
-        onPaymentComplete={handleSplitPaymentComplete}
-        formatPrice={formatPrice}
-      />
     </div>
   );
 };
