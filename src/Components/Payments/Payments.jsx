@@ -47,73 +47,59 @@ export const Payments = ({
 
     const numericAmount = Number(amount);
     
-    setPaymentStatus('processing');
-    setTimeout(() => {
-      const randomOutcome = Math.random();
-      if (randomOutcome < 0.9) {
-        const methodLabel = getPaymentMethodLabel(method);
-        const updatedPayments = [
-          ...partialPayments,
-          { 
-            method, 
-            amount: numericAmount, 
-            label: methodLabel,
-            details: details
-          },
-        ];
-        setPartialPayments(updatedPayments);
-        
-        const newRemainingTotal = Math.max(0, Number((currentRemainingTotal - numericAmount).toFixed(2)));
-        setCurrentRemainingTotal(newRemainingTotal);
-        
-        let successMessage = `Betalning på ${formatPrice(numericAmount)} genomförd med ${methodLabel}!`;
-        
-        if (method === 'invoice') {
-          const destination = details && details.email 
-            ? `e-post (${details.email})` 
-            : 'postadress';
-          
-          successMessage = `Faktura på ${formatPrice(numericAmount)} har skickats till ${destination}!`;
-          
-          if (details && details.reference) {
-            successMessage += ` Referens: ${details.reference}`;
-          }
-        }
-        
-        if (method === 'giftcard') {
-          const cardCount = details && details.cards ? details.cards.length : 0;
-          const cardWord = cardCount === 1 ? 'presentkort' : 'presentkort';
-          
-          successMessage = `Betalning på ${formatPrice(numericAmount)} genomförd med ${cardCount} ${cardWord}!`;
-        }
-        
-        if (method === 'klarna') {
-          successMessage = `Betalning på ${formatPrice(numericAmount)} har initierats med Klarna!`;
-          if (details && details.email) {
-            successMessage += ` Bekräftelse skickas till ${details.email}.`;
-          }
-        }
-
-        setPaymentMessage(successMessage);
-        
-        setPaymentStatus('success');
-        
-        if (newRemainingTotal > 0) {
-          setTimeout(() => {
-            setSelectedPaymentMethod('');
-            setPaymentStatus('idle');
-            setPaymentMessage('');
-          }, 1500);
-        } else {
-          setTimeout(() => {
-            finishPayment();
-          }, 2000);
-        }
-      } else {
-        setPaymentStatus('declined');
-        setDeclineReason('Betalningen avvisades. Försök igen.');
+    // Viktigt: Se till att method-parametern faktiskt sparas och används
+    const methodLabel = getPaymentMethodLabel(method);
+    const updatedPayments = [
+      ...partialPayments,
+      { 
+        method, // Spara den faktiska method-strängen (card, cash, swish, etc.)
+        amount: numericAmount, 
+        label: methodLabel, // Använd label för visning
+        details: details
+      },
+    ];
+    setPartialPayments(updatedPayments);
+    
+    const newRemainingTotal = Math.max(0, Number((currentRemainingTotal - numericAmount).toFixed(2)));
+    setCurrentRemainingTotal(newRemainingTotal);
+    
+    let successMessage = `Betalning på ${formatPrice(numericAmount)} genomförd med ${methodLabel}!`;
+    
+    if (method === 'invoice') {
+      const destination = details && details.email 
+        ? `e-post (${details.email})` 
+        : 'postadress';
+      
+      successMessage = `Faktura på ${formatPrice(numericAmount)} har skickats till ${destination}!`;
+      
+      if (details && details.reference) {
+        successMessage += ` Referens: ${details.reference}`;
       }
-    }, 1500);
+    }
+    
+    if (method === 'giftcard') {
+      const cardCount = details && details.cards ? details.cards.length : 0;
+      const cardWord = cardCount === 1 ? 'presentkort' : 'presentkort';
+      
+      successMessage = `Betalning på ${formatPrice(numericAmount)} genomförd med ${cardCount} ${cardWord}!`;
+    }
+    
+    if (method === 'klarna') {
+      successMessage = `Betalning på ${formatPrice(numericAmount)} har initierats med Klarna!`;
+      if (details && details.email) {
+        successMessage += ` Bekräftelse skickas till ${details.email}.`;
+      }
+    }
+
+    setPaymentMessage(successMessage);
+    setPaymentStatus('success');
+    
+    if (newRemainingTotal > 0) {
+      setSelectedPaymentMethod('');
+      setPaymentStatus('idle');
+    } else {
+      finishPayment();
+    }
   };
 
   const getPaymentMethodLabel = (method) => {
@@ -132,6 +118,7 @@ export const Payments = ({
     setPaymentStatus('success');
     setPaymentMessage(`Betalning slutförd! Totalt: ${formatPrice(total)}`);
     
+    // Försäkra oss om att finala betalningsdatan innehåller korrekt betalningsmetod
     let finalPaymentData = [...partialPayments];
     
     const paidTotal = finalPaymentData.reduce((sum, payment) => sum + Number(payment.amount), 0);
@@ -139,31 +126,31 @@ export const Payments = ({
     if (Math.abs(paidTotal - total) > 0.01) {
       console.log(`Betalat belopp (${paidTotal}) matchar inte total (${total}), lägger till justering`);
       
+      // Använd den senaste betalningsmetodens method och label för att justera beloppet
       const lastPayment = finalPaymentData[finalPaymentData.length - 1];
       const method = lastPayment ? lastPayment.method : 'card';
       const label = lastPayment ? lastPayment.label : 'Kort';
       
       finalPaymentData.push({
-        method,
+        method, // Använd samma method som senaste betalningen
         amount: Number((total - paidTotal).toFixed(2)),
         label,
         isAdjustment: true
       });
     }
     
-    setTimeout(() => {
-      if (typeof onPaymentComplete === 'function') {
-        console.log("Calling onPaymentComplete with:", finalPaymentData);
-        onPaymentComplete(finalPaymentData);
-      } else {
-        console.warn("onPaymentComplete function is not provided");
-      }
-      
-      setPartialPayments([]);
-      setCurrentRemainingTotal(0);
-      
-      onClose();
-    }, 2500);
+    // Se till att vi skickar de korrekta betalningsmetoderna till onPaymentComplete
+    if (typeof onPaymentComplete === 'function') {
+      console.log("Calling onPaymentComplete with:", finalPaymentData);
+      onPaymentComplete(finalPaymentData);
+    } else {
+      console.warn("onPaymentComplete function is not provided");
+    }
+    
+    setPartialPayments([]);
+    setCurrentRemainingTotal(0);
+    
+    onClose();
   };
 
   const handlePaymentMethodSelect = (method) => {
@@ -210,9 +197,6 @@ export const Payments = ({
         <div className="payment-completed-view">
           <div className="payment-success-icon">✓</div>
           <h2>Betalning slutförd</h2>
-          <div className="payment-message">
-            {paymentMessage}
-          </div>
           <div className="payment-summary">
             Totalt: {formatPrice(total)}
           </div>
@@ -310,7 +294,7 @@ export const Payments = ({
               onClick={onClose}
               disabled={partialPayments.length > 0}
             >
-              <ArrowLeft size={16} /> {/* Uppdatera till 16px för att matcha gamla designen */}
+              <ArrowLeft size={16} />
               <span>Tillbaka</span>
             </button>
           </div>
