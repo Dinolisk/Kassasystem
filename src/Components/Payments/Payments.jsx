@@ -39,26 +39,26 @@ export const Payments = ({
   }, [isOpen, remainingTotal, total]);
 
   const simulatePayment = (method, amount, details) => {
-    if (amount > currentRemainingTotal) {
+    if (amount > currentRemainingTotal + 0.01) { // Tillåt små skillnader
       setPaymentStatus('declined');
       setDeclineReason(`Beloppet överstiger resterande summa, max ${formatPrice(currentRemainingTotal)}`);
       return;
     }
 
-    const numericAmount = Number(amount);
+    const numericAmount = Number(amount.toFixed(2)); // Avrunda till 2 decimaler
     
-    // Viktigt: Se till att method-parametern faktiskt sparas och används
     const methodLabel = getPaymentMethodLabel(method);
-    const updatedPayments = [
-      ...partialPayments,
-      { 
-        method, // Spara den faktiska method-strängen (card, cash, swish, etc.)
-        amount: numericAmount, 
-        label: methodLabel, // Använd label för visning
-        details: details
-      },
-    ];
+    const newPayment = { 
+      method, 
+      amount: numericAmount, 
+      label: methodLabel,
+      details: details,
+      timestamp: new Date().toISOString() // Lägg till timestamp för unik identifiering
+    };
+    
+    const updatedPayments = [...partialPayments, newPayment];
     setPartialPayments(updatedPayments);
+    console.log("Updated partialPayments:", updatedPayments); // Logg för felsökning
     
     const newRemainingTotal = Math.max(0, Number((currentRemainingTotal - numericAmount).toFixed(2)));
     setCurrentRemainingTotal(newRemainingTotal);
@@ -69,9 +69,7 @@ export const Payments = ({
       const destination = details && details.email 
         ? `e-post (${details.email})` 
         : 'postadress';
-      
       successMessage = `Faktura på ${formatPrice(numericAmount)} har skickats till ${destination}!`;
-      
       if (details && details.reference) {
         successMessage += ` Referens: ${details.reference}`;
       }
@@ -80,7 +78,6 @@ export const Payments = ({
     if (method === 'giftcard') {
       const cardCount = details && details.cards ? details.cards.length : 0;
       const cardWord = cardCount === 1 ? 'presentkort' : 'presentkort';
-      
       successMessage = `Betalning på ${formatPrice(numericAmount)} genomförd med ${cardCount} ${cardWord}!`;
     }
     
@@ -94,11 +91,11 @@ export const Payments = ({
     setPaymentMessage(successMessage);
     setPaymentStatus('success');
     
-    if (newRemainingTotal > 0) {
+    if (newRemainingTotal <= 0.01) { // Slutför om resterande är nära noll
+      finishPayment(updatedPayments); // Skicka med uppdaterade betalningar direkt
+    } else {
       setSelectedPaymentMethod('');
       setPaymentStatus('idle');
-    } else {
-      finishPayment();
     }
   };
 
@@ -114,32 +111,17 @@ export const Payments = ({
     return labels[method] || method;
   };
 
-  const finishPayment = () => {
+  const finishPayment = (finalPayments) => {
     setPaymentStatus('success');
     setPaymentMessage(`Betalning slutförd! Totalt: ${formatPrice(total)}`);
     
-    // Försäkra oss om att finala betalningsdatan innehåller korrekt betalningsmetod
-    let finalPaymentData = [...partialPayments];
-    
+    const finalPaymentData = finalPayments || [...partialPayments];
     const paidTotal = finalPaymentData.reduce((sum, payment) => sum + Number(payment.amount), 0);
     
-    if (Math.abs(paidTotal - total) > 0.01) {
-      console.log(`Betalat belopp (${paidTotal}) matchar inte total (${total}), lägger till justering`);
-      
-      // Använd den senaste betalningsmetodens method och label för att justera beloppet
-      const lastPayment = finalPaymentData[finalPaymentData.length - 1];
-      const method = lastPayment ? lastPayment.method : 'card';
-      const label = lastPayment ? lastPayment.label : 'Kort';
-      
-      finalPaymentData.push({
-        method, // Använd samma method som senaste betalningen
-        amount: Number((total - paidTotal).toFixed(2)),
-        label,
-        isAdjustment: true
-      });
+    if (Math.abs(paidTotal - total) > 0.1) {
+      console.warn(`Betalat belopp (${paidTotal}) matchar inte total (${total}).`);
     }
     
-    // Se till att vi skickar de korrekta betalningsmetoderna till onPaymentComplete
     if (typeof onPaymentComplete === 'function') {
       console.log("Calling onPaymentComplete with:", finalPaymentData);
       onPaymentComplete(finalPaymentData);
@@ -149,7 +131,6 @@ export const Payments = ({
     
     setPartialPayments([]);
     setCurrentRemainingTotal(0);
-    
     onClose();
   };
 
@@ -272,7 +253,7 @@ export const Payments = ({
               className="soft-menu-button payment-invoice-button"
               onClick={() => handlePaymentMethodSelect('invoice')}
             >
-              <FileText /> Faktura
+              <FileText /> faktura
             </button>
 
             <button
