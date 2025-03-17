@@ -592,20 +592,20 @@ function CashRegister() {
                   <span>eller</span>
                 </div>
                 <input
-                  type="text"
-                  placeholder="Personnummer (ÅÅÅÅMMDD-XXXX)"
-                  value={customerInfo.personnummer}
-                  onChange={e => {
-                    const value = e.target.value;
-                    if (value === '' || /^[\d-]*$/.test(value)) {
-                      if (value.length <= 13) {
-                        setCustomerInfo saman({...customerInfo, personnummer: value, phone: ''});
+                    type="text"
+                    placeholder="Personnummer (ÅÅÅÅMMDD-XXXX)"
+                    value={customerInfo.personnummer}
+                    onChange={e => {
+                      const value = e.target.value;
+                      if (value === '' || /^[\d-]*$/.test(value)) {
+                        if (value.length <= 13) {
+                          setCustomerInfo({...customerInfo, personnummer: value, phone: ''}); // Fixat "saman" till "setCustomerInfo"
+                        }
                       }
-                    }
-                  }}
-                  pattern="\d{8}-\d{4}"
-                  title="Ange personnummer i formatet ÅÅÅÅMMDD-XXXX"
-                />
+                    }}
+                    pattern="\d{8}-\d{4}"
+                    title="Ange personnummer i formatet ÅÅÅÅMMDD-XXXX"
+                  />
               </div>
               <div className="dialog-buttons">
                 <button type="button" onClick={() => {
