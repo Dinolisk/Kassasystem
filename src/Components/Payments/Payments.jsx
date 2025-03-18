@@ -122,6 +122,23 @@ export const Payments = ({
       console.warn(`Betalat belopp (${paidTotal}) matchar inte total (${total}).`);
     }
     
+    // Skicka kvittodata till Heroku backend
+    fetch('https://gardeco-api.herokuapp.com/receipt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ paymentMethods: finalPaymentData, total }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Svar från backend:', data);
+        // Visa ett meddelande till användaren om det behövs
+        setPaymentMessage(`Betalning slutförd! ${data.message}`);
+      })
+      .catch(error => {
+        console.error('Fel vid skick till servern:', error);
+        setPaymentMessage('Betalning slutförd, men fel vid kommunikation med servern');
+      });
+    
     if (typeof onPaymentComplete === 'function') {
       console.log("Calling onPaymentComplete with:", finalPaymentData);
       onPaymentComplete(finalPaymentData);
