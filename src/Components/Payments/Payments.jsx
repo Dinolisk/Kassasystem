@@ -10,6 +10,9 @@ import KlarnaPayment from './methods/KlarnaPayment.jsx';
 import OrderSummary from './components/OrderSummary';
 import PaymentStatus from './components/PaymentStatus';
 
+// Hämta bas-URL från miljövariabel
+const BASE_URL = import.meta.env.VITE_API_URL;
+
 export const Payments = ({
   isOpen,
   onClose,
@@ -39,26 +42,25 @@ export const Payments = ({
   }, [isOpen, remainingTotal, total]);
 
   const simulatePayment = (method, amount, details) => {
-    if (amount > currentRemainingTotal + 0.01) { // Tillåt små skillnader
+    if (amount > currentRemainingTotal + 0.01) {
       setPaymentStatus('declined');
       setDeclineReason(`Beloppet överstiger resterande summa, max ${formatPrice(currentRemainingTotal)}`);
       return;
     }
 
-    const numericAmount = Number(amount.toFixed(2)); // Avrunda till 2 decimaler
-    
+    const numericAmount = Number(amount.toFixed(2));
     const methodLabel = getPaymentMethodLabel(method);
     const newPayment = { 
       method, 
       amount: numericAmount, 
       label: methodLabel,
       details: details,
-      timestamp: new Date().toISOString() // Lägg till timestamp för unik identifiering
+      timestamp: new Date().toISOString()
     };
     
     const updatedPayments = [...partialPayments, newPayment];
     setPartialPayments(updatedPayments);
-    console.log("Updated partialPayments:", updatedPayments); // Logg för felsökning
+    console.log("Updated partialPayments:", updatedPayments);
     
     const newRemainingTotal = Math.max(0, Number((currentRemainingTotal - numericAmount).toFixed(2)));
     setCurrentRemainingTotal(newRemainingTotal);
@@ -66,9 +68,7 @@ export const Payments = ({
     let successMessage = `Betalning på ${formatPrice(numericAmount)} genomförd med ${methodLabel}!`;
     
     if (method === 'invoice') {
-      const destination = details && details.email 
-        ? `e-post (${details.email})` 
-        : 'postadress';
+      const destination = details && details.email ? `e-post (${details.email})` : 'postadress';
       successMessage = `Faktura på ${formatPrice(numericAmount)} har skickats till ${destination}!`;
       if (details && details.reference) {
         successMessage += ` Referens: ${details.reference}`;
@@ -91,8 +91,8 @@ export const Payments = ({
     setPaymentMessage(successMessage);
     setPaymentStatus('success');
     
-    if (newRemainingTotal <= 0.01) { // Slutför om resterande är nära noll
-      finishPayment(updatedPayments); // Skicka med uppdaterade betalningar direkt
+    if (newRemainingTotal <= 0.01) {
+      finishPayment(updatedPayments);
     } else {
       setSelectedPaymentMethod('');
       setPaymentStatus('idle');
@@ -122,8 +122,11 @@ export const Payments = ({
       console.warn(`Betalat belopp (${paidTotal}) matchar inte total (${total}).`);
     }
     
-    // Skicka kvittodata till Heroku backend
-    fetch('https://gardeco-api.herokuapp.com/receipt', {
+    // Logga URL:en som används
+    console.log('Skickar kvitto till:', `${BASE_URL}/receipt`);
+    
+    // Skicka kvittodata till Heroku backend med rätt URL
+    fetch(`${BASE_URL}/receipt`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ paymentMethods: finalPaymentData, total }),
@@ -131,7 +134,6 @@ export const Payments = ({
       .then(response => response.json())
       .then(data => {
         console.log('Svar från backend:', data);
-        // Visa ett meddelande till användaren om det behövs
         setPaymentMessage(`Betalning slutförd! ${data.message}`);
       })
       .catch(error => {
@@ -150,7 +152,7 @@ export const Payments = ({
     setCurrentRemainingTotal(0);
     onClose();
   };
-
+  
   const handlePaymentMethodSelect = (method) => {
     setSelectedPaymentMethod(method);
     setPaymentStatus('idle');
