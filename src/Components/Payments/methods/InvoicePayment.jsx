@@ -15,6 +15,11 @@ const InvoicePayment = ({
     email: '',
     phone: ''
   });
+  const [errors, setErrors] = useState({
+    name: '',
+    email: '',
+    phone: ''
+  });
   const [internalPaymentStatus, setInternalPaymentStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState('');
   const [showCustomModal, setShowCustomModal] = useState(false);
@@ -70,20 +75,68 @@ const InvoicePayment = ({
     setAmount(remainingTotal);
   };
 
+  const validateName = (name) => {
+    const nameRegex = /^[a-zA-ZåäöÅÄÖ\s]+$/;
+    if (!nameRegex.test(name)) {
+      return 'Namn får endast innehålla bokstäver';
+    }
+    return '';
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Ange en giltig e-postadress';
+    }
+    return '';
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^07[\d]{8}$/;
+    if (!phoneRegex.test(phone)) {
+      return 'Ange ett giltigt telefonnummer (07XXXXXXXX)';
+    }
+    return '';
+  };
+
   const handleCustomerInfoChange = (e) => {
     const { name, value } = e.target;
     setCustomerInfo(prevInfo => ({
       ...prevInfo,
       [name]: value
     }));
+
+    // Validate fields on change
+    if (name === 'name') {
+      setErrors(prev => ({
+        ...prev,
+        name: validateName(value)
+      }));
+    } else if (name === 'email') {
+      setErrors(prev => ({
+        ...prev,
+        email: validateEmail(value)
+      }));
+    } else if (name === 'phone') {
+      setErrors(prev => ({
+        ...prev,
+        phone: validatePhone(value)
+      }));
+    }
   };
 
   // Validering av formulär
   const isFormValid = () => {
     if (invoiceMethod === 'email') {
-      return customerInfo.name && customerInfo.email;
+      return customerInfo.name && 
+             customerInfo.email && 
+             !errors.name && 
+             !errors.email;
     } else {
-      return customerInfo.name && customerInfo.phone;
+      return customerInfo.name && 
+             customerInfo.phone && 
+             !errors.name &&
+             !errors.phone;
     }
   };
 
@@ -202,7 +255,9 @@ const InvoicePayment = ({
             onChange={handleCustomerInfoChange}
             placeholder="Kundens namn"
             disabled={internalPaymentStatus !== 'idle'}
+            className={errors.name ? 'input-error' : ''}
           />
+          {errors.name && <div className="error-message">{errors.name}</div>}
         </div>
         
         {invoiceMethod === 'email' ? (
@@ -216,7 +271,9 @@ const InvoicePayment = ({
               onChange={handleCustomerInfoChange}
               placeholder="exempel@mail.se"
               disabled={internalPaymentStatus !== 'idle'}
+              className={errors.email ? 'input-error' : ''}
             />
+            {errors.email && <div className="error-message">{errors.email}</div>}
           </div>
         ) : (
           <div className="invoice-form-group">
@@ -229,7 +286,9 @@ const InvoicePayment = ({
               onChange={handleCustomerInfoChange}
               placeholder="07XXXXXXXX"
               disabled={internalPaymentStatus !== 'idle'}
+              className={errors.phone ? 'input-error' : ''}
             />
+            {errors.phone && <div className="error-message">{errors.phone}</div>}
           </div>
         )}
       </div>

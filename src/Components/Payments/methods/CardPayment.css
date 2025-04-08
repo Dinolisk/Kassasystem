@@ -20,13 +20,13 @@
 
 /* Beloppssektion */
 .card-amount-total {
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   background: var(--light-bg, #f8f9fa);
   border-radius: 8px;
   padding: 8px 12px;
   border-left: 4px solid var(--payment-card, #2c7be5);
-  display: flex;
-  align-items: center;
+  min-height: 56px;
+  position: relative;
 }
 
 .card-amount-layout {
@@ -34,7 +34,7 @@
   align-items: center;
   width: 100%;
   height: 100%;
-  justify-content: center; /* Centrerar innehållet */
+  position: relative;
 }
 
 .card-amount-label {
@@ -42,112 +42,19 @@
   font-weight: 600;
   color: #333;
   width: 30%;
-  text-align: right; /* Högerjusterar texten för att skapa balans */
-  padding-right: 15px; /* Lägger till lite mellanrum till höger om texten */
+  text-align: left;
   display: flex;
   align-items: center;
-  justify-content: flex-end; /* Högerjusterar innehållet i flex-containern */
 }
 
 .card-amount-controls {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   align-items: center;
-  justify-content: center; /* Centrerar kontrollerna */
-  width: 40%;
-  gap: 10px; /* Lite mer utrymme mellan elementen */
-}
-
-.card-amount-center {
-  display: flex;
-  justify-content: center; /* Centrerar inputfältet över hela skärmbredden */
-  width: auto; /* Låter bredden anpassas efter innehållet */
-  flex-grow: 0; /* Förhindrar expansion */
-}
-
-.card-amount-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  max-width: 150px; /* Minskat för att passa bättre i mitten */
-  height: 40px;
-  margin: 0 auto; /* Centrerar display-elementet */
-}
-
-.card-amount-input {
-  border: none;
-  background: transparent;
-  font-size: 1.5rem;
-  font-weight: 600;
-  padding: 4px 0;
-  text-align: center;
-  color: var(--text-primary, #1a1a1a);
-  width: 100%;
-  max-width: 100px;
-  height: 100%;
-  line-height: 1.5;
-}
-
-.card-amount-input:focus {
-  outline: none;
-}
-
-.card-amount-input::-webkit-inner-spin-button,
-.card-amount-input::-webkit-outer-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.card-currency {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: #666;
-  padding-left: 4px;
-  display: flex;
-  align-items: center;
-}
-
-.card-amount-button {
-  width: 36px;
-  height: 36px;
-  background: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  color: #333;
-  transition: all 0.2s ease;
-}
-
-.card-amount-button:hover {
-  background: #f0f0f0;
-}
-
-.card-amount-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.card-reset-button {
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #666;
-  transition: color 0.2s ease;
-}
-
-.card-reset-button:hover {
-  color: var(--payment-card, #2c7be5);
-}
-
-.card-reset-button:disabled {
-  color: #ccc;
-  cursor: not-allowed;
+  gap: 10px;
+  width: auto;
 }
 
 .card-amount-spacer {
@@ -212,7 +119,7 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 16px; /* Ökat mellanrum mellan ikoner */
+  gap: 16px;
 }
 
 .card-brand {
@@ -228,8 +135,8 @@
 }
 
 .card-brand svg {
-  width: 55px; /* Ökat från 40px */
-  height: 35px; /* Ökat från 25px */
+  width: 55px;
+  height: 35px;
 }
 
 /* Instruktioner */

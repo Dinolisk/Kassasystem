@@ -1,14 +1,24 @@
 // src/Components/Payments/components/PaymentStatus.jsx
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Loader2, CheckCircle2, XCircle } from 'lucide-react';
 import { STATUS_MESSAGES, DECLINE_MESSAGES } from '../../../utils/paymentUtils';
 
-const PaymentStatus = ({ paymentStatus, declineReason }) => {
+const LOADING_STATUSES = [
+  'processing',
+  'awaiting_card', 
+  'awaiting_scan',
+  'verifying',
+  'verifying_card',
+  'invoice_sent'
+];
+
+const PaymentStatus = ({ paymentStatus = 'idle', declineReason = '' }) => {
   if (paymentStatus === 'idle') return null;
   
   return (
     <div className="payment-status">
-      {['processing', 'awaiting_card', 'awaiting_scan', 'verifying', 'verifying_card', 'awaiting_card', 'invoice_sent'].includes(paymentStatus) && (
+      {LOADING_STATUSES.includes(paymentStatus) && (
         <>
           <Loader2 className="animate-spin" size={48} />
           <p>{STATUS_MESSAGES[paymentStatus]}</p>
@@ -28,6 +38,16 @@ const PaymentStatus = ({ paymentStatus, declineReason }) => {
       )}
     </div>
   );
+};
+
+PaymentStatus.propTypes = {
+  paymentStatus: PropTypes.oneOf([
+    'idle',
+    ...LOADING_STATUSES,
+    'approved',
+    'declined'
+  ]),
+  declineReason: PropTypes.string
 };
 
 export default PaymentStatus;

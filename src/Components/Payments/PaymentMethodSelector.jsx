@@ -103,7 +103,7 @@ const completePayment = () => {
     ...payment,
     timestamp: payment.timestamp || new Date().toISOString()
   }));
-  
+
   // Send the payments array to the parent
   console.log("Sending final payments:", paymentsWithTimestamps);
   onPaymentComplete(paymentsWithTimestamps);
@@ -112,7 +112,7 @@ const completePayment = () => {
   resetPaymentStates();
   onClose();
 };
-    
+
 const handleAddPayment = async (amount) => {
   const paymentAmount = parseFloat(amount || customAmount);
   if (isNaN(paymentAmount) || paymentAmount <= 0 || paymentAmount > remainingAmount) return;

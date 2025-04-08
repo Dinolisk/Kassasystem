@@ -15,6 +15,11 @@ const KlarnaPayment = ({
     email: '',
     phone: ''
   });
+  const [errors, setErrors] = useState({
+    personalNumber: '',
+    email: '',
+    phone: ''
+  });
   const [internalPaymentStatus, setInternalPaymentStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState('');
   const [showCustomModal, setShowCustomModal] = useState(false);
@@ -66,21 +71,63 @@ const KlarnaPayment = ({
     setAmount(remainingTotal);
   };
 
+  const validatePersonalNumber = (pnr) => {
+    const pnrRegex = /^(\d{4})(\d{2})(\d{2})-?(\d{4})$/;
+    if (!pnrRegex.test(pnr)) {
+      return 'Ange ett giltigt personnummer (ÅÅÅÅMMDD-XXXX)';
+    }
+    return '';
+  };
+
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return 'Ange en giltig e-postadress';
+    }
+    return '';
+  };
+
+  const validatePhone = (phone) => {
+    const phoneRegex = /^07[\d]{8}$/;
+    if (!phoneRegex.test(phone)) {
+      return 'Ange ett giltigt telefonnummer (07XXXXXXXX)';
+    }
+    return '';
+  };
+
   const handleCustomerInfoChange = (e) => {
     const { name, value } = e.target;
     setCustomerInfo(prevInfo => ({
       ...prevInfo,
       [name]: value
     }));
+
+    // Validate fields on change
+    if (name === 'personalNumber') {
+      setErrors(prev => ({
+        ...prev,
+        personalNumber: validatePersonalNumber(value)
+      }));
+    } else if (name === 'email') {
+      setErrors(prev => ({
+        ...prev,
+        email: validateEmail(value)
+      }));
+    } else if (name === 'phone') {
+      setErrors(prev => ({
+        ...prev,
+        phone: validatePhone(value)
+      }));
+    }
   };
 
   const isFormValid = () => {
     return customerInfo.personalNumber && 
-           customerInfo.personalNumber.length >= 10 && 
            customerInfo.email && 
-           customerInfo.email.includes('@') && 
            customerInfo.phone && 
-           customerInfo.phone.length >= 8;
+           !errors.personalNumber && 
+           !errors.email && 
+           !errors.phone;
   };
 
   const getKlarnaMethodLabel = () => {
@@ -218,7 +265,9 @@ const KlarnaPayment = ({
               onChange={handleCustomerInfoChange}
               placeholder="ÅÅÅÅMMDD-XXXX"
               disabled={internalPaymentStatus !== 'idle'}
+              className={errors.personalNumber ? 'input-error' : ''}
             />
+            {errors.personalNumber && <div className="error-message">{errors.personalNumber}</div>}
           </div>
           
           <div className="klarna-form-group">
@@ -231,7 +280,9 @@ const KlarnaPayment = ({
               onChange={handleCustomerInfoChange}
               placeholder="07XXXXXXXX"
               disabled={internalPaymentStatus !== 'idle'}
+              className={errors.phone ? 'input-error' : ''}
             />
+            {errors.phone && <div className="error-message">{errors.phone}</div>}
           </div>
         </div>
         
@@ -245,7 +296,9 @@ const KlarnaPayment = ({
             onChange={handleCustomerInfoChange}
             placeholder="exempel@mail.se"
             disabled={internalPaymentStatus !== 'idle'}
+            className={errors.email ? 'input-error' : ''}
           />
+          {errors.email && <div className="error-message">{errors.email}</div>}
           <small className="klarna-form-help">Du får bekräftelse och kvitto till denna e-post</small>
         </div>
       </div>

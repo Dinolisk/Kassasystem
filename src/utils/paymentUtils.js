@@ -93,37 +93,77 @@ export const METHOD_LABELS = {
     return Math.max(0, totalAmount - totalPaid);
   };
   
-  // Simulera en betalningsprocess med callback för statusuppdateringar
-  export const simulatePaymentProcess = async (method, onStatusChange) => {
+  // Enhanced payment simulation with cancellation support and better error handling
+  const delay = (ms, shouldCancel = () => false) => {
+    return new Promise((resolve, reject) => {
+      const interval = setInterval(() => {
+        if (shouldCancel()) {
+          clearInterval(interval);
+          reject(new Error('Payment cancelled'));
+        }
+      }, 100);
+      
+      setTimeout(() => {
+        clearInterval(interval);
+        resolve();
+      }, ms);
+    });
+  };
+
+  export const simulatePaymentProcess = async (method, onStatusChange, shouldCancel = () => false) => {
     try {
-      // Simulera slumpmässigt avslag för kortbetalningar (10% chans)
+      // Simulate random decline for card payments (10% chance)
       if (method === 'card' && Math.random() < 0.1) {
-        // Simulera betalningsförsök innan den nekas
         onStatusChange('awaiting_card');
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        onStatusChange('processing');
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        await delay(2000, shouldCancel);
         
-        // Neka betalningen med meddelande om otillräckligt saldo
+        onStatusChange('processing');
+        await delay(1500, shouldCancel);
+        
         onStatusChange('declined', 'insufficient_funds');
-        return false;
+        return { success: false, cancelled: false };
       }
-  
-      // Hämta steg för vald betalningsmetod eller använd standardsteg
+
+      // Get stages for selected method or use default
       const stages = PAYMENT_STAGES[method] || PAYMENT_STAGES['default'];
       
-      // Processera varje steg
+      // Process each stage
       for (const stage of stages) {
-        onStatusChange(stage.status);
-        await new Promise(resolve => setTimeout(resolve, stage.duration));
+        onStatusChange(stage.status, stage.message);
+        await delay(stage.duration, shouldCancel);
       }
       
-      return true;
+      return { success: true, cancelled: false };
     } catch (error) {
-      console.error("Error during payment processing:", error);
-      onStatusChange('declined');
-      return false;
+      if (error.message === 'Payment cancelled') {
+        onStatusChange('cancelled', 'Payment was cancelled');
+        return { success: false, cancelled: true };
+      }
+      
+      console.error("Payment processing error:", error);
+      onStatusChange('error', DECLINE_MESSAGES.default);
+      return { success: false, cancelled: false };
     }
+  };
+
+  // Shared amount handling utilities
+  export const handleAmountChange = (value, remainingTotal) => {
+    if (value === '') return 0;
+    
+    const newAmount = parseFloat(value);
+    if (!isNaN(newAmount)) {
+      return Math.min(Math.max(newAmount, 0), remainingTotal);
+    }
+    return 0;
+  };
+
+  export const increaseAmount = (amount, remainingTotal) => {
+    const newAmount = Math.round((amount + 1) * 100) / 100;
+    return Math.min(newAmount, remainingTotal);
+  };
+
+  export const decreaseAmount = (amount) => {
+    return Math.max(0, Math.round((amount - 1) * 100) / 100);
   };
   
   // Verifierar presentkort och returnerar saldo

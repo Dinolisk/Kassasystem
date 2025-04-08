@@ -1,63 +1,31 @@
-import React, { useState, useEffect } from 'react';
-import './CardPayment.css';
-import { RotateCcw, Plus, Minus, CheckCircle, Loader, CreditCard, ArrowLeft } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { 
+  simulatePaymentProcess,
+  STATUS_MESSAGES,
+  handleAmountChange as handleAmountChangeUtil,
+  increaseAmount,
+  decreaseAmount
+} from '../../../utils/paymentUtils';
+import AmountControls from '../shared/AmountControls';
+import PaymentStatusModal from '../shared/PaymentStatusModal';
+import { CreditCard, ArrowLeft } from 'lucide-react';
+import './Cardpayment.css';
+import '../shared/AmountControls.css';
 
 const CardPayment = ({
   remainingTotal,
-  paymentStatus: externalPaymentStatus,
   formatPrice,
   completePayment,
   onBack,
 }) => {
   const [amount, setAmount] = useState(remainingTotal);
-  const [internalPaymentStatus, setInternalPaymentStatus] = useState('idle');
+  const [paymentStatus, setPaymentStatus] = useState('idle');
   const [statusMessage, setStatusMessage] = useState('');
-  const [showCustomModal, setShowCustomModal] = useState(false);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const cancelRef = useRef(false);
 
-  useEffect(() => {
-    setAmount(remainingTotal);
-  }, [remainingTotal]);
-
-  const handleAmountChange = (e) => {
-    const value = e.target.value;
-    if (value === '') {
-      setAmount(0);
-      return;
-    }
-
-    const newAmount = parseFloat(value);
-    if (!isNaN(newAmount)) {
-      const adjustedAmount = Math.min(Math.max(newAmount, 0), remainingTotal);
-      setAmount(adjustedAmount);
-    }
-  };
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Backspace' || e.key === 'Delete') {
-      const selectionStart = e.target.selectionStart;
-      const selectionEnd = e.target.selectionEnd;
-      const value = e.target.value;
-
-      if (selectionStart === 0 && selectionEnd === value.length) {
-        setAmount(0);
-        e.preventDefault();
-      }
-    }
-  };
-
-  const increaseAmount = () => {
-    const newAmount = Math.round((amount + 1) * 100) / 100;
-    const adjustedAmount = Math.min(newAmount, remainingTotal);
-    setAmount(adjustedAmount);
-  };
-
-  const decreaseAmount = () => {
-    const newAmount = Math.max(0, Math.round((amount - 1) * 100) / 100);
+  const updateAmount = (newAmount) => {
     setAmount(newAmount);
-  };
-
-  const resetAmount = () => {
-    setAmount(remainingTotal);
   };
 
   const handleQuickAmount = (percent) => {
@@ -65,48 +33,33 @@ const CardPayment = ({
     setAmount(newAmount);
   };
 
-  const simulatePayment = () => {
-    if (amount <= 0) {
-      return;
-    }
+  const handlePayment = async () => {
+    if (amount <= 0) return;
 
-    setInternalPaymentStatus('idle');
-    setStatusMessage('');
-    
-    setShowCustomModal(true);
-    
-    setTimeout(() => {
-      setInternalPaymentStatus('processing');
-      setStatusMessage('Väntar på kortläsaren...');
-      
+    cancelRef.current = false;
+    setPaymentStatus('processing');
+    setStatusMessage(STATUS_MESSAGES.awaiting_card);
+    setShowStatusModal(true);
+
+    const { success } = await simulatePaymentProcess(
+      'card',
+      (status, messageKey) => {
+        setPaymentStatus(status);
+        setStatusMessage(messageKey ? STATUS_MESSAGES[messageKey] || messageKey : '');
+      },
+      () => cancelRef.current
+    );
+
+    if (success) {
       setTimeout(() => {
-        setStatusMessage('Läser kort...');
-        
-        setTimeout(() => {
-          setStatusMessage('Behandlar betalning...');
-          
-          setTimeout(() => {
-            setStatusMessage('Verifierar transaktion...');
-            
-            setTimeout(() => {
-              setInternalPaymentStatus('completed');
-              setStatusMessage('Betalning godkänd!');
-              
-              setTimeout(() => {
-                setShowCustomModal(false);
-                setTimeout(() => {
-                  completePayment('card', amount);
-                }, 300);
-              }, 1500);
-            }, 1500);
-          }, 1500);
-        }, 1500);
-      }, 1500);
-    }, 100);
+        completePayment('card', amount);
+        setShowStatusModal(false);
+      }, 1000);
+    } else if (!cancelRef.current) {
+      setTimeout(() => setShowStatusModal(false), 2000);
+    }
   };
 
-  const currentPaymentStatus = internalPaymentStatus;
-  
   return (
     <div className="card-payment-container">
       <h2>Kortbetalning</h2>
@@ -115,47 +68,16 @@ const CardPayment = ({
         <div className="card-amount-layout">
           <span className="card-amount-label">Belopp att betala:</span>
           <div className="card-amount-controls">
-            <button
-              onClick={decreaseAmount}
-              className="card-amount-button"
-              disabled={currentPaymentStatus !== 'idle' || amount <= 0}
-              aria-label="Minska belopp med 1 krona"
-            >
-              <Minus size={18} />
-            </button>
-            <div className="card-amount-center">
-              <div className="card-amount-display">
-                <input
-                  type="number"
-                  value={amount === 0 ? '' : amount}
-                  onChange={handleAmountChange}
-                  onKeyDown={handleKeyDown}
-                  className="card-amount-input"
-                  disabled={currentPaymentStatus !== 'idle'}
-                  aria-label="Belopp att betala i kronor"
-                  step="0.01"
-                />
-                <span className="card-currency">kr</span>
-              </div>
-            </div>
-            <button
-              onClick={increaseAmount}
-              className="card-amount-button"
-              disabled={currentPaymentStatus !== 'idle' || amount >= remainingTotal}
-              aria-label="Öka belopp med 1 krona"
-            >
-              <Plus size={18} />
-            </button>
-            <button
-              onClick={resetAmount}
-              className="card-reset-button"
-              disabled={currentPaymentStatus !== 'idle' || amount === remainingTotal}
-              aria-label="Återställ belopp till ursprungligt värde"
-            >
-              <RotateCcw size={14} />
-            </button>
+            <AmountControls
+              amount={amount}
+              remainingTotal={remainingTotal}
+              currentPaymentStatus={paymentStatus}
+              onAmountChange={updateAmount}
+              onIncrease={() => updateAmount(increaseAmount(amount, remainingTotal))}
+              onDecrease={() => updateAmount(decreaseAmount(amount))}
+              onReset={() => updateAmount(remainingTotal)}
+            />
           </div>
-          <div className="card-amount-spacer"></div>
         </div>
       </div>
 
@@ -163,34 +85,33 @@ const CardPayment = ({
         <button 
           className={`quick-amount-btn ${Math.abs(amount - remainingTotal) < 0.01 ? 'active' : ''}`} 
           onClick={() => handleQuickAmount(1.0)}
-          disabled={currentPaymentStatus !== 'idle'}
+          disabled={paymentStatus !== 'idle'}
         >
           100%
         </button>
         <button 
           className={`quick-amount-btn ${Math.abs(amount - (remainingTotal * 0.75)) < 0.01 ? 'active' : ''}`} 
           onClick={() => handleQuickAmount(0.75)}
-          disabled={currentPaymentStatus !== 'idle'}
+          disabled={paymentStatus !== 'idle'}
         >
           75%
         </button>
         <button 
           className={`quick-amount-btn ${Math.abs(amount - (remainingTotal * 0.5)) < 0.01 ? 'active' : ''}`} 
           onClick={() => handleQuickAmount(0.5)}
-          disabled={currentPaymentStatus !== 'idle'}
+          disabled={paymentStatus !== 'idle'}
         >
           50%
         </button>
         <button 
           className={`quick-amount-btn ${Math.abs(amount - (remainingTotal * 0.25)) < 0.01 ? 'active' : ''}`} 
           onClick={() => handleQuickAmount(0.25)}
-          disabled={currentPaymentStatus !== 'idle'}
+          disabled={paymentStatus !== 'idle'}
         >
           25%
         </button>
       </div>
 
-      {/* Ersatt textinformation med kortikoner */}
       <div className="card-brands-container">
         <div className="accepted-cards-label">Accepterade kort:</div>
         <div className="card-brands">
@@ -225,9 +146,9 @@ const CardPayment = ({
       </div>
 
       <button
-        onClick={simulatePayment}
+        onClick={handlePayment}
         className="card-payment-button"
-        disabled={currentPaymentStatus !== 'idle' || amount <= 0}
+        disabled={paymentStatus !== 'idle' || amount <= 0}
         aria-label="Genomför kortbetalning"
       >
         <CreditCard size={18} style={{ marginRight: '8px' }} />
@@ -237,33 +158,18 @@ const CardPayment = ({
       <button 
         onClick={onBack} 
         className="payment-method-back-button"
-        disabled={currentPaymentStatus !== 'idle'}
+        disabled={paymentStatus !== 'idle'}
       >
         <ArrowLeft size={18} />
         Tillbaka
       </button>
 
-      {showCustomModal && (
-        <div className="payment-overlay">
-          <div className="payment-modal">
-            <div className={`payment-status-modal ${
-              currentPaymentStatus === 'completed' ? 'success' : 
-              currentPaymentStatus === 'failed' ? 'error' : 
-              currentPaymentStatus === 'processing' ? 'processing' : ''
-            }`}>
-              {currentPaymentStatus === 'processing' ? (
-                <Loader className="status-icon spinning" size={36} />
-              ) : currentPaymentStatus === 'completed' ? (
-                <CheckCircle className="status-icon" size={36} />
-              ) : null}
-              
-              <div className="status-message">
-                {statusMessage}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      <PaymentStatusModal
+        show={showStatusModal}
+        status={paymentStatus}
+        message={statusMessage}
+        onClose={() => setShowStatusModal(false)}
+      />
     </div>
   );
 };

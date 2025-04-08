@@ -1,3 +1,14 @@
+/* Error styling */
+.input-error {
+  border-color: #ff4d4f !important;
+}
+
+.error-message {
+  color: #ff4d4f;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
 /* Klarna - Huvudcontainer */
 .klarna-container {
     display: flex;
