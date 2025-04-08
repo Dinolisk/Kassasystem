@@ -116,25 +116,39 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 0.75rem;
-    gap: 0.5rem;
+    padding: 1.5rem;
+    gap: 0.75rem;
     background: white;
-    border: 2px solid #37383a;
+    border: 1px solid #e5e7eb;
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.2s ease;
-    height: 120px;
+    height: 140px;
+    min-width: 140px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .payment-method-option:hover {
-    background: #ededed;
     transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-color: #2E3A4E;
 }
 
 .payment-method-option svg {
-    width: 40px;
-    height: 40px;
-    color: #2E3A4E;
+    width: 2.5rem;
+    height: 2.5rem;
+    color: inherit;
+}
+
+.payment-method-option span {
+    font-size: 1rem;
+    font-weight: 600;
+    color: inherit;
+}
+
+.payment-method-options {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1.5rem;
 }
 
 .payment-method-option span {

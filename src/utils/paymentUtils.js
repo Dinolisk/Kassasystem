@@ -2,15 +2,51 @@
 
 // ---------- KONSTANTER ----------
 
-// Mappning för betalningsmetodetiketter
-export const METHOD_LABELS = {
-    'card': 'Kort',
-    'cash': 'Kontanter',
-    'swish': 'Swish',
-    'invoice': 'Faktura',
-    'giftcard': 'Presentkort',
-    'split': 'Delad betalning'
-  };
+// Standardiserad betalningsmetodkonfiguration
+export const PAYMENT_METHODS = {
+  card: {
+    label: 'Kort',
+    icon: 'CreditCard',
+    color: '#3b82f6',
+    minAmount: 1,
+    maxAmount: 10000,
+    requiresCustomer: false
+  },
+  cash: {
+    label: 'Kontanter', 
+    icon: 'Banknote',
+    color: '#10b981',
+    minAmount: 0.1,
+    maxAmount: 20000,
+    requiresCustomer: false
+  },
+  swish: {
+    label: 'Swish',
+    icon: 'Smartphone',
+    color: '#a3e635',
+    minAmount: 1,
+    maxAmount: 10000,
+    requiresCustomer: true
+  },
+  invoice: {
+    label: 'Faktura',
+    icon: 'FileText',
+    color: '#8b5cf6',
+    minAmount: 100,
+    maxAmount: 50000,
+    requiresCustomer: true
+  },
+  giftcard: {
+    label: 'Presentkort',
+    icon: 'Gift',
+    color: '#ec4899',
+    minAmount: 1,
+    maxAmount: 5000,
+    requiresCustomer: false
+  }
+};
+
+// Statusmeddelanden för betalningsprocesser
   
   // Statusmeddelanden för betalningsprocesser
   export const STATUS_MESSAGES = {

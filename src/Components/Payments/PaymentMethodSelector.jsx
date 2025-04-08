@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+ximport React, { useState, useEffect } from 'react';
 import { 
   CreditCard, 
   Banknote, 
   Smartphone, 
+  FileText,
+  Gift,
   ArrowLeft,
   Trash2,
-  X,
-  Loader2,
-  CheckCircle2,
-  XCircle
+  X
 } from 'lucide-react';
+import PaymentStatus from './shared/PaymentStatus';
 import './PaymentMethodSelector.css';
 
 const PaymentMethodSelector = ({
@@ -41,11 +41,19 @@ const PaymentMethodSelector = ({
 
   if (!isOpen) return null;
 
-  const methods = [
-    { id: 'card', icon: CreditCard, label: 'Kort' },
-    { id: 'cash', icon: Banknote, label: 'Kontanter' },
-    { id: 'swish', icon: Smartphone, label: 'Swish' },
-  ];
+  const methods = Object.entries(PAYMENT_METHODS).map(([id, config]) => ({
+    id,
+    icon: config.icon === 'CreditCard' ? CreditCard : 
+          config.icon === 'Banknote' ? Banknote :
+          config.icon === 'Smartphone' ? Smartphone :
+          config.icon === 'FileText' ? FileText :
+          config.icon === 'Gift' ? Gift : CreditCard,
+    label: config.label,
+    color: config.color,
+    minAmount: config.minAmount,
+    maxAmount: config.maxAmount,
+    requiresCustomer: config.requiresCustomer
+  }));
 
   const handleMethodSelection = (methodId) => {
     setSelectedMethod(methods.find(m => m.id === methodId));
@@ -174,41 +182,6 @@ const handlePercentageClick = (percentage) => {
   setCustomAmount(amount.toFixed(2));
 };
 
-const renderPaymentStatus = () => {
-  if (paymentStatus === 'idle') return null;
-  
-  const statusMessages = {
-    awaiting_card: 'Väntar på kortbetalning...',
-    verifying_card: 'Verifierar kort...',
-    processing: 'Behandlar betalning...',
-    approved: 'Betalning godkänd!',
-    declined: 'Betalning nekad. Försök igen.',
-    awaiting_scan: 'Väntar på QR-kod scanning...'
-  };
-  
-  return (
-    <div className="payment-status">
-      {['processing', 'awaiting_card', 'awaiting_scan', 'verifying_card'].includes(paymentStatus) && (
-        <>
-          <Loader2 className="animate-spin h-8 w-8" />
-          <p>{statusMessages[paymentStatus]}</p>
-        </>
-      )}
-      {paymentStatus === 'approved' && (
-        <>
-          <CheckCircle2 className="h-8 w-8 text-green-500" />
-          <p>{statusMessages[paymentStatus]}</p>
-        </>
-      )}
-      {paymentStatus === 'declined' && (
-        <>
-          <XCircle className="h-8 w-8 text-red-500" />
-          <p>{statusMessages[paymentStatus]}</p>
-        </>
-      )}
-    </div>
-  );
-};
 
 return (
   <div className="modal-overlay" onClick={onClose}>
@@ -334,7 +307,7 @@ return (
         </button>
       )}
 
-      {renderPaymentStatus()}
+      <PaymentStatus status={paymentStatus} method={selectedMethod?.label} />
     </div>
   </div>
 );
